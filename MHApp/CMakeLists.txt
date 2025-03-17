@@ -1,0 +1,28 @@
+cmake_minimum_required(VERSION 3.15)
+project(MHApp LANGUAGES CXX VERSION 0.1)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+add_compile_options(/EHsc)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_CXX_FLAGS /utf-8)
+
+if (${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/${PROJECT_NAME}/${CMAKE_BUILD_TYPE}/bin)
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/${PROJECT_NAME}/${CMAKE_BUILD_TYPE}/lib)
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/${PROJECT_NAME}/${CMAKE_BUILD_TYPE}/lib)
+endif()
+
+add_executable(MiniHome main.cpp)
+
+target_link_libraries(
+    MiniHome PRIVATE
+    MHCore
+    MHWindow
+)
+
+set_target_properties(
+    MiniHome PROPERTIES
+    WIN32_EXECUTABLE TRUE
+)
