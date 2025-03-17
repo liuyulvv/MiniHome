@@ -22,7 +22,7 @@ namespace MHWindow {
 
 class MH_WINDOW_API MHVtkWindow : public QVTKOpenGLNativeWidget {
 public:
-    MHVtkWindow();
+    explicit MHVtkWindow(QWidget* parent = nullptr);
     ~MHVtkWindow();
     MHVtkWindow(const MHVtkWindow& window) = delete;
     MHVtkWindow(MHVtkWindow&& window) = delete;

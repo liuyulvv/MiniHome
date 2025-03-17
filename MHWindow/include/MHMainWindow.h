@@ -12,8 +12,10 @@
 #define MH_WINDOW_API __declspec(dllimport)
 #endif
 
+#include <QDockWidget>
 #include <QMainWindow>
 
+#include "MHLeftNavigation.h"
 #include "MHVtkWindow.h"
 
 namespace Ui {
@@ -34,6 +36,8 @@ public:
 
 private:
     Ui::MHMainWindow* ui;
+    QDockWidget* m_leftDockWidget;
+    MHLeftNavigation* m_leftNavigation;
     MHVtkWindow* m_vtkWindow;
 };
 

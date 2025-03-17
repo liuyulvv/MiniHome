@@ -8,7 +8,7 @@
 
 namespace MHWindow {
 
-MHVtkWindow::MHVtkWindow() {
+MHVtkWindow::MHVtkWindow(QWidget* parent) : QVTKOpenGLNativeWidget(parent) {
     m_window = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
     m_renderer = vtkSmartPointer<MHCore::MHRenderer>::New();
     m_window->AddRenderer(m_renderer);
@@ -16,6 +16,7 @@ MHVtkWindow::MHVtkWindow() {
 }
 
 MHVtkWindow::~MHVtkWindow() {
+    m_renderer = nullptr;
     m_window = nullptr;
 }
 
