@@ -22,6 +22,11 @@ endif()
 
 add_subdirectory(third/fmt)
 
+include_directories(
+    ${CMAKE_CURRENT_SOURCE_DIR}/third
+    ${CMAKE_CURRENT_SOURCE_DIR}/third/boost
+)
+
 add_subdirectory(MHCore)
 
 add_subdirectory(MHWindow)
