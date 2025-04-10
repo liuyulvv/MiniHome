@@ -6,7 +6,6 @@
 
 #include "MHLeftNavigation.h"
 
-#include <QPushButton>
 #include <QResizeEvent>
 #include <QSpacerItem>
 
@@ -16,41 +15,43 @@ namespace MHWindow {
 
 MHLeftNavigation::MHLeftNavigation(QWidget *parent) : QWidget(parent), ui(new Ui::MHLeftNavigation) {
     ui->setupUi(this);
-    m_hLayout1 = new QHBoxLayout();
-    m_hLayout1->addWidget(ui->lineButton);
-    m_hLayout1->addWidget(ui->rectangleButton);
-    m_hLayout1->addSpacerItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum));
-    m_hLayout2 = new QHBoxLayout();
-    m_hLayout2->addWidget(ui->arcButton);
-    m_hLayout2->addSpacerItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum));
+    m_gridLayout = new QGridLayout(this);
+    m_widgets.push_back(ui->lineButton);
+    m_widgets.push_back(ui->rectangleButton);
+    m_widgets.push_back(ui->arcButton);
+    m_maxColumn = 2;
+    layoutWidget();
     m_vLayout = new QVBoxLayout(this);
-    m_vLayout->addLayout(m_hLayout1);
-    m_vLayout->addLayout(m_hLayout2);
+    m_vLayout->addLayout(m_gridLayout);
+    m_vLayout->addSpacerItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum));
     setLayout(m_vLayout);
 }
 
 MHLeftNavigation::~MHLeftNavigation() {
-    delete m_hLayout1;
-    delete m_hLayout2;
+    m_widgets.clear();
+    delete m_gridLayout;
     delete m_vLayout;
     delete ui;
 }
 
 void MHLeftNavigation::resizeEvent(QResizeEvent *event) {
     if (event->size().width() < 152) {
-        m_vLayout->removeItem(m_hLayout1);
-        m_vLayout->removeItem(m_hLayout2);
-        m_vLayout->addWidget(ui->lineButton);
-        m_vLayout->addWidget(ui->rectangleButton);
-        m_vLayout->addWidget(ui->arcButton);
+        m_maxColumn = 1;
+        layoutWidget();
     } else {
-        m_vLayout->removeWidget(ui->lineButton);
-        m_vLayout->removeWidget(ui->rectangleButton);
-        m_vLayout->removeWidget(ui->arcButton);
-        m_vLayout->addLayout(m_hLayout1);
-        m_vLayout->addLayout(m_hLayout2);
+        m_maxColumn = 2;
+        layoutWidget();
     }
     QWidget::resizeEvent(event);
+}
+
+void MHLeftNavigation::layoutWidget() {
+    for (int i = 0; i < m_widgets.size(); i++) {
+        m_gridLayout->removeWidget(m_widgets[i]);
+    }
+    for (int i = 0; i < m_widgets.size(); i++) {
+        m_gridLayout->addWidget(m_widgets[i], i / m_maxColumn, i % m_maxColumn);
+    }
 }
 
 }  // namespace MHWindow

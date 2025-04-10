@@ -6,9 +6,10 @@
  * @date 2025-03-17
  */
 
-#include <QHBoxLayout>
+#include <QGridLayout>
 #include <QVBoxLayout>
 #include <QWidget>
+#include <vector>
 
 namespace Ui {
 class MHLeftNavigation;
@@ -27,10 +28,14 @@ protected:
     void resizeEvent(QResizeEvent *event) override;
 
 private:
-    Ui::MHLeftNavigation *ui;
-    QHBoxLayout *m_hLayout1;
-    QHBoxLayout *m_hLayout2;
-    QVBoxLayout *m_vLayout;
+    void layoutWidget();
+
+private:
+    Ui::MHLeftNavigation *ui = nullptr;
+    QGridLayout *m_gridLayout = nullptr;
+    QVBoxLayout *m_vLayout = nullptr;
+    int m_maxColumn = 2;
+    std::vector<QWidget *> m_widgets;
 };
 
 }  // namespace MHWindow
