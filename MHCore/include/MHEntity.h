@@ -12,23 +12,30 @@
 #define MH_CORE_API __declspec(dllimport)
 #endif
 
-#include <vtkSmartPointer.h>
+#include <string>
+
+#include "MHActor.h"
+#include "MHRenderer.h"
 
 namespace MHCore {
 
-class MHActor;
-
 class MH_CORE_API MHEntity {
 public:
-    MHEntity();
+    MHEntity(vtkSmartPointer<MHRenderer> renderer);
     ~MHEntity();
     MHEntity(const MHEntity& entity) = delete;
     MHEntity(MHEntity&& entity) = delete;
     MHEntity& operator=(const MHEntity& entity) = delete;
     MHEntity& operator=(MHEntity&& entity) = delete;
 
+public:
+    const std::string& getId() const;
+    void show();
+
 protected:
-    vtkSmartPointer<MHActor> m_Actor;
+    vtkSmartPointer<MHRenderer> m_renderer = nullptr;
+    std::string m_id;
+    vtkSmartPointer<vtkActor> m_Actor = nullptr;
 };
 
 }  // namespace MHCore

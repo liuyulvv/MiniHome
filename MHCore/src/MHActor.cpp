@@ -6,18 +6,20 @@
 
 #include "MHActor.h"
 
-#include <vtkObjectFactory.h>
-
 namespace MHCore {
 
-vtkStandardNewMacro(MHActor);
-
-MHActor::MHActor() {
-    m_Entity = nullptr;
-}
+MHActor::MHActor() {}
 
 MHActor::~MHActor() {
     m_Entity = nullptr;
+}
+
+void MHActor::setEntity(std::shared_ptr<MHEntity> entity) {
+    m_Entity = entity;
+}
+
+std::shared_ptr<MHEntity> MHActor::getEntity() const {
+    return m_Entity;
 }
 
 }  // namespace MHCore
