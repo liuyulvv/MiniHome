@@ -16,7 +16,7 @@
 #include <QMainWindow>
 
 #include "MHLeftNavigation.h"
-#include "MHVtkWindow.h"
+#include "MHMainVTKWindow.h"
 
 namespace Ui {
 class MHMainWindow;
@@ -38,7 +38,7 @@ private:
     Ui::MHMainWindow* ui;
     QDockWidget* m_leftDockWidget;
     MHLeftNavigation* m_leftNavigation;
-    MHVtkWindow* m_vtkWindow;
+    MHMainVTKWindow* m_vtkWindow;
 };
 
 }  // namespace MHWindow

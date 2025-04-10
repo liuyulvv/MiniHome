@@ -18,7 +18,7 @@ MHMainWindow::MHMainWindow() : ui(new Ui::MHMainWindow) {
     m_leftNavigation = new MHLeftNavigation(this);
     m_leftDockWidget->setWidget(m_leftNavigation);
     addDockWidget(Qt::LeftDockWidgetArea, m_leftDockWidget);
-    m_vtkWindow = new MHVtkWindow(this);
+    m_vtkWindow = new MHMainVTKWindow(this);
     setCentralWidget(m_vtkWindow);
 }
 
