@@ -18,14 +18,19 @@ namespace MHCore {
 
 class MH_CORE_API MHRenderer : public vtkOpenGLRenderer {
 public:
-    static MHRenderer* New();
+    static MHRenderer* New() {
+        return new MHRenderer();
+    }
     vtkTypeMacro(MHRenderer, vtkOpenGLRenderer);
     MHRenderer(const MHRenderer& renderer) = delete;
     MHRenderer(MHRenderer&& renderer) = delete;
     MHRenderer& operator=(const MHRenderer& renderer) = delete;
     MHRenderer& operator=(MHRenderer&& renderer) = delete;
 
-protected:
+public:
+    void render();
+
+private:
     MHRenderer();
     ~MHRenderer();
 };

@@ -6,11 +6,13 @@
 
 #include "MHRenderer.h"
 
-#include <vtkObjectFactory.h>
+#include <vtkRenderWindow.h>
 
 namespace MHCore {
 
-vtkStandardNewMacro(MHRenderer);
+void MHRenderer::render() {
+    GetRenderWindow()->Render();
+}
 
 MHRenderer::MHRenderer() {
     SetBackground(1.0, 1.0, 1.0);
