@@ -44,6 +44,7 @@ target_include_directories(
 )
 target_link_libraries(${PROJECT_NAME} PUBLIC 
     MHCore
+    MHHouse
     Qt6::Core 
     Qt6::Gui
     Qt6::Widgets
