@@ -32,11 +32,11 @@ add_subdirectory(MHGeometry)
 add_subdirectory(MHCore)
 add_dependencies(MHCore MHGeometry)
 
-add_subdirectory(MHWindow)
-add_dependencies(MHWindow MHCore)
-
 add_subdirectory(MHHouse)
 add_dependencies(MHHouse MHCore)
+
+add_subdirectory(MHWindow)
+add_dependencies(MHWindow MHCore MHHouse)
 
 add_subdirectory(MHApp)
 add_dependencies(MiniHome MHWindow MHHouse)
