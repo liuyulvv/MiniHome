@@ -12,6 +12,9 @@
 #define MH_CORE_API __declspec(dllimport)
 #endif
 
+#include <vtkImageData.h>
+#include <vtkTexture.h>
+
 #include <string>
 
 #include "MHActor.h"
@@ -33,9 +36,13 @@ public:
     virtual void show();
 
 protected:
-    vtkSmartPointer<MHRenderer> m_renderer = nullptr;
+    void createDefaultTexture();
+
+protected:
+    vtkSmartPointer<MHRenderer> m_renderer;
     std::string m_id;
-    vtkSmartPointer<vtkActor> m_actor = nullptr;
+    vtkSmartPointer<MHActor> m_actor;
+    vtkSmartPointer<vtkTexture> m_texture;
 };
 
 }  // namespace MHCore

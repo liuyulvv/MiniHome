@@ -15,10 +15,12 @@
 namespace MHCore {
 
 MHEntity::MHEntity(vtkSmartPointer<MHRenderer> renderer) : m_renderer(renderer) {
-    m_actor = nullptr;
     boost::uuids::time_generator_v7 generator;
     auto uuid = generator();
     m_id = boost::uuids::to_string(uuid);
+    m_actor = vtkSmartPointer<MHActor>::New();
+    createDefaultTexture();
+    m_actor->SetTexture(m_texture);
 }
 
 MHEntity::~MHEntity() {
@@ -34,6 +36,19 @@ const std::string& MHEntity::getId() const {
 void MHEntity::show() {
     m_renderer->AddActor(m_actor);
     m_renderer->render();
+}
+
+void MHEntity::createDefaultTexture() {
+    vtkSmartPointer<vtkImageData> imageData = vtkSmartPointer<vtkImageData>::New();
+    imageData->SetDimensions(1, 1, 1);
+    imageData->AllocateScalars(VTK_UNSIGNED_CHAR, 3);
+    unsigned char* pixel = static_cast<unsigned char*>(imageData->GetScalarPointer(0, 0, 0));
+    pixel[0] = 0;
+    pixel[1] = 0;
+    pixel[2] = 255;
+    m_texture = vtkSmartPointer<vtkTexture>::New();
+    m_texture->SetInputData(imageData);
+    m_texture->InterpolateOn();
 }
 
 }  // namespace MHCore
