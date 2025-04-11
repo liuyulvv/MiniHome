@@ -17,11 +17,11 @@
 namespace MHWindow {
 
 MHMainVTKWindow::MHMainVTKWindow(QWidget* parent) : QVTKOpenGLNativeWidget(parent) {
-    m_window = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
+    m_window = vtkSmartPointer<MHWindow::MHMainVTKRenderWindow>::New();
     auto mainRenderer = MHCore::MHRendererManager::getInstance().getMainRenderer();
     m_window->AddRenderer(mainRenderer);
     setRenderWindow(m_window);
-    m_interactor = vtkSmartPointer<MHCore::MHInteractor>::New();
+    m_interactor = vtkSmartPointer<MHCore::MHInteractorStyle>::New();
     m_interactor->init(m_window->GetInteractor(), mainRenderer);
     createGround();
 }
