@@ -43,6 +43,14 @@ public:
         return m_targetVertex;
     }
 
+    void setSourceVertex(const MHVertex& vertex) {
+        m_sourceVertex = vertex;
+    }
+
+    void setTargetVertex(const MHVertex& vertex) {
+        m_targetVertex = vertex;
+    }
+
 private:
     MHVertex m_sourceVertex;
     MHVertex m_targetVertex;
