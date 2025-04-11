@@ -15,15 +15,15 @@
 namespace MHCore {
 
 MHEntity::MHEntity(vtkSmartPointer<MHRenderer> renderer) : m_renderer(renderer) {
-    m_Actor = nullptr;
+    m_actor = nullptr;
     boost::uuids::time_generator_v7 generator;
     auto uuid = generator();
     m_id = boost::uuids::to_string(uuid);
 }
 
 MHEntity::~MHEntity() {
-    m_renderer->RemoveActor(m_Actor);
-    m_Actor = nullptr;
+    m_renderer->RemoveActor(m_actor);
+    m_actor = nullptr;
     m_renderer = nullptr;
 }
 
@@ -32,7 +32,7 @@ const std::string& MHEntity::getId() const {
 }
 
 void MHEntity::show() {
-    m_renderer->AddActor(m_Actor);
+    m_renderer->AddActor(m_actor);
     m_renderer->render();
 }
 

@@ -30,12 +30,12 @@ public:
 
 public:
     const std::string& getId() const;
-    void show();
+    virtual void show();
 
 protected:
     vtkSmartPointer<MHRenderer> m_renderer = nullptr;
     std::string m_id;
-    vtkSmartPointer<vtkActor> m_Actor = nullptr;
+    vtkSmartPointer<vtkActor> m_actor = nullptr;
 };
 
 }  // namespace MHCore
