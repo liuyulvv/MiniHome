@@ -34,8 +34,10 @@ enum class MHInteractorType {
 class MH_CORE_API MHMainVTKInteractorStyle : public vtkInteractorStyleTrackballCamera {
 public:
     static MHMainVTKInteractorStyle& getInstance() {
-        static MHMainVTKInteractorStyle instance;
-        return instance;
+        if (!m_instance) {
+            m_instance = new MHMainVTKInteractorStyle();
+        }
+        return *m_instance;
     }
 
     vtkTypeMacro(MHMainVTKInteractorStyle, vtkInteractorStyleTrackballCamera);
@@ -49,7 +51,7 @@ private:
     ~MHMainVTKInteractorStyle();
 
 public:
-    void init(vtkRenderWindowInteractor* interactor, vtkRenderer* renderer);
+    void init(vtkRenderWindowInteractor* interactor);
     void render();
     void switchTo(MHInteractorType type);
     void insertFilter(std::shared_ptr<MHInteractorFilter> filter);
@@ -67,9 +69,9 @@ public:
     virtual void OnMouseMove() override;
 
 private:
+    static MHMainVTKInteractorStyle* m_instance;
     MHInteractorType m_currentInteractorType;
     vtkRenderWindowInteractor* m_interactor;  // not owned
-    vtkRenderer* m_renderer;                  // not owned
     vtkSmartPointer<vtkCellPicker> m_cellPicker;
     vtkSmartPointer<vtkCamera> m_camera2D;
     vtkSmartPointer<vtkCamera> m_camera3D;

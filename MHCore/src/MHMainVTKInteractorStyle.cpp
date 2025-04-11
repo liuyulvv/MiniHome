@@ -11,8 +11,11 @@
 
 #include "MHActor.h"
 #include "MHEntityManager.h"
+#include "MHRendererManager.h"
 
 namespace MHCore {
+
+MHMainVTKInteractorStyle* MHMainVTKInteractorStyle::m_instance = nullptr;
 
 MHMainVTKInteractorStyle::MHMainVTKInteractorStyle() : m_maxElevation(vtkMath::RadiansFromDegrees(87.0)) {
     m_currentInteractorType = MHInteractorType::Top3D;
@@ -42,16 +45,16 @@ MHMainVTKInteractorStyle::MHMainVTKInteractorStyle() : m_maxElevation(vtkMath::R
 MHMainVTKInteractorStyle::~MHMainVTKInteractorStyle() {
 }
 
-void MHMainVTKInteractorStyle::init(vtkRenderWindowInteractor* interactor, vtkRenderer* renderer) {
+void MHMainVTKInteractorStyle::init(vtkRenderWindowInteractor* interactor) {
     m_interactor = interactor;
-    m_renderer = renderer;
     m_interactor->SetInteractorStyle(this);
-    m_interactor->SetRenderWindow(renderer->GetRenderWindow());
-    SetCurrentRenderer(renderer);
+    auto mainRender = MHRendererManager::getInstance().getMainRenderer();
+    m_interactor->SetRenderWindow(mainRender->GetRenderWindow());
+    SetCurrentRenderer(mainRender);
     if (m_currentInteractorType == MHInteractorType::Top2D) {
-        renderer->SetActiveCamera(m_camera2D);
+        mainRender->SetActiveCamera(m_camera2D);
     } else {
-        renderer->SetActiveCamera(m_camera3D);
+        mainRender->SetActiveCamera(m_camera3D);
     }
     m_cellPicker = vtkSmartPointer<vtkCellPicker>::New();
 }
@@ -65,10 +68,11 @@ void MHMainVTKInteractorStyle::switchTo(MHInteractorType type) {
         return;
     }
     m_currentInteractorType = type;
+    auto mainRender = MHRendererManager::getInstance().getMainRenderer();
     if (m_currentInteractorType == MHInteractorType::Top2D) {
-        m_renderer->SetActiveCamera(m_camera2D);
+        mainRender->SetActiveCamera(m_camera2D);
     } else {
-        m_renderer->SetActiveCamera(m_camera3D);
+        mainRender->SetActiveCamera(m_camera3D);
     }
     render();
 }
@@ -89,7 +93,8 @@ void MHMainVTKInteractorStyle::removeFilter(std::shared_ptr<MHInteractorFilter> 
 
 std::shared_ptr<MHEntity> MHMainVTKInteractorStyle::pickEntity() {
     auto clickPos = m_interactor->GetEventPosition();
-    m_cellPicker->Pick(clickPos[0], clickPos[1], 0, m_renderer);
+    auto mainRender = MHRendererManager::getInstance().getMainRenderer();
+    m_cellPicker->Pick(clickPos[0], clickPos[1], 0, mainRender);
     auto pickedActor = m_cellPicker->GetActor();
     if (pickedActor) {
         auto actor = dynamic_cast<MHActor*>(pickedActor);
@@ -108,9 +113,10 @@ void MHMainVTKInteractorStyle::fillInteractorInfo() {
     m_interactorInfo.screenX = pos[0];
     m_interactorInfo.screenY = pos[1];
     double worldPos[4];
-    m_renderer->SetDisplayPoint(m_interactorInfo.screenX, m_interactorInfo.screenY, 0);
-    m_renderer->DisplayToWorld();
-    m_renderer->GetWorldPoint(worldPos);
+    auto mainRender = MHRendererManager::getInstance().getMainRenderer();
+    mainRender->SetDisplayPoint(m_interactorInfo.screenX, m_interactorInfo.screenY, 0);
+    mainRender->DisplayToWorld();
+    mainRender->GetWorldPoint(worldPos);
     m_interactorInfo.worldX = worldPos[0];
     m_interactorInfo.worldY = worldPos[1];
 }
@@ -170,7 +176,7 @@ void MHMainVTKInteractorStyle::OnMouseMove() {
     } else if (m_leftPressed && m_currentInteractorType == MHInteractorType::Top3D) {
         double deltaX = -(m_interactorInfo.screenX - m_lastX) * 0.1;
         double deltaY = -(m_interactorInfo.screenY - m_lastY) * 0.1;
-        auto camera = m_renderer->GetActiveCamera();
+        auto camera = m_currentInteractorType == MHInteractorType::Top2D ? m_camera2D : m_camera3D;
         double cameraPos[3];
         double focalPoint[3];
         camera->GetPosition(cameraPos);

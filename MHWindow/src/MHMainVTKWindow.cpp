@@ -22,7 +22,7 @@ MHMainVTKWindow::MHMainVTKWindow(QWidget* parent) : QVTKOpenGLNativeWidget(paren
     auto mainRenderer = MHCore::MHRendererManager::getInstance().getMainRenderer();
     m_window->AddRenderer(mainRenderer);
     setRenderWindow(m_window);
-    MHCore::MHMainVTKInteractorStyle::getInstance().init(m_window->GetInteractor(), mainRenderer);
+    MHCore::MHMainVTKInteractorStyle::getInstance().init(m_window->GetInteractor());
     createGround();
 }
 
