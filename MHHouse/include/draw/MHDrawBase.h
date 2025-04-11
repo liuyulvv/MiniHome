@@ -6,18 +6,20 @@
  * @date 2025-04-11
  */
 
+#include <memory>
+
 #include "MHInteractorFilter.h"
 
 namespace MHHouse {
 
 enum class MHDrawType {
     NONE,
-    WALL_RECTANGLE,
     WALL_LINE,
+    WALL_RECTANGLE,
     WALL_ARC
 };
 
-class MHDrawBase : public MHCore::MHInteractorFilter {
+class MHDrawBase : public MHCore::MHInteractorFilter, public std::enable_shared_from_this<MHDrawBase> {
 public:
     MHDrawBase() = default;
     virtual ~MHDrawBase() = default;
