@@ -24,8 +24,8 @@ namespace MHCore {
 
 class MH_CORE_API MHEntity {
 public:
-    MHEntity(vtkSmartPointer<MHRenderer> renderer);
-    ~MHEntity();
+    explicit MHEntity(vtkSmartPointer<MHRenderer> renderer = nullptr);
+    virtual ~MHEntity();
     MHEntity(const MHEntity& entity) = delete;
     MHEntity(MHEntity&& entity) = delete;
     MHEntity& operator=(const MHEntity& entity) = delete;

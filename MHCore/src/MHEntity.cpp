@@ -11,10 +11,14 @@
 #include <boost/uuid/uuid_io.hpp>
 
 #include "MHActor.h"
+#include "MHRendererManager.h"
 
 namespace MHCore {
 
 MHEntity::MHEntity(vtkSmartPointer<MHRenderer> renderer) : m_renderer(renderer) {
+    if (!m_renderer) {
+        m_renderer = MHRendererManager::getInstance().getMainRenderer();
+    }
     boost::uuids::time_generator_v7 generator;
     auto uuid = generator();
     m_id = boost::uuids::to_string(uuid);
