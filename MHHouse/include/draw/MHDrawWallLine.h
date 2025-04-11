@@ -7,14 +7,15 @@
  */
 
 #include "MHDrawBase.h"
+#include "MHLineEntity.h"
 
 namespace MHHouse {
 
-class MHDrawManager;
+class MHDrawWallManager;
 
 class MHDrawWallLine final : public MHDrawBase {
 public:
-    friend class MHDrawManager;
+    friend class MHDrawWallManager;
     ~MHDrawWallLine() = default;
     MHDrawWallLine(const MHDrawWallLine& line) = delete;
     MHDrawWallLine(MHDrawWallLine&& line) = delete;
@@ -32,6 +33,19 @@ public:
     virtual bool onLeftButtonUp(const MHCore::MHInteractorInfo& interactorInfo) override;
     virtual bool onRightButtonUp(const MHCore::MHInteractorInfo& interactorInfo) override;
     virtual bool onMouseMove(const MHCore::MHInteractorInfo& interactorInfo) override;
+
+private:
+    enum class DrawState {
+        END,
+        FIRST,
+        SECOND,
+    };
+
+private:
+    DrawState m_drawState = DrawState::END;
+    std::unique_ptr<MHCore::MHLineEntity> m_lineEntity = nullptr;
+    bool m_lineEntityShow = false;
+    std::vector<std::unique_ptr<MHCore::MHLineEntity>> m_lineEntities = {};
 };
 
 }  // namespace MHHouse
