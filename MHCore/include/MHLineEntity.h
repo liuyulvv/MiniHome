@@ -13,7 +13,7 @@
 #endif
 
 #include "MHEntity.h"
-#include "MHPoint.h"
+#include "MHLineEdge.hpp"
 
 namespace MHCore {
 
@@ -27,13 +27,12 @@ public:
     MHLineEntity& operator=(MHLineEntity&& entity) = delete;
 
 public:
-    void setStartPoint(const MHGeometry::MHPoint& point);
-    void setEndPoint(const MHGeometry::MHPoint& point);
+    void setSourceVertex(const MHGeometry::MHVertex& vertex);
+    void setTargetVertex(const MHGeometry::MHVertex& vertex);
     void update();
 
 private:
-    MHGeometry::MHPoint m_startPoint;
-    MHGeometry::MHPoint m_endPoint;
+    MHGeometry::MHLineEdge m_lineEdge;
 };
 
 }  // namespace MHCore

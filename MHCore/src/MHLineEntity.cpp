@@ -14,18 +14,20 @@ namespace MHCore {
 MHLineEntity::MHLineEntity(vtkSmartPointer<MHRenderer> renderer) : MHEntity(renderer) {
 }
 
-void MHLineEntity::setStartPoint(const MHGeometry::MHPoint& point) {
-    m_startPoint = point;
+void MHLineEntity::setSourceVertex(const MHGeometry::MHVertex& vertex) {
+    m_lineEdge.setSourceVertex(vertex);
 }
 
-void MHLineEntity::setEndPoint(const MHGeometry::MHPoint& point) {
-    m_endPoint = point;
+void MHLineEntity::setTargetVertex(const MHGeometry::MHVertex& vertex) {
+    m_lineEdge.setTargetVertex(vertex);
 }
 
 void MHLineEntity::update() {
     auto lineSource = vtkSmartPointer<vtkLineSource>::New();
-    double start[3] = {m_startPoint.x, m_startPoint.y, m_startPoint.z};
-    double end[3] = {m_endPoint.x, m_endPoint.y, m_endPoint.z};
+    auto sourceVertex = m_lineEdge.getSourceVertex();
+    auto targetVertex = m_lineEdge.getTargetVertex();
+    double start[3] = {sourceVertex.x, sourceVertex.y, sourceVertex.z};
+    double end[3] = {targetVertex.x, targetVertex.y, targetVertex.z};
     lineSource->SetPoint1(start);
     lineSource->SetPoint2(end);
     auto mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
