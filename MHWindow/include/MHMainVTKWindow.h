@@ -14,7 +14,8 @@
 
 #include <QVTKOpenGLNativeWidget.h>
 
-#include "MHInteractorStyle.h"
+#include <memory>
+
 #include "MHMainVTKRenderWindow.h"
 
 namespace MHWindow {
@@ -32,8 +33,7 @@ private:
     void createGround();
 
 private:
-    vtkSmartPointer<MHWindow::MHMainVTKRenderWindow> m_window;
-    vtkSmartPointer<MHCore::MHInteractorStyle> m_interactor;
+    vtkSmartPointer<MHCore::MHMainVTKRenderWindow> m_window;
 };
 
 }  // namespace MHWindow

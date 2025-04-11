@@ -1,12 +1,12 @@
 /**
- * @file MHInteractorStyle.cpp
+ * @file MHMainVTKInteractorStyle.cpp
  * @author liuyulvv (liuyulvv@outlook.com)
  * @date 2025-03-18
  */
 
-#include "MHInteractorStyle.h"
+#include "MHMainVTKInteractorStyle.h"
 
-#include <vtkObjectFactory.h>
+#include <vtkMath.h>
 #include <vtkRenderWindow.h>
 
 #include "MHActor.h"
@@ -14,9 +14,7 @@
 
 namespace MHCore {
 
-vtkStandardNewMacro(MHInteractorStyle);
-
-MHInteractorStyle::MHInteractorStyle() : m_maxElevation(87) {
+MHMainVTKInteractorStyle::MHMainVTKInteractorStyle() : m_maxElevation(vtkMath::RadiansFromDegrees(87.0)) {
     m_currentInteractorType = MHInteractorType::Top3D;
     m_cellPicker = nullptr;
     m_camera2D = vtkSmartPointer<vtkCamera>::New();
@@ -41,10 +39,10 @@ MHInteractorStyle::MHInteractorStyle() : m_maxElevation(87) {
     m_rightPressed = false;
 }
 
-MHInteractorStyle::~MHInteractorStyle() {
+MHMainVTKInteractorStyle::~MHMainVTKInteractorStyle() {
 }
 
-void MHInteractorStyle::init(vtkRenderWindowInteractor* interactor, vtkRenderer* renderer) {
+void MHMainVTKInteractorStyle::init(vtkRenderWindowInteractor* interactor, vtkRenderer* renderer) {
     m_interactor = interactor;
     m_renderer = renderer;
     m_interactor->SetInteractorStyle(this);
@@ -58,11 +56,11 @@ void MHInteractorStyle::init(vtkRenderWindowInteractor* interactor, vtkRenderer*
     m_cellPicker = vtkSmartPointer<vtkCellPicker>::New();
 }
 
-void MHInteractorStyle::render() {
+void MHMainVTKInteractorStyle::render() {
     m_interactor->GetRenderWindow()->Render();
 }
 
-void MHInteractorStyle::switchTo(MHInteractorType type) {
+void MHMainVTKInteractorStyle::switchTo(MHInteractorType type) {
     if (m_currentInteractorType == type) {
         return;
     }
@@ -75,21 +73,21 @@ void MHInteractorStyle::switchTo(MHInteractorType type) {
     render();
 }
 
-void MHInteractorStyle::insertFilter(std::shared_ptr<MHInteractorFilter> filter) {
+void MHMainVTKInteractorStyle::insertFilter(std::shared_ptr<MHInteractorFilter> filter) {
     m_interactorFilters.push_back(filter);
     std::sort(m_interactorFilters.begin(), m_interactorFilters.end(), [](const auto& lhs, const auto& rhs) {
         return lhs->getPriority() < rhs->getPriority();
     });
 }
 
-void MHInteractorStyle::removeFilter(std::shared_ptr<MHInteractorFilter> filter) {
+void MHMainVTKInteractorStyle::removeFilter(std::shared_ptr<MHInteractorFilter> filter) {
     auto iter = std::find(m_interactorFilters.begin(), m_interactorFilters.end(), filter);
     if (iter != m_interactorFilters.end()) {
         m_interactorFilters.erase(iter);
     }
 }
 
-std::shared_ptr<MHEntity> MHInteractorStyle::pickEntity() {
+std::shared_ptr<MHEntity> MHMainVTKInteractorStyle::pickEntity() {
     auto clickPos = m_interactor->GetEventPosition();
     m_cellPicker->Pick(clickPos[0], clickPos[1], 0, m_renderer);
     auto pickedActor = m_cellPicker->GetActor();
@@ -105,7 +103,7 @@ std::shared_ptr<MHEntity> MHInteractorStyle::pickEntity() {
     return nullptr;
 }
 
-void MHInteractorStyle::fillInteractorInfo() {
+void MHMainVTKInteractorStyle::fillInteractorInfo() {
     auto pos = m_interactor->GetEventPosition();
     m_interactorInfo.screenX = pos[0];
     m_interactorInfo.screenY = pos[1];
@@ -117,7 +115,7 @@ void MHInteractorStyle::fillInteractorInfo() {
     m_interactorInfo.worldY = worldPos[1];
 }
 
-void MHInteractorStyle::OnLeftButtonDown() {
+void MHMainVTKInteractorStyle::OnLeftButtonDown() {
     m_leftPressed = true;
     fillInteractorInfo();
     m_lastX = m_interactorInfo.screenX;
@@ -129,7 +127,7 @@ void MHInteractorStyle::OnLeftButtonDown() {
     }
 }
 
-void MHInteractorStyle::OnLeftButtonUp() {
+void MHMainVTKInteractorStyle::OnLeftButtonUp() {
     m_leftPressed = false;
     fillInteractorInfo();
     for (const auto& filter : m_interactorFilters) {
@@ -139,7 +137,7 @@ void MHInteractorStyle::OnLeftButtonUp() {
     }
 }
 
-void MHInteractorStyle::OnRightButtonDown() {
+void MHMainVTKInteractorStyle::OnRightButtonDown() {
     m_rightPressed = true;
     fillInteractorInfo();
     for (const auto& filter : m_interactorFilters) {
@@ -149,7 +147,7 @@ void MHInteractorStyle::OnRightButtonDown() {
     }
 }
 
-void MHInteractorStyle::OnRightButtonUp() {
+void MHMainVTKInteractorStyle::OnRightButtonUp() {
     m_rightPressed = false;
     fillInteractorInfo();
     for (const auto& filter : m_interactorFilters) {
@@ -159,7 +157,7 @@ void MHInteractorStyle::OnRightButtonUp() {
     }
 }
 
-void MHInteractorStyle::OnMouseMove() {
+void MHMainVTKInteractorStyle::OnMouseMove() {
     fillInteractorInfo();
     for (const auto& filter : m_interactorFilters) {
         if (filter->onMouseMove(m_interactorInfo)) {

@@ -6,10 +6,10 @@
 
 #include "MHMainVTKRenderWindow.h"
 
-namespace MHWindow {
+namespace MHCore {
 
 void MHMainVTKRenderWindow::Render() {
     vtkGenericOpenGLRenderWindow::Render();
 }
 
-}
+}  // namespace MHCore

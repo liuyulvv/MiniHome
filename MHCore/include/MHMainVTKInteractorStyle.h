@@ -1,7 +1,7 @@
 #pragma once
 
 /**
- * @file MHInteractorStyle.h
+ * @file MHMainVTKInteractorStyle.h
  * @author liuyulvv (liuyulvv@outlook.com)
  * @date 2025-03-18
  */
@@ -31,18 +31,22 @@ enum class MHInteractorType {
     Top3D
 };
 
-class MH_CORE_API MHInteractorStyle : public vtkInteractorStyleTrackballCamera {
+class MH_CORE_API MHMainVTKInteractorStyle : public vtkInteractorStyleTrackballCamera {
 public:
-    static MHInteractorStyle* New();
-    vtkTypeMacro(MHInteractorStyle, vtkInteractorStyleTrackballCamera);
-    MHInteractorStyle(const MHInteractorStyle& interactor) = delete;
-    MHInteractorStyle(MHInteractorStyle&& interactor) = delete;
-    MHInteractorStyle& operator=(const MHInteractorStyle& interactor) = delete;
-    MHInteractorStyle& operator=(MHInteractorStyle&& interactor) = delete;
+    static MHMainVTKInteractorStyle& getInstance() {
+        static MHMainVTKInteractorStyle instance;
+        return instance;
+    }
 
-protected:
-    MHInteractorStyle();
-    ~MHInteractorStyle();
+    vtkTypeMacro(MHMainVTKInteractorStyle, vtkInteractorStyleTrackballCamera);
+    MHMainVTKInteractorStyle(const MHMainVTKInteractorStyle& interactor) = delete;
+    MHMainVTKInteractorStyle(MHMainVTKInteractorStyle&& interactor) = delete;
+    MHMainVTKInteractorStyle& operator=(const MHMainVTKInteractorStyle& interactor) = delete;
+    MHMainVTKInteractorStyle& operator=(MHMainVTKInteractorStyle&& interactor) = delete;
+
+private:
+    MHMainVTKInteractorStyle();
+    ~MHMainVTKInteractorStyle();
 
 public:
     void init(vtkRenderWindowInteractor* interactor, vtkRenderer* renderer);
@@ -72,7 +76,7 @@ private:
     std::vector<std::shared_ptr<MHInteractorFilter>> m_interactorFilters;
     MHInteractorInfo m_interactorInfo;
 
-    const int m_maxElevation;
+    const double m_maxElevation;
     int m_lastX;
     int m_lastY;
     bool m_leftPressed;

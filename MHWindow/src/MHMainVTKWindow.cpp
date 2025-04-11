@@ -11,18 +11,18 @@
 #include "MHActor.h"
 #include "MHEntity.h"
 #include "MHEntityManager.h"
+#include "MHMainVTKInteractorStyle.h"
 #include "MHRenderer.h"
 #include "MHRendererManager.h"
 
 namespace MHWindow {
 
 MHMainVTKWindow::MHMainVTKWindow(QWidget* parent) : QVTKOpenGLNativeWidget(parent) {
-    m_window = vtkSmartPointer<MHWindow::MHMainVTKRenderWindow>::New();
+    m_window = vtkSmartPointer<MHCore::MHMainVTKRenderWindow>::New();
     auto mainRenderer = MHCore::MHRendererManager::getInstance().getMainRenderer();
     m_window->AddRenderer(mainRenderer);
     setRenderWindow(m_window);
-    m_interactor = vtkSmartPointer<MHCore::MHInteractorStyle>::New();
-    m_interactor->init(m_window->GetInteractor(), mainRenderer);
+    MHCore::MHMainVTKInteractorStyle::getInstance().init(m_window->GetInteractor(), mainRenderer);
     createGround();
 }
 

@@ -6,11 +6,17 @@
  * @date 2025-04-11
  */
 
+#ifdef MH_CORE_EXPORTS
+#define MH_CORE_API __declspec(dllexport)
+#else
+#define MH_CORE_API __declspec(dllimport)
+#endif
+
 #include <vtkGenericOpenGLRenderWindow.h>
 
-namespace MHWindow {
+namespace MHCore {
 
-class MHMainVTKRenderWindow : public vtkGenericOpenGLRenderWindow {
+class MH_CORE_API MHMainVTKRenderWindow : public vtkGenericOpenGLRenderWindow {
 public:
     static MHMainVTKRenderWindow* New() {
         return new MHMainVTKRenderWindow();
@@ -30,4 +36,4 @@ public:
     virtual void Render() override;
 };
 
-}  // namespace MHWindow
+}  // namespace MHCore
