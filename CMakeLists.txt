@@ -27,10 +27,16 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/third/boost
 )
 
+add_subdirectory(MHGeometry)
+
 add_subdirectory(MHCore)
+add_dependencies(MHCore MHGeometry)
 
 add_subdirectory(MHWindow)
 add_dependencies(MHWindow MHCore)
 
+add_subdirectory(MHHouse)
+add_dependencies(MHHouse MHCore)
+
 add_subdirectory(MHApp)
-add_dependencies(MiniHome MHCore MHWindow)
+add_dependencies(MiniHome MHWindow MHHouse)
