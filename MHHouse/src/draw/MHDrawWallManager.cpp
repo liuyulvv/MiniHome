@@ -6,6 +6,8 @@
 
 #include "MHDrawWallManager.h"
 
+#include "MHMainVTKInteractorStyle.h"
+
 namespace MHHouse {
 
 MHDrawWallManager::MHDrawWallManager() {
@@ -17,6 +19,7 @@ void MHDrawWallManager::beginDraw(MHDrawType drawType) {
     if (m_drawType == drawType) {
         return;
     }
+    MHCore::MHMainVTKInteractorStyle::getInstance().switchTo(MHCore::MHInteractorType::Top2D);
     endDraw();
     m_drawType = drawType;
     switch (m_drawType) {
