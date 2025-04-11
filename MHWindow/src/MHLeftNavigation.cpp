@@ -9,12 +9,14 @@
 #include <QResizeEvent>
 #include <QSpacerItem>
 
+#include "MHDrawWallManager.h"
 #include "ui_MHLeftNavigation.h"
 
 namespace MHWindow {
 
 MHLeftNavigation::MHLeftNavigation(QWidget *parent) : QWidget(parent), ui(new Ui::MHLeftNavigation) {
     ui->setupUi(this);
+    ui->arcButton->setEnabled(false);
     m_gridLayout = new QGridLayout(this);
     m_widgets.push_back(ui->lineButton);
     m_widgets.push_back(ui->rectangleButton);
@@ -25,6 +27,16 @@ MHLeftNavigation::MHLeftNavigation(QWidget *parent) : QWidget(parent), ui(new Ui
     m_vLayout->addLayout(m_gridLayout);
     m_vLayout->addSpacerItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum));
     setLayout(m_vLayout);
+
+    connect(ui->lineButton, &QToolButton::clicked, this, [this]() {
+        MHHouse::MHDrawWallManager::getInstance().beginDraw(MHHouse::MHDrawType::WALL_LINE);
+    });
+    connect(ui->rectangleButton, &QToolButton::clicked, this, [this]() {
+        MHHouse::MHDrawWallManager::getInstance().beginDraw(MHHouse::MHDrawType::WALL_RECTANGLE);
+    });
+    connect(ui->arcButton, &QToolButton::clicked, this, [this]() {
+        MHHouse::MHDrawWallManager::getInstance().beginDraw(MHHouse::MHDrawType::WALL_ARC);
+    });
 }
 
 MHLeftNavigation::~MHLeftNavigation() {
