@@ -62,7 +62,7 @@
     <string>弧形</string>
    </property>
   </widget>
-  <widget class="QToolButton" name="lineButton">
+  <widget class="QToolButton" name="rectangleButton">
    <property name="geometry">
     <rect>
      <x>79</x>
@@ -93,7 +93,7 @@
     <string>矩形</string>
    </property>
   </widget>
-  <widget class="QToolButton" name="rectangleButton">
+  <widget class="QToolButton" name="lineButton">
    <property name="geometry">
     <rect>
      <x>9</x>
