@@ -8,7 +8,9 @@
 
 namespace MHCore {
 
-MHActor::MHActor() {}
+MHActor::MHActor() {
+    GetProperty()->BackfaceCullingOn();
+}
 
 MHActor::~MHActor() {
     m_Entity = nullptr;
