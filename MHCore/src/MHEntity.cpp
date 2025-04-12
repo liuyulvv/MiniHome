@@ -19,6 +19,8 @@ MHEntity::MHEntity(vtkSmartPointer<MHRenderer> renderer) : m_renderer(renderer) 
     if (!m_renderer) {
         m_renderer = MHRendererManager::getInstance().getMainRenderer();
     }
+    m_localTransform = vtkSmartPointer<vtkTransform>::New();
+    m_localTransform->Identity();
     boost::uuids::time_generator_v7 generator;
     auto uuid = generator();
     m_id = boost::uuids::to_string(uuid);
@@ -33,13 +35,66 @@ MHEntity::~MHEntity() {
     m_renderer = nullptr;
 }
 
+void MHEntity::show() {
+    m_renderer->AddActor(m_actor);
+    m_renderer->render();
+}
+
 const std::string& MHEntity::getId() const {
     return m_id;
 }
 
-void MHEntity::show() {
-    m_renderer->AddActor(m_actor);
-    m_renderer->render();
+void MHEntity::move(double x, double y, double z) {
+    m_localTransform->Translate(x, y, z);
+    applyTransform();
+}
+
+void MHEntity::scale(double x, double y, double z) {
+    m_localTransform->Scale(x, y, z);
+    applyTransform();
+}
+
+void MHEntity::rotateX(double angle) {
+    m_localTransform->RotateX(angle);
+    applyTransform();
+}
+
+void MHEntity::rotateY(double angle) {
+    m_localTransform->RotateY(angle);
+    applyTransform();
+}
+
+void MHEntity::rotateZ(double angle) {
+    m_localTransform->RotateZ(angle);
+    applyTransform();
+}
+
+vtkSmartPointer<vtkTransform> MHEntity::getGlobalTransform() const {
+    vtkSmartPointer<vtkTransform> globalTransform = vtkSmartPointer<vtkTransform>::New();
+    globalTransform->DeepCopy(m_localTransform);
+    if (auto parent = m_parent.lock()) {
+        vtkSmartPointer<vtkTransform> parentTransform = parent->getGlobalTransform();
+        parentTransform->Concatenate(globalTransform);
+        return parentTransform;
+    }
+    return globalTransform;
+}
+
+vtkSmartPointer<vtkTransform> MHEntity::getLocaltransform() const {
+    vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+    transform->DeepCopy(m_localTransform);
+    return transform;
+}
+
+std::vector<std::shared_ptr<MHEntity>> MHEntity::getChildren() const {
+    return m_children;
+}
+
+void MHEntity::addChild(std::shared_ptr<MHEntity> child) {
+    if (child) {
+        child->m_parent = shared_from_this();
+        m_children.push_back(child);
+    }
 }
 
 void MHEntity::createDefaultTexture() {
@@ -53,6 +108,20 @@ void MHEntity::createDefaultTexture() {
     m_texture = vtkSmartPointer<vtkTexture>::New();
     m_texture->SetInputData(imageData);
     m_texture->InterpolateOn();
+}
+
+void MHEntity::applyTransform() {
+    vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+    transform->Identity();
+    if (auto parent = m_parent.lock()) {
+        vtkSmartPointer<vtkTransform> parentTransform = parent->getGlobalTransform();
+        transform->Concatenate(parentTransform);
+    }
+    transform->Concatenate(m_localTransform);
+    m_actor->SetUserTransform(transform);
+    if (m_topo) {
+        m_topo->applyTransform(transform);
+    }
 }
 
 }  // namespace MHCore
