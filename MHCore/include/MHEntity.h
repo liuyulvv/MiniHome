@@ -30,7 +30,7 @@ public:
     MHEntity& operator=(MHEntity&& entity) = delete;
 
 public:
-    virtual void show();
+    virtual void show(bool forceRender = true);
 
 public:
     const std::string& getId() const;
@@ -43,6 +43,7 @@ public:
     vtkSmartPointer<vtkTransform> getLocaltransform() const;
     std::vector<std::shared_ptr<MHEntity>> getChildren() const;
     void addChild(std::shared_ptr<MHEntity> child);
+    void setTopo(std::unique_ptr<MHGeometry::MHTopoBase> topo);
 
 protected:
     void createDefaultTexture();

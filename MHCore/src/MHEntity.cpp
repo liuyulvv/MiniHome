@@ -33,11 +33,19 @@ MHEntity::~MHEntity() {
     m_renderer->RemoveActor(m_actor);
     m_actor = nullptr;
     m_renderer = nullptr;
+    m_children.clear();
 }
 
-void MHEntity::show() {
+void MHEntity::show(bool forceRender) {
     m_renderer->AddActor(m_actor);
-    m_renderer->render();
+    for (const auto& child : m_children) {
+        if (child) {
+            child->show(false);
+        }
+    }
+    if (forceRender) {
+        m_renderer->render();
+    }
 }
 
 const std::string& MHEntity::getId() const {
@@ -95,6 +103,10 @@ void MHEntity::addChild(std::shared_ptr<MHEntity> child) {
         child->m_parent = shared_from_this();
         m_children.push_back(child);
     }
+}
+
+void MHEntity::setTopo(std::unique_ptr<MHGeometry::MHTopoBase> topo) {
+    m_topo = std::move(topo);
 }
 
 void MHEntity::createDefaultTexture() {
