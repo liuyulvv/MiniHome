@@ -6,7 +6,7 @@
  * @date 2025-04-11
  */
 
-#include <MHVertex.hpp>
+#include <MHVertex.h>
 #include <TopoDS_Vertex.hxx>
 #include <gp_Pnt.hxx>
 

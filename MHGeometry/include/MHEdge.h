@@ -1,12 +1,12 @@
 #pragma once
 
 /**
- * @file MHEdge.hpp
+ * @file MHEdge.h
  * @author liuyulvv (liuyulvv@outlook.com)
  * @date 2025-04-11
  */
 
-#include "MHVertex.hpp"
+#include "MHVertex.h"
 
 namespace MHGeometry {
 

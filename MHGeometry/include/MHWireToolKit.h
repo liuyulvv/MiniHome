@@ -9,7 +9,7 @@
 #include <TopoDS_Wire.hxx>
 #include <vector>
 
-#include "MHWire.hpp"
+#include "MHWire.h"
 
 namespace MHGeometry::MHToolKit {
 

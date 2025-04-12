@@ -29,11 +29,9 @@ endif()
 find_package(OpenCASCADE REQUIRED)
 
 file(GLOB_RECURSE SRCS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
-file(GLOB_RECURSE HEADER_SRCS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp")
 
 add_library(${PROJECT_NAME} SHARED 
     ${SRCS}
-    ${HEADER_SRCS}
 )
 
 target_include_directories(

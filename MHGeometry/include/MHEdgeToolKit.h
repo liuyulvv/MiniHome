@@ -8,8 +8,8 @@
 
 #include <TopoDS_Edge.hxx>
 
-#include "MHArcEdge.hpp"
-#include "MHLineEdge.hpp"
+#include "MHArcEdge.h"
+#include "MHLineEdge.h"
 
 namespace MHGeometry::MHToolKit {
 

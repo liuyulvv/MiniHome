@@ -1,7 +1,7 @@
 #pragma once
 
 /**
- * @file MHVertex.hpp
+ * @file MHVertex.h
  * @author liuyulvv (liuyulvv@outlook.com)
  * @date 2025-04-11
  */
@@ -11,6 +11,9 @@
 #else
 #define MH_GEOMETRY_API __declspec(dllimport)
 #endif
+
+#include <vtkSmartPointer.h>
+#include <vtkTransform.h>
 
 namespace MHGeometry {
 
@@ -39,12 +42,13 @@ public:
 public:
     virtual MHTopoType getType() const = 0;
     virtual MHTopoBase* clone() const = 0;
+    virtual void applyTransform(vtkSmartPointer<vtkTransform> transform) = 0;
 };
 
 class MH_GEOMETRY_API MHVertex : public MHTopoBase {
 public:
     MHVertex() = default;
-    MHVertex(double x, double y, double z) : x(x), y(y), z(z) {}
+    MHVertex(double x, double y, double z);
     ~MHVertex() = default;
     MHVertex(const MHVertex& vertex) = default;
     MHVertex(MHVertex&& vertex) = default;
@@ -52,13 +56,16 @@ public:
     MHVertex& operator=(MHVertex&& vertex) = default;
 
 public:
-    virtual MHTopoType getType() const override {
-        return MHTopoType::VERTEX;
-    }
+    virtual MHTopoType getType() const override;
+    virtual MHTopoBase* clone() const override;
+    virtual void applyTransform(vtkSmartPointer<vtkTransform> transform) override;
 
-    virtual MHTopoBase* clone() const override {
-        return new MHVertex(this->x, this->y, this->z);
-    }
+public:
+    MHVertex normalize() const;
+    MHVertex cross(const MHVertex& vertex) const;
+    double dot(const MHVertex& vertex) const;
+    double length() const;
+    bool isParallel(const MHVertex& vertex) const;
 
 public:
     double x{0.0};

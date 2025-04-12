@@ -29,7 +29,8 @@ MH_GEOMETRY_API TopoDS_Edge toTopoDSEdge(const MHLineEdge& lineEdge) {
 
 MH_GEOMETRY_API TopoDS_Edge toTopoDSEdge(const MHArcEdge& arcEdge) {
     auto centerVertex = arcEdge.getCenter();
-    gp_Dir normal(0.0, 0.0, 1.0);
+    auto arcNormal = arcEdge.getNormal();
+    gp_Dir normal(arcNormal.x, arcNormal.y, arcNormal.z);
     gp_Ax2 axis(gp_Pnt(centerVertex.x, centerVertex.y, centerVertex.z), normal);
     gp_Circ circle(axis, arcEdge.getRadius());
     Standard_Real sourceRadian = angleToRadian(arcEdge.getSourceAngle());
@@ -79,6 +80,7 @@ MH_GEOMETRY_API MHArcEdge toMHArcEdge(const TopoDS_Edge& topoDSEdge) {
     Handle(Geom_Circle) geomCircle = Handle(Geom_Circle)::DownCast(curve);
     const gp_Circ& circ = geomCircle->Circ();
     gp_Pnt center = circ.Location();
+    gp_Dir normal = circ.Axis().Direction();
     Standard_Real radius = circ.Radius();
     gp_Pnt startPoint = geomCircle->Value(first);
     gp_Pnt endPoint = geomCircle->Value(last);
@@ -88,7 +90,8 @@ MH_GEOMETRY_API MHArcEdge toMHArcEdge(const TopoDS_Edge& topoDSEdge) {
     Standard_Real targetRadian = atan2(centerToEnd.Y(), centerToEnd.X());
     MHTopoOrientation orientation = (sourceRadian < targetRadian) ? MHTopoOrientation::COUNTER_CLOCK_WISE : MHTopoOrientation::CLOCK_WISE;
     MHVertex centerVertex(center.X(), center.Y(), center.Z());
-    return MHArcEdge(centerVertex, radius, radianToAngle(sourceRadian), radianToAngle(targetRadian), orientation);
+    MHVertex normalVertex(normal.X(), normal.Y(), normal.Z());
+    return MHArcEdge(centerVertex, normalVertex, radius, radianToAngle(sourceRadian), radianToAngle(targetRadian), orientation);
 }
 
 }  // namespace MHGeometry::MHToolKit
