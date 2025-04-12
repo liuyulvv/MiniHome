@@ -13,13 +13,13 @@
 #endif
 
 #include "MHEntity.h"
-#include "MHLineEdge.hpp"
+#include "MHLineEdge.h"
 
 namespace MHCore {
 
 class MH_CORE_API MHLineEntity : public MHEntity {
 public:
-    MHLineEntity(vtkSmartPointer<MHRenderer> renderer);
+    explicit MHLineEntity(vtkSmartPointer<MHRenderer> renderer = nullptr);
     ~MHLineEntity() = default;
     MHLineEntity(const MHLineEntity& entity) = delete;
     MHLineEntity(MHLineEntity&& entity) = delete;
