@@ -6,25 +6,26 @@
 
 #include "MHDrawWallLine.h"
 
-#include "MHDrawWallManager.h"
+#include "MHDrawHouseManager.h"
+#include "MHEntityManager.h"
 #include "MHMainVTKInteractorStyle.h"
-#include "MHRendererManager.h"
 
 namespace MHHouse {
 
 void MHDrawWallLine::beginDraw() {
     MHCore::MHMainVTKInteractorStyle::getInstance().insertFilter(shared_from_this());
-    m_lineEntity = std::make_unique<MHCore::MHLineEntity>(MHCore::MHRendererManager::getInstance().getMainRenderer());
-    m_lineEntityShow = false;
-    m_lineEntities.clear();
+    m_lineEdge = std::make_unique<MHGeometry::MHLineEdge>();
+    m_wallEntity = std::make_unique<MHWallEntity>();
+    m_wallEntityShow = false;
+    m_wallEntities.clear();
     m_drawState = DrawState::FIRST;
 }
 
 void MHDrawWallLine::endDraw() {
     MHCore::MHMainVTKInteractorStyle::getInstance().removeFilter(shared_from_this());
-    m_lineEntity.reset(nullptr);
-    m_lineEntityShow = false;
-    m_lineEntities.clear();
+    m_wallEntity.reset();
+    m_wallEntityShow = false;
+    m_wallEntities.clear();
     m_drawState = DrawState::END;
 }
 
@@ -34,16 +35,20 @@ int MHDrawWallLine::getPriority() const {
 
 bool MHDrawWallLine::onLeftButtonDown(const MHCore::MHInteractorInfo& interactorInfo) {
     if (m_drawState == DrawState::FIRST) {
-        m_lineEntity->setStartPoint({interactorInfo.worldX, interactorInfo.worldY, 0});
+        m_lineEdge->setSourceVertex({interactorInfo.worldX, interactorInfo.worldY, 0});
         m_drawState = DrawState::SECOND;
     } else if (m_drawState == DrawState::SECOND) {
-        m_lineEntity->setEndPoint({interactorInfo.worldX, interactorInfo.worldY, 0});
-        m_lineEntity->update();
-        m_lineEntities.push_back(std::move(m_lineEntity));
-        m_lineEntity = std::make_unique<MHCore::MHLineEntity>(MHCore::MHRendererManager::getInstance().getMainRenderer());
-        m_lineEntityShow = false;
-        m_lineEntity->setStartPoint({interactorInfo.worldX, interactorInfo.worldY, 0});
-        m_lineEntity->update();
+        m_lineEdge->setTargetVertex({interactorInfo.worldX, interactorInfo.worldY, 0});
+        m_wallEntity->updateWall(*m_lineEdge, MHDrawHouseManager::getDrawWallHeight(), MHDrawHouseManager::getDrawWallWidth(), MHDrawHouseManager::getDrawWallPositionType());
+        m_wallEntity->generateWall2D();
+        m_wallEntity->generateWall3D();
+        m_wallEntity->show();
+        MHCore::MHEntityManager::getInstance().addEntity(m_wallEntity);
+        m_wallEntities.push_back(m_wallEntity);
+        m_wallEntity = std::make_unique<MHWallEntity>();
+        m_wallEntityShow = false;
+        m_lineEdge = std::make_unique<MHGeometry::MHLineEdge>();
+        m_lineEdge->setSourceVertex({interactorInfo.worldX, interactorInfo.worldY, 0});
         MHCore::MHMainVTKInteractorStyle::getInstance().render();
     }
     return true;
@@ -54,12 +59,12 @@ bool MHDrawWallLine::onLeftButtonUp(const MHCore::MHInteractorInfo& interactorIn
 }
 
 bool MHDrawWallLine::onRightButtonUp(const MHCore::MHInteractorInfo& interactorInfo) {
-    if (m_lineEntity) {
-        m_lineEntity.reset(nullptr);
+    if (m_wallEntity) {
+        m_wallEntity.reset();
     }
     m_drawState = DrawState::END;
-    m_lineEntityShow = false;
-    MHDrawWallManager::getInstance().endDraw();
+    m_wallEntityShow = false;
+    MHDrawHouseManager::getInstance().endDraw();
     MHCore::MHMainVTKInteractorStyle::getInstance().render();
     return true;
 }
@@ -69,11 +74,12 @@ bool MHDrawWallLine::onMouseMove(const MHCore::MHInteractorInfo& interactorInfo)
         return true;
     }
     if (m_drawState == DrawState::SECOND) {
-        m_lineEntity->setEndPoint({interactorInfo.worldX, interactorInfo.worldY, 0});
-        m_lineEntity->update();
-        if (!m_lineEntityShow) {
-            m_lineEntity->show();
-            m_lineEntityShow = true;
+        m_lineEdge->setTargetVertex({interactorInfo.worldX, interactorInfo.worldY, 0});
+        m_wallEntity->updateWall(*m_lineEdge, MHDrawHouseManager::getDrawWallHeight(), MHDrawHouseManager::getDrawWallWidth(), MHDrawHouseManager::getDrawWallPositionType());
+        m_wallEntity->generateWall2D();
+        if (!m_wallEntityShow) {
+            m_wallEntity->show();
+            m_wallEntityShow = true;
         }
         MHCore::MHMainVTKInteractorStyle::getInstance().render();
     }

@@ -9,7 +9,7 @@
 #include <QResizeEvent>
 #include <QSpacerItem>
 
-#include "MHDrawWallManager.h"
+#include "MHDrawHouseManager.h"
 #include "ui_MHLeftNavigation.h"
 
 namespace MHWindow {
@@ -29,13 +29,13 @@ MHLeftNavigation::MHLeftNavigation(QWidget *parent) : QWidget(parent), ui(new Ui
     setLayout(m_vLayout);
 
     connect(ui->lineButton, &QToolButton::clicked, this, [this]() {
-        MHHouse::MHDrawWallManager::getInstance().beginDraw(MHHouse::MHDrawType::WALL_LINE);
+        MHHouse::MHDrawHouseManager::getInstance().beginDraw(MHHouse::MHDrawType::WALL_LINE);
     });
     connect(ui->rectangleButton, &QToolButton::clicked, this, [this]() {
-        MHHouse::MHDrawWallManager::getInstance().beginDraw(MHHouse::MHDrawType::WALL_RECTANGLE);
+        MHHouse::MHDrawHouseManager::getInstance().beginDraw(MHHouse::MHDrawType::WALL_RECTANGLE);
     });
     connect(ui->arcButton, &QToolButton::clicked, this, [this]() {
-        MHHouse::MHDrawWallManager::getInstance().beginDraw(MHHouse::MHDrawType::WALL_ARC);
+        MHHouse::MHDrawHouseManager::getInstance().beginDraw(MHHouse::MHDrawType::WALL_ARC);
     });
 }
 

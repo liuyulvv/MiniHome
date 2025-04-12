@@ -1,21 +1,25 @@
 /**
- * @file MHDrawWallManager.cpp
+ * @file MHDrawHouseManager.cpp
  * @author liuyulvv (liuyulvv@outlook.com)
  * @date 2025-04-11
  */
 
-#include "MHDrawWallManager.h"
+#include "MHDrawHouseManager.h"
 
 #include "MHMainVTKInteractorStyle.h"
 
 namespace MHHouse {
 
-MHDrawWallManager::MHDrawWallManager() {
+MHWallPositionType MHDrawHouseManager::m_drawWallPositionType = MHWallPositionType::MID;
+double MHDrawHouseManager::m_drawWallHeight = 2800.0;
+double MHDrawHouseManager::m_drawWallWidth = 240.0;
+
+MHDrawHouseManager::MHDrawHouseManager() {
     m_drawWallRectangle.reset(new MHDrawWallRectangle());
     m_drawWallLine.reset(new MHDrawWallLine());
 }
 
-void MHDrawWallManager::beginDraw(MHDrawType drawType) {
+void MHDrawHouseManager::beginDraw(MHDrawType drawType) {
     if (m_drawType == drawType) {
         return;
     }
@@ -35,7 +39,7 @@ void MHDrawWallManager::beginDraw(MHDrawType drawType) {
     }
 }
 
-void MHDrawWallManager::endDraw() {
+void MHDrawHouseManager::endDraw() {
     switch (m_drawType) {
         case MHDrawType::WALL_RECTANGLE:
             m_drawWallRectangle->endDraw();
@@ -47,6 +51,18 @@ void MHDrawWallManager::endDraw() {
             break;
     }
     m_drawType = MHDrawType::NONE;
+}
+
+MHWallPositionType MHDrawHouseManager::getDrawWallPositionType() {
+    return m_drawWallPositionType;
+}
+
+double MHDrawHouseManager::getDrawWallHeight() {
+    return m_drawWallHeight;
+}
+
+double MHDrawHouseManager::getDrawWallWidth() {
+    return m_drawWallWidth;
 }
 
 }  // namespace MHHouse

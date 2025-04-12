@@ -7,15 +7,15 @@
  */
 
 #include "MHDrawBase.h"
-#include "MHLineEntity.h"
+#include "MHWallEntity.h"
 
 namespace MHHouse {
 
-class MHDrawWallManager;
+class MHDrawHouseManager;
 
 class MHDrawWallLine final : public MHDrawBase {
 public:
-    friend class MHDrawWallManager;
+    friend class MHDrawHouseManager;
     ~MHDrawWallLine() = default;
     MHDrawWallLine(const MHDrawWallLine& line) = delete;
     MHDrawWallLine(MHDrawWallLine&& line) = delete;
@@ -43,9 +43,10 @@ private:
 
 private:
     DrawState m_drawState = DrawState::END;
-    std::unique_ptr<MHCore::MHLineEntity> m_lineEntity = nullptr;
-    bool m_lineEntityShow = false;
-    std::vector<std::unique_ptr<MHCore::MHLineEntity>> m_lineEntities = {};
+    std::unique_ptr<MHGeometry::MHLineEdge> m_lineEdge = nullptr;
+    std::shared_ptr<MHWallEntity> m_wallEntity = nullptr;
+    bool m_wallEntityShow = false;
+    std::vector<std::shared_ptr<MHWallEntity>> m_wallEntities = {};
 };
 
 }  // namespace MHHouse

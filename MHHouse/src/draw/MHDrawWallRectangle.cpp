@@ -6,7 +6,7 @@
 
 #include "MHDrawWallRectangle.h"
 
-#include "MHDrawWallManager.h"
+#include "MHDrawHouseManager.h"
 
 namespace MHHouse {
 

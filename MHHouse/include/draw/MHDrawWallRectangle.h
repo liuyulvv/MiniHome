@@ -10,11 +10,11 @@
 
 namespace MHHouse {
 
-class MHDrawWallManager;
+class MHDrawHouseManager;
 
 class MHDrawWallRectangle final : public MHDrawBase {
 public:
-    friend class MHDrawWallManager;
+    friend class MHDrawHouseManager;
     ~MHDrawWallRectangle() = default;
     MHDrawWallRectangle(const MHDrawWallRectangle& rectangle) = delete;
     MHDrawWallRectangle(MHDrawWallRectangle&& rectangle) = delete;
