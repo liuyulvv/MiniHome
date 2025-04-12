@@ -7,6 +7,7 @@
  */
 
 #include <MHVertex.h>
+
 #include <TopoDS_Vertex.hxx>
 #include <gp_Pnt.hxx>
 

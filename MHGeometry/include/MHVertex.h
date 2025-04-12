@@ -30,7 +30,7 @@ enum class MHTopoOrientation {
     COUNTER_CLOCK_WISE,
 };
 
-class MHTopoBase {
+class MH_GEOMETRY_API MHTopoBase {
 public:
     MHTopoBase() = default;
     virtual ~MHTopoBase() = default;
@@ -61,6 +61,11 @@ public:
     virtual void applyTransform(vtkSmartPointer<vtkTransform> transform) override;
 
 public:
+    MHVertex operator+(const MHVertex& vertex) const;
+    MHVertex operator-(const MHVertex& vertex) const;
+    MHVertex operator*(double scalar) const;
+    MHVertex operator/(double scalar) const;
+    MHVertex operator-() const;
     MHVertex normalize() const;
     MHVertex cross(const MHVertex& vertex) const;
     double dot(const MHVertex& vertex) const;

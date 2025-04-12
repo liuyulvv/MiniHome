@@ -32,6 +32,7 @@ public:
 public:
     void setSourceVertex(const MHVertex& vertex);
     void setTargetVertex(const MHVertex& vertex);
+    double length() const;
 
 private:
     MHVertex m_sourceVertex;

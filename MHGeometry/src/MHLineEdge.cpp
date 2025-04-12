@@ -39,4 +39,8 @@ void MHLineEdge::setTargetVertex(const MHVertex& vertex) {
     m_targetVertex = vertex;
 }
 
+double MHLineEdge::length() const {
+    return (m_targetVertex - m_sourceVertex).length();
+}
+
 }  // namespace MHGeometry

@@ -26,10 +26,33 @@ void MHVertex::applyTransform(vtkSmartPointer<vtkTransform> transform) {
     this->z = point[2];
 }
 
+MHVertex MHVertex::operator+(const MHVertex& vertex) const {
+    return MHVertex(x + vertex.x, y + vertex.y, z + vertex.z);
+}
+
+MHVertex MHVertex::operator-(const MHVertex& vertex) const {
+    return MHVertex(x - vertex.x, y - vertex.y, z - vertex.z);
+}
+
+MHVertex MHVertex::operator*(double scalar) const {
+    return MHVertex(x * scalar, y * scalar, z * scalar);
+}
+
+MHVertex MHVertex::operator/(double scalar) const {
+    if (abs(scalar) < 1e-6) {
+        throw std::runtime_error("Division by zero.");
+    }
+    return MHVertex(x / scalar, y / scalar, z / scalar);
+}
+
+MHVertex MHVertex::operator-() const {
+    return MHVertex(-x, -y, -z);
+}
+
 MHVertex MHVertex::normalize() const {
     double length = std::sqrt(x * x + y * y + z * z);
     if (length <= 1e-6) {
-        throw std::runtime_error("Cannot normalize a zero vector.");
+        return *this;
     }
     return MHVertex(x / length, y / length, z / length);
 }
