@@ -1,0 +1,113 @@
+/**
+ * @file MHWallEntity.cpp
+ * @author liuyulvv (liuyulvv@outlook.com)
+ * @date 2025-04-12
+ */
+
+#include "MHWallEntity.h"
+
+#include "MHEntityManager.h"
+#include "MHFaceToolKit.h"
+#include "MHPlaneFace.h"
+
+namespace MHHouse {
+
+MHWallEntity::MHWallEntity(vtkSmartPointer<MHCore::MHRenderer> renderer) : MHHouseEntity(renderer) {
+}
+
+void MHWallEntity::updateWall(const MHGeometry::MHLineEdge& midEdge, double height, double width, MHWallPositionType positionType) {
+    m_midEdge = std::make_unique<MHGeometry::MHLineEdge>(midEdge);
+    m_height = height;
+    m_width = width;
+    m_positionType = positionType;
+}
+
+void MHWallEntity::generateWall2D() {
+    if (!m_midEdge) {
+        return;
+    }
+    auto edgeType = m_midEdge->getEdgeType();
+    if (edgeType == MHGeometry::MHEdgeType::LINE_EDGE) {
+        auto lineEdge = static_cast<MHGeometry::MHLineEdge*>(m_midEdge.get());
+        if (lineEdge->length() < 1e-6) {
+            return;
+        }
+        auto edgeDirection = (m_midEdge->getTargetVertex() - m_midEdge->getSourceVertex()).normalize();
+        auto edgeNormal = edgeDirection.cross(MHGeometry::MHVertex(0, 0, 1)).normalize();
+        m_edges.clear();
+        MHGeometry::MHVertex innerSourceVertex, innerTargetVertex, outerSourceVertex, outerTargetVertex;
+        switch (m_positionType) {
+            case MHWallPositionType::LEFT: {
+                innerSourceVertex = m_midEdge->getSourceVertex() - edgeNormal * m_width;
+                innerTargetVertex = m_midEdge->getTargetVertex() - edgeNormal * m_width;
+                outerSourceVertex = m_midEdge->getSourceVertex();
+                outerTargetVertex = m_midEdge->getTargetVertex();
+                break;
+            }
+            case MHWallPositionType::MID: {
+                innerSourceVertex = m_midEdge->getSourceVertex() - edgeNormal * m_width / 2;
+                innerTargetVertex = m_midEdge->getTargetVertex() - edgeNormal * m_width / 2;
+                outerSourceVertex = m_midEdge->getSourceVertex() + edgeNormal * m_width / 2;
+                outerTargetVertex = m_midEdge->getTargetVertex() + edgeNormal * m_width / 2;
+                break;
+            }
+            case MHWallPositionType::RIGHT: {
+                innerSourceVertex = m_midEdge->getSourceVertex();
+                innerTargetVertex = m_midEdge->getTargetVertex();
+                outerSourceVertex = m_midEdge->getSourceVertex() + edgeNormal * m_width;
+                outerTargetVertex = m_midEdge->getTargetVertex() + edgeNormal * m_width;
+                break;
+            }
+        }
+        m_edges.push_back(std::make_unique<MHGeometry::MHLineEdge>(innerSourceVertex, outerSourceVertex));
+        m_edges.push_back(std::make_unique<MHGeometry::MHLineEdge>(outerSourceVertex, outerTargetVertex));
+        m_edges.push_back(std::make_unique<MHGeometry::MHLineEdge>(outerTargetVertex, innerTargetVertex));
+        m_edges.push_back(std::make_unique<MHGeometry::MHLineEdge>(innerTargetVertex, innerSourceVertex));
+    } else {
+    }
+    MHGeometry::MHPlaneFace baseFace;
+    MHGeometry::MHWire baseWire;
+    for (const auto& edge : m_edges) {
+        auto edgeType = edge->getEdgeType();
+        if (edgeType == MHGeometry::MHEdgeType::LINE_EDGE) {
+            auto lineEdge = static_cast<MHGeometry::MHLineEdge*>(edge.get());
+            baseWire.addEdge(*lineEdge);
+        } else if (edgeType == MHGeometry::MHEdgeType::ARC_EDGE) {
+            auto arcEdge = static_cast<MHGeometry::MHArcEdge*>(edge.get());
+            baseWire.addEdge(*arcEdge);
+        }
+    }
+    baseFace.addWire(baseWire);
+    m_baseFace = std::make_unique<MHGeometry::MHPlaneFace>(baseFace);
+    vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+    transform->Identity();
+    transform->Translate(0, 0, m_height);
+    baseFace.applyTransform(transform);
+    if (!m_wall2D) {
+        m_wall2D = std::make_shared<MHHouseEntity>();
+        m_children.push_back(m_wall2D);
+    }
+    m_wall2D->setTopo(std::make_unique<MHGeometry::MHPlaneFace>(baseFace));
+    m_wall2D->updateTopo();
+}
+
+void MHWallEntity::generateWall3D() {
+    if (!m_baseFace || m_edges.empty()) {
+        return;
+    }
+    for (const auto& edge : m_edges) {
+        auto edgeType = edge->getEdgeType();
+        if (edgeType == MHGeometry::MHEdgeType::LINE_EDGE) {
+            auto lineEdge = static_cast<MHGeometry::MHLineEdge*>(edge.get());
+            auto planeFace = MHGeometry::MHToolKit::edgeToFace(*lineEdge, {0, 0, 1}, m_height);
+            auto topoDSFace = MHGeometry::MHToolKit::toTopoDSFace(planeFace);
+            auto entity = std::make_shared<MHHouseEntity>();
+            entity->setTopo(std::make_unique<MHGeometry::MHPlaneFace>(planeFace));
+            entity->updateTopo();
+            m_children.push_back(entity);
+        } else if (edgeType == MHGeometry::MHEdgeType::ARC_EDGE) {
+        }
+    }
+}
+
+}  // namespace MHHouse
