@@ -14,7 +14,8 @@
         "QVTK",
         "SRCS",
         "STREQUAL",
-        "Topo"
+        "Topo",
+        "WXYZ"
     ],
     "files.associations": {
         "*.wxss": "css",
