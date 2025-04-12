@@ -6,9 +6,15 @@
 
 #include "MHMainVTKRenderWindow.h"
 
+#include "vtkRendererCollection.h"
+
 namespace MHCore {
 
 void MHMainVTKRenderWindow::Render() {
+    double renderBox[6];
+    auto renderer = this->GetRenderers()->GetFirstRenderer();
+    renderer->ComputeVisiblePropBounds(renderBox);
+    renderer->ResetCameraClippingRange(renderBox);
     vtkGenericOpenGLRenderWindow::Render();
 }
 

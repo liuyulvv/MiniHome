@@ -67,6 +67,7 @@ public:
     virtual void OnRightButtonDown() override;
     virtual void OnRightButtonUp() override;
     virtual void OnMouseMove() override;
+    virtual void OnChar() override;
 
 private:
     static MHMainVTKInteractorStyle* m_instance;

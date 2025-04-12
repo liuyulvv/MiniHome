@@ -21,7 +21,7 @@ MHMainVTKInteractorStyle::MHMainVTKInteractorStyle() : m_maxElevation(vtkMath::R
     m_currentInteractorType = MHInteractorType::Top3D;
     m_cellPicker = nullptr;
     m_camera2D = vtkSmartPointer<vtkCamera>::New();
-    m_camera2D->SetPosition(0.0, 0.0, 15.0);
+    m_camera2D->SetPosition(0.0, 0.0, 15000.0);
     m_camera2D->SetFocalPoint(0.0, 0.0, 0.0);
     m_camera2D->SetViewUp(0.0, 1.0, 0.0);
     m_camera2D->SetParallelScale(10000.0);
@@ -31,7 +31,6 @@ MHMainVTKInteractorStyle::MHMainVTKInteractorStyle() : m_maxElevation(vtkMath::R
     m_camera3D->SetPosition(0.0, -20000.0, 20000.0);
     m_camera3D->SetFocalPoint(0.0, 0.0, 0.0);
     m_camera3D->SetViewUp(0.0, 0.0, 1.0);
-    m_camera3D->SetClippingRange(0.1, 50000.0);
 
     m_interactorFilters = {};
     m_interactorInfo = {0, 0, 0, 0};
@@ -40,6 +39,7 @@ MHMainVTKInteractorStyle::MHMainVTKInteractorStyle() : m_maxElevation(vtkMath::R
     m_lastY = 0;
     m_leftPressed = false;
     m_rightPressed = false;
+    AutoAdjustCameraClippingRangeOff();
 }
 
 MHMainVTKInteractorStyle::~MHMainVTKInteractorStyle() {
@@ -200,6 +200,14 @@ void MHMainVTKInteractorStyle::OnMouseMove() {
         m_lastY = m_interactorInfo.screenY;
         render();
         return;
+    }
+}
+
+void MHMainVTKInteractorStyle::OnChar() {
+    if (m_interactor->GetKeyCode() == '2') {
+        switchTo(MHInteractorType::Top2D);
+    } else if (m_interactor->GetKeyCode() == '3') {
+        switchTo(MHInteractorType::Top3D);
     }
 }
 
