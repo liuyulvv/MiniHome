@@ -6,13 +6,15 @@
  * @date 2025-04-11
  */
 
-#include <vector>
-
 #include "MHWire.h"
 
 namespace MHGeometry {
 
-class MHFace {
+enum class MHFaceType {
+    PLANE_FACE,
+};
+
+class MH_GEOMETRY_API MHFace : public MHTopoBase {
 public:
     MHFace() = default;
     ~MHFace() = default;
@@ -21,8 +23,11 @@ public:
     MHFace& operator=(const MHFace& face) = default;
     MHFace& operator=(MHFace&& face) = default;
 
-private:
-    std::vector<MHWire> m_wires;
+public:
+    virtual MHTopoType getType() const override {
+        return MHTopoType::FACE;
+    }
+    virtual MHFaceType getFaceType() const = 0;
 };
 
 }  // namespace MHGeometry
