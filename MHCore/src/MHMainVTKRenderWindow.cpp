@@ -6,15 +6,23 @@
 
 #include "MHMainVTKRenderWindow.h"
 
-#include "vtkRendererCollection.h"
+#include <vtkCamera.h>
+#include <vtkRendererCollection.h>
 
 namespace MHCore {
 
 void MHMainVTKRenderWindow::Render() {
-    double renderBox[6];
+    double bounds[6];
     auto renderer = this->GetRenderers()->GetFirstRenderer();
-    renderer->ComputeVisiblePropBounds(renderBox);
-    renderer->ResetCameraClippingRange(renderBox);
+    renderer->ComputeVisiblePropBounds(bounds);
+    double dx = bounds[1] - bounds[0];
+    double dy = bounds[3] - bounds[2];
+    double dz = bounds[5] - bounds[4];
+    double diagonal = std::sqrt(dx * dx + dy * dy + dz * dz);
+    double nearDistance = diagonal * 0.01;
+    double farDistance = diagonal * 10.0;
+    auto camera = renderer->GetActiveCamera();
+    camera->SetClippingRange(nearDistance, farDistance);
     vtkGenericOpenGLRenderWindow::Render();
 }
 
