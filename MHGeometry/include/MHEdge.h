@@ -25,6 +25,9 @@ public:
     MHEdge& operator=(MHEdge&& edge) = default;
 
 public:
+    virtual MHTopoType getType() const override {
+        return MHTopoType::EDGE;
+    }
     virtual MHEdgeType getEdgeType() const = 0;
     virtual const MHVertex& getSourceVertex() const = 0;
     virtual const MHVertex& getTargetVertex() const = 0;

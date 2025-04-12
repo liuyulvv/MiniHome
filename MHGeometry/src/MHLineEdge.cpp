@@ -10,10 +10,6 @@ namespace MHGeometry {
 
 MHLineEdge::MHLineEdge(const MHVertex& source, const MHVertex& target) : m_sourceVertex(source), m_targetVertex(target) {}
 
-MHTopoType MHLineEdge::getType() const {
-    return MHTopoType::EDGE;
-}
-
 MHEdgeType MHLineEdge::getEdgeType() const {
     return MHEdgeType::LINE_EDGE;
 }

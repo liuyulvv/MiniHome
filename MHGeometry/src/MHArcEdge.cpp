@@ -30,10 +30,6 @@ MHArcEdge::MHArcEdge(const MHVertex& center, const MHVertex& normal, double radi
     computeVertex();
 }
 
-MHTopoType MHArcEdge::getType() const {
-    return MHTopoType::EDGE;
-}
-
 MHEdgeType MHArcEdge::getEdgeType() const {
     return MHEdgeType::ARC_EDGE;
 }

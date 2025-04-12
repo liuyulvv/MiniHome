@@ -23,7 +23,6 @@ public:
     MHLineEdge& operator=(MHLineEdge&& edge) = default;
 
 public:
-    virtual MHTopoType getType() const override;
     virtual MHEdgeType getEdgeType() const override;
     virtual MHTopoBase* clone() const override;
     virtual void applyTransform(vtkSmartPointer<vtkTransform> transform) override;
