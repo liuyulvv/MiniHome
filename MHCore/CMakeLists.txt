@@ -21,7 +21,9 @@ find_package(VTK REQUIRED COMPONENTS
     CommonColor    
     CommonCore
     CommonDataModel
+    FiltersGeometry
     FiltersSources
+    FiltersTexture
     GUISupportQt
     InteractionStyle
     RenderingAnnotation
