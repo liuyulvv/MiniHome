@@ -26,7 +26,7 @@ public:
 
 public:
     virtual MHTopoType getType() const override;
-    virtual MHTopoBase* clone() const override;
+    virtual std::unique_ptr<MHTopoBase> clone() const override;
     virtual void applyTransform(vtkSmartPointer<vtkTransform> transform) override;
 
 public:

@@ -23,7 +23,7 @@ public:
 
 public:
     virtual MHFaceType getFaceType() const override;
-    virtual MHTopoBase* clone() const override;
+    virtual std::unique_ptr<MHTopoBase> clone() const override;
     virtual void applyTransform(vtkSmartPointer<vtkTransform> transform) override;
 
 public:

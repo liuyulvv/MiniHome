@@ -30,7 +30,7 @@ public:
 
 public:
     virtual MHEdgeType getEdgeType() const override;
-    virtual MHTopoBase* clone() const override;
+    virtual std::unique_ptr<MHTopoBase> clone() const override;
     virtual void applyTransform(vtkSmartPointer<vtkTransform> transform) override;
     virtual const MHVertex& getSourceVertex() const override;
     virtual const MHVertex& getTargetVertex() const override;

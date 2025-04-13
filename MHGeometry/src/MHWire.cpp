@@ -56,8 +56,8 @@ MHTopoType MHWire::getType() const {
     return MHTopoType::WIRE;
 }
 
-MHTopoBase* MHWire::clone() const {
-    return new MHWire(*this);
+std::unique_ptr<MHTopoBase> MHWire::clone() const {
+    return std::make_unique<MHWire>(*this);
 }
 
 void MHWire::applyTransform(vtkSmartPointer<vtkTransform> transform) {

@@ -14,8 +14,8 @@ MHEdgeType MHLineEdge::getEdgeType() const {
     return MHEdgeType::LINE_EDGE;
 }
 
-MHTopoBase* MHLineEdge::clone() const {
-    return new MHLineEdge(*this);
+std::unique_ptr<MHTopoBase> MHLineEdge::clone() const {
+    return std::make_unique<MHLineEdge>(*this);
 }
 
 void MHLineEdge::applyTransform(vtkSmartPointer<vtkTransform> transform) {

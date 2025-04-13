@@ -12,8 +12,8 @@ MHFaceType MHPlaneFace::getFaceType() const {
     return MHFaceType::PLANE_FACE;
 }
 
-MHTopoBase* MHPlaneFace::clone() const {
-    return new MHPlaneFace(*this);
+std::unique_ptr<MHTopoBase> MHPlaneFace::clone() const {
+    return std::make_unique<MHPlaneFace>(*this);
 }
 
 void MHPlaneFace::applyTransform(vtkSmartPointer<vtkTransform> transform) {
