@@ -7,6 +7,8 @@
  */
 
 #include "MHDrawBase.h"
+#include "MHLineEdge.h"
+#include "MHWallEntity.h"
 
 namespace MHHouse {
 
@@ -22,7 +24,7 @@ public:
     MHDrawWallRectangle& operator=(MHDrawWallRectangle&& rectangle) = delete;
 
 private:
-    MHDrawWallRectangle();
+    MHDrawWallRectangle() = default;
 
 public:
     virtual void beginDraw() override;
@@ -34,6 +36,17 @@ public:
     virtual bool onMouseMove(const MHCore::MHInteractorInfo& interactorInfo) override;
 
 private:
+    enum class DrawState {
+        END,
+        FIRST,
+        SECOND,
+    };
+    void updateWallEntities(bool generate3D);
+
+private:
+    DrawState m_drawState = DrawState::END;
+    std::unique_ptr<MHGeometry::MHLineEdge> m_lineEdge = nullptr;
+    std::vector<std::shared_ptr<MHWallEntity>> m_wallEntities = {};
 };
 
 }  // namespace MHHouse
