@@ -39,6 +39,8 @@ void MHMainVTKWindow::createGround() {
     ground->SetResolution(40, 40);
     auto groundMapper = vtkSmartPointer<vtkDataSetMapper>::New();
     groundMapper->SetInputConnection(ground->GetOutputPort());
+    groundMapper->SetResolveCoincidentTopologyToPolygonOffset();
+    groundMapper->SetRelativeCoincidentTopologyPolygonOffsetParameters(1.0, 1.0);
     auto groundActor = vtkSmartPointer<MHCore::MHActor>::New();
     groundActor->SetMapper(groundMapper);
     groundActor->GetProperty()->SetEdgeVisibility(true);
