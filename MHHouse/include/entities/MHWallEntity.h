@@ -41,8 +41,8 @@ private:
 
 private:
     std::unique_ptr<MHGeometry::MHEdge> m_midEdge = nullptr;
-    double m_height = 0.0;
-    double m_width = 0.0;
+    double m_height = 2800.0;
+    double m_width = 240.0;
     MHWallPositionType m_positionType = MHWallPositionType::LEFT;
     std::vector<std::unique_ptr<MHGeometry::MHEdge>> m_edges;
     std::unique_ptr<MHGeometry::MHPlaneFace> m_baseFace = nullptr;
