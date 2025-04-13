@@ -31,9 +31,13 @@ public:
 
 public:
     virtual void show(bool forceRender = true);
+    virtual void destroy();
+    virtual void onEnter();
+    virtual void onLeave();
 
 public:
     const std::string& getId() const;
+    bool isSame(std::shared_ptr<MHEntity> entity) const;
     void move(double x, double y, double z);
     void scale(double x, double y, double z);
     void rotateX(double angle);
@@ -59,6 +63,7 @@ protected:
     std::weak_ptr<MHEntity> m_parent;
     std::vector<std::shared_ptr<MHEntity>> m_children;
     vtkSmartPointer<vtkTransform> m_localTransform;
+    bool m_hovered = false;
 };
 
 }  // namespace MHCore

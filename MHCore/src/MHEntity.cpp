@@ -38,6 +38,7 @@ MHEntity::~MHEntity() {
 
 void MHEntity::show(bool forceRender) {
     m_renderer->AddActor(m_actor);
+    m_actor->setEntity(shared_from_this());
     for (const auto& child : m_children) {
         if (child) {
             child->show(false);
@@ -48,8 +49,33 @@ void MHEntity::show(bool forceRender) {
     }
 }
 
+void MHEntity::destroy() {
+    m_renderer->RemoveActor(m_actor);
+    m_actor->setEntity(nullptr);
+    for (const auto& child : m_children) {
+        if (child) {
+            child->destroy();
+        }
+    }
+}
+
+void MHEntity::onEnter() {
+    m_hovered = true;
+}
+
+void MHEntity::onLeave() {
+    m_hovered = false;
+}
+
 const std::string& MHEntity::getId() const {
     return m_id;
+}
+
+bool MHEntity::isSame(std::shared_ptr<MHEntity> entity) const {
+    if (entity) {
+        return m_id == entity->getId();
+    }
+    return false;
 }
 
 void MHEntity::move(double x, double y, double z) {
