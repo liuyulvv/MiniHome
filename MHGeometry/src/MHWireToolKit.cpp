@@ -6,10 +6,15 @@
 
 #include "MHWireToolKit.h"
 
+#include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepBuilderAPI_MakeWire.hxx>
+#include <BRepGProp.hxx>
 #include <BRepOffsetAPI_MakeOffset.hxx>
+#include <ShapeAnalysis.hxx>
+#include <ShapeExtend_WireData.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
+#include <gp_Pln.hxx>
 
 #include "MHEdgeToolKit.h"
 
@@ -57,6 +62,36 @@ MH_GEOMETRY_API MHWire offsetWire(const MHWire& wire, double offsetDistance) {
     offsetMaker.Perform(offsetDistance);
     auto offsetTopoDSWire = offsetMaker.Shape();
     return toMHWire(TopoDS::Wire(offsetTopoDSWire));
+}
+
+MH_GEOMETRY_API bool isWireCounterClockWise(const MHWire& wire, const MHVertex& normal) {
+    auto topoDSWire = toTopoDSWire(wire);
+    return isWireCounterClockWise(topoDSWire, normal);
+}
+
+MH_GEOMETRY_API bool isWireCounterClockWise(const TopoDS_Wire& wire, const MHVertex& normal) {
+    gp_Pln plane(gp_Pnt(0, 0, 0), gp_Dir(normal.x, normal.y, normal.z));
+    TopoDS_Face face = BRepBuilderAPI_MakeFace(plane, -1.0, 1.0, -1.0, 1.0);
+    Handle(ShapeExtend_WireData) wireData = new ShapeExtend_WireData(wire);
+    double area = ShapeAnalysis::TotCross2D(wireData, face);
+    return area > 0;
+}
+
+MH_GEOMETRY_API MHWire changeWireDirection(const MHWire& wire, bool counterClockWise, const MHVertex& normal) {
+    if (counterClockWise && isWireCounterClockWise(wire, normal)) {
+        return wire;
+    }
+    TopoDS_Wire topoDSWire = toTopoDSWire(wire);
+    TopoDS_Wire reversedWire = TopoDS::Wire(topoDSWire.Reversed());
+    return toMHWire(reversedWire);
+}
+
+MH_GEOMETRY_API TopoDS_Wire changeWireDirection(const TopoDS_Wire& wire, bool counterClockWise, const MHVertex& normal) {
+    if (counterClockWise && isWireCounterClockWise(wire, normal)) {
+        return wire;
+    }
+    TopoDS_Wire reversedWire = TopoDS::Wire(wire.Reversed());
+    return reversedWire;
 }
 
 }  // namespace MHGeometry::MHToolKit

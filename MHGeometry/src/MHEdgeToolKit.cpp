@@ -67,6 +67,9 @@ MH_GEOMETRY_API MHLineEdge toMHLineEdge(const TopoDS_Edge& topoDSEdge) {
     gp_Pnt target = curve->Value(last);
     MHVertex sourceVertex(start.X(), start.Y(), start.Z());
     MHVertex targetVertex(target.X(), target.Y(), target.Z());
+    if (topoDSEdge.Orientation() == TopAbs_REVERSED) {
+        std::swap(sourceVertex, targetVertex);
+    }
     return MHLineEdge(sourceVertex, targetVertex);
 }
 
@@ -87,6 +90,9 @@ MH_GEOMETRY_API MHArcEdge toMHArcEdge(const TopoDS_Edge& topoDSEdge) {
     gp_Vec centerToEnd(center, endPoint);
     Standard_Real sourceRadian = atan2(centerToStart.Y(), centerToStart.X());
     Standard_Real targetRadian = atan2(centerToEnd.Y(), centerToEnd.X());
+    if (topoDSEdge.Orientation() == TopAbs_REVERSED) {
+        std::swap(sourceRadian, targetRadian);
+    }
     MHTopoOrientation orientation = (sourceRadian < targetRadian) ? MHTopoOrientation::COUNTER_CLOCK_WISE : MHTopoOrientation::CLOCK_WISE;
     MHVertex centerVertex(center.X(), center.Y(), center.Z());
     MHVertex normalVertex(normal.X(), normal.Y(), normal.Z());
