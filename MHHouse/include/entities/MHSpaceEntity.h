@@ -18,6 +18,9 @@ public:
     MHSpaceEntity(MHSpaceEntity&& entity) = delete;
     MHSpaceEntity& operator=(const MHSpaceEntity& entity) = delete;
     MHSpaceEntity& operator=(MHSpaceEntity&& entity) = delete;
+
+private:
+    void createDefaultTexture();
 };
 
 }  // namespace MHHouse
