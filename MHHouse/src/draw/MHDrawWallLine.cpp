@@ -24,6 +24,7 @@ void MHDrawWallLine::beginDraw() {
 
 void MHDrawWallLine::endDraw() {
     MHCore::MHMainVTKInteractorStyle::getInstance().removeFilter(shared_from_this());
+    m_lineEdge.reset();
     m_wallEntity.reset();
     m_wallEntityShow = false;
     m_drawState = DrawState::END;
