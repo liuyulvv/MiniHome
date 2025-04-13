@@ -45,7 +45,6 @@ private:
     DrawState m_drawState = DrawState::END;
     std::unique_ptr<MHGeometry::MHLineEdge> m_lineEdge = nullptr;
     std::shared_ptr<MHWallEntity> m_wallEntity = nullptr;
-    bool m_wallEntityShow = false;
 };
 
 }  // namespace MHHouse

@@ -67,6 +67,11 @@ void MHSpaceManager::generateSpaces() {
             spaceFaces.push_back(face);
         }
     }
+    for (auto& space : m_spaces) {
+        if (space.second) {
+            space.second->destroy();
+        }
+    }
     m_spaces.clear();
     for (auto& face : spaceFaces) {
         auto spaceEntity = std::make_shared<MHSpaceEntity>();

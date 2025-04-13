@@ -27,6 +27,11 @@ void MHDrawWallRectangle::beginDraw() {
 void MHDrawWallRectangle::endDraw() {
     MHCore::MHMainVTKInteractorStyle::getInstance().removeFilter(shared_from_this());
     m_lineEdge.reset();
+    for (auto wallEntity : m_wallEntities) {
+        if (wallEntity) {
+            wallEntity->destroy();
+        }
+    }
     m_wallEntities.clear();
     m_drawState = DrawState::END;
 }

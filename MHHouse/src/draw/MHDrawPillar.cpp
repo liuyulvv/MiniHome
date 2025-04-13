@@ -24,6 +24,9 @@ void MHDrawPillar::beginDraw() {
 void MHDrawPillar::endDraw() {
     MHCore::MHMainVTKInteractorStyle::getInstance().removeFilter(shared_from_this());
     m_midEdge.reset(nullptr);
+    if (m_pillarEntity) {
+        m_pillarEntity->destroy();
+    }
     m_pillarEntity.reset();
     m_drawState = DrawState::END;
 }
