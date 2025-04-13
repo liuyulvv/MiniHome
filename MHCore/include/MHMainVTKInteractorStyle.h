@@ -84,6 +84,7 @@ private:
     int m_lastY;
     bool m_leftPressed;
     bool m_rightPressed;
+    std::shared_ptr<MHEntity> m_hoveredEntity = nullptr;
 };
 
 }  // namespace MHCore

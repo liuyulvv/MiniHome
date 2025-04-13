@@ -20,7 +20,10 @@ namespace MHWindow {
 MHMainVTKWindow::MHMainVTKWindow(QWidget* parent) : QVTKOpenGLNativeWidget(parent) {
     m_window = vtkSmartPointer<MHCore::MHMainVTKRenderWindow>::New();
     auto mainRenderer = MHCore::MHRendererManager::getInstance().getMainRenderer();
+    auto hoverRenderer = MHCore::MHRendererManager::getInstance().getHoverRenderer();
+    m_window->SetNumberOfLayers(2);
     m_window->AddRenderer(mainRenderer);
+    m_window->AddRenderer(hoverRenderer);
     setRenderWindow(m_window);
     MHCore::MHMainVTKInteractorStyle::getInstance().init(m_window->GetInteractor());
     createGround();

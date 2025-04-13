@@ -49,12 +49,15 @@ void MHMainVTKInteractorStyle::init(vtkRenderWindowInteractor* interactor) {
     m_interactor = interactor;
     m_interactor->SetInteractorStyle(this);
     auto mainRender = MHRendererManager::getInstance().getMainRenderer();
+    auto hoverRender = MHRendererManager::getInstance().getHoverRenderer();
     m_interactor->SetRenderWindow(mainRender->GetRenderWindow());
     SetCurrentRenderer(mainRender);
     if (m_currentInteractorType == MHInteractorType::Top2D) {
         mainRender->SetActiveCamera(m_camera2D);
+        hoverRender->SetActiveCamera(m_camera2D);
     } else {
         mainRender->SetActiveCamera(m_camera3D);
+        hoverRender->SetActiveCamera(m_camera3D);
     }
     m_cellPicker = vtkSmartPointer<vtkCellPicker>::New();
 }
@@ -69,10 +72,13 @@ void MHMainVTKInteractorStyle::switchTo(MHInteractorType type) {
     }
     m_currentInteractorType = type;
     auto mainRender = MHRendererManager::getInstance().getMainRenderer();
+    auto hoverRender = MHRendererManager::getInstance().getHoverRenderer();
     if (m_currentInteractorType == MHInteractorType::Top2D) {
         mainRender->SetActiveCamera(m_camera2D);
+        hoverRender->SetActiveCamera(m_camera2D);
     } else {
         mainRender->SetActiveCamera(m_camera3D);
+        hoverRender->SetActiveCamera(m_camera3D);
     }
     render();
 }
@@ -99,10 +105,7 @@ std::shared_ptr<MHEntity> MHMainVTKInteractorStyle::pickEntity() {
     if (pickedActor) {
         auto actor = dynamic_cast<MHActor*>(pickedActor);
         if (actor) {
-            auto entity = actor->getEntity();
-            if (entity) {
-                return MHEntityManager::getInstance().getEntity(entity->getId());
-            }
+            return actor->getEntity();
         }
     }
     return nullptr;
@@ -200,6 +203,27 @@ void MHMainVTKInteractorStyle::OnMouseMove() {
         m_lastY = m_interactorInfo.screenY;
         render();
         return;
+    }
+    auto entity = pickEntity();
+    if (entity) {
+        if (m_hoveredEntity) {
+            if (m_hoveredEntity->isSame(entity)) {
+            } else {
+                m_hoveredEntity->onLeave();
+                m_hoveredEntity = entity;
+                m_hoveredEntity->onEnter();
+            }
+        } else {
+            m_hoveredEntity = entity;
+            m_hoveredEntity->onEnter();
+        }
+        render();
+    } else {
+        if (m_hoveredEntity) {
+            m_hoveredEntity->onLeave();
+            m_hoveredEntity = nullptr;
+            render();
+        }
     }
 }
 

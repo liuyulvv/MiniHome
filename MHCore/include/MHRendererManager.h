@@ -37,8 +37,13 @@ public:
         return m_mainRenderer;
     }
 
+    vtkSmartPointer<MHRenderer> getHoverRenderer() const {
+        return m_hoverRenderer;
+    }
+
 private:
     vtkSmartPointer<MHRenderer> m_mainRenderer = nullptr;
+    vtkSmartPointer<MHRenderer> m_hoverRenderer = nullptr;
 };
 
 }  // namespace MHCore
