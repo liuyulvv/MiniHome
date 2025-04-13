@@ -46,7 +46,6 @@ private:
     std::unique_ptr<MHGeometry::MHLineEdge> m_lineEdge = nullptr;
     std::shared_ptr<MHWallEntity> m_wallEntity = nullptr;
     bool m_wallEntityShow = false;
-    std::vector<std::shared_ptr<MHWallEntity>> m_wallEntities = {};
 };
 
 }  // namespace MHHouse

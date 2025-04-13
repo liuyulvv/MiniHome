@@ -33,6 +33,11 @@ public:
     void updateWall(const MHGeometry::MHLineEdge& midEdge, double height, double width, MHWallPositionType positionType);
     void generateWall2D();
     void generateWall3D();
+    std::vector<std::unique_ptr<MHGeometry::MHEdge>> getEdges();
+    std::unique_ptr<MHGeometry::MHPlaneFace> getBaseFace() const;
+
+private:
+    void createDefaultTexture();
 
 private:
     std::unique_ptr<MHGeometry::MHEdge> m_midEdge = nullptr;

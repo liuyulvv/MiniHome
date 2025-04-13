@@ -9,6 +9,8 @@
 #include "MHDrawHouseManager.h"
 #include "MHEntityManager.h"
 #include "MHMainVTKInteractorStyle.h"
+#include "MHSpaceManager.h"
+#include "MHWallManager.h"
 
 namespace MHHouse {
 
@@ -17,7 +19,6 @@ void MHDrawWallLine::beginDraw() {
     m_lineEdge = std::make_unique<MHGeometry::MHLineEdge>();
     m_wallEntity = std::make_unique<MHWallEntity>();
     m_wallEntityShow = false;
-    m_wallEntities.clear();
     m_drawState = DrawState::FIRST;
 }
 
@@ -25,7 +26,6 @@ void MHDrawWallLine::endDraw() {
     MHCore::MHMainVTKInteractorStyle::getInstance().removeFilter(shared_from_this());
     m_wallEntity.reset();
     m_wallEntityShow = false;
-    m_wallEntities.clear();
     m_drawState = DrawState::END;
 }
 
@@ -43,8 +43,9 @@ bool MHDrawWallLine::onLeftButtonDown(const MHCore::MHInteractorInfo& interactor
         m_wallEntity->generateWall2D();
         m_wallEntity->generateWall3D();
         m_wallEntity->show();
+        MHWallManager::getInstance().addWall(m_wallEntity);
         MHCore::MHEntityManager::getInstance().addEntity(m_wallEntity);
-        m_wallEntities.push_back(m_wallEntity);
+        MHSpaceManager::getInstance().generateSpaces();
         m_wallEntity = std::make_unique<MHWallEntity>();
         m_wallEntityShow = false;
         m_lineEdge = std::make_unique<MHGeometry::MHLineEdge>();

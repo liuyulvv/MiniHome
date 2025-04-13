@@ -13,6 +13,9 @@
 namespace MHHouse {
 
 MHWallEntity::MHWallEntity(vtkSmartPointer<MHCore::MHRenderer> renderer) : MHHouseEntity(renderer) {
+    m_actor->GetProperty()->EdgeVisibilityOff();
+    createDefaultTexture();
+    m_actor->SetTexture(m_texture);
 }
 
 void MHWallEntity::updateWall(const MHGeometry::MHLineEdge& midEdge, double height, double width, MHWallPositionType positionType) {
@@ -89,6 +92,7 @@ void MHWallEntity::generateWall2D() {
     }
     m_wall2D->setTopo(std::make_unique<MHGeometry::MHPlaneFace>(baseFace));
     m_wall2D->updateTopo();
+    m_wall2D->setTexture(m_texture);
 }
 
 void MHWallEntity::generateWall3D() {
@@ -104,10 +108,52 @@ void MHWallEntity::generateWall3D() {
             auto entity = std::make_shared<MHHouseEntity>();
             entity->setTopo(std::make_unique<MHGeometry::MHPlaneFace>(planeFace));
             entity->updateTopo();
+            entity->setTexture(m_texture);
             m_children.push_back(entity);
         } else if (edgeType == MHGeometry::MHEdgeType::ARC_EDGE) {
         }
     }
+}
+
+std::vector<std::unique_ptr<MHGeometry::MHEdge>> MHWallEntity::getEdges() {
+    std::vector<std::unique_ptr<MHGeometry::MHEdge>> edges;
+    for (const auto& edge : m_edges) {
+        auto clone = edge->clone();
+        auto cloneEdge = dynamic_cast<MHGeometry::MHEdge*>(clone.release());
+        auto edgeType = cloneEdge->getEdgeType();
+        if (edgeType == MHGeometry::MHEdgeType::LINE_EDGE) {
+            auto lineEdge = static_cast<MHGeometry::MHLineEdge*>(cloneEdge);
+            auto newLineEdge = std::unique_ptr<MHGeometry::MHLineEdge>(lineEdge);
+            edges.push_back(std::move(newLineEdge));
+        } else if (edgeType == MHGeometry::MHEdgeType::ARC_EDGE) {
+            auto arcEdge = static_cast<MHGeometry::MHArcEdge*>(cloneEdge);
+            auto newArcEdge = std::unique_ptr<MHGeometry::MHArcEdge>(arcEdge);
+            edges.push_back(std::move(newArcEdge));
+        }
+    }
+    return edges;
+}
+
+std::unique_ptr<MHGeometry::MHPlaneFace> MHWallEntity::getBaseFace() const {
+    if (m_baseFace) {
+        auto clone = m_baseFace->clone();
+        auto face = dynamic_cast<MHGeometry::MHPlaneFace*>(clone.release());
+        return std::unique_ptr<MHGeometry::MHPlaneFace>(face);
+    }
+    return nullptr;
+}
+
+void MHWallEntity::createDefaultTexture() {
+    vtkSmartPointer<vtkImageData> imageData = vtkSmartPointer<vtkImageData>::New();
+    imageData->SetDimensions(1, 1, 1);
+    imageData->AllocateScalars(VTK_UNSIGNED_CHAR, 3);
+    unsigned char* pixel = static_cast<unsigned char*>(imageData->GetScalarPointer(0, 0, 0));
+    pixel[0] = 248;
+    pixel[1] = 248;
+    pixel[2] = 255;
+    m_texture = vtkSmartPointer<vtkTexture>::New();
+    m_texture->SetInputData(imageData);
+    m_texture->InterpolateOn();
 }
 
 }  // namespace MHHouse

@@ -26,10 +26,11 @@ target_include_directories(
     ${PROJECT_NAME} PUBLIC 
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}/include/entities
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/manager
     ${CMAKE_CURRENT_SOURCE_DIR}/include/draw
 )
 
-target_link_libraries(${PROJECT_NAME} PUBLIC 
+target_link_libraries(${PROJECT_NAME} PUBLIC
     MHCore
     MHGeometry
 )
