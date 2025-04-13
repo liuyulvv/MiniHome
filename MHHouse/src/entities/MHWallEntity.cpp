@@ -88,11 +88,11 @@ void MHWallEntity::generateWall2D() {
     baseFace.applyTransform(transform);
     if (!m_wall2D) {
         m_wall2D = std::make_shared<MHHouseEntity>();
+        m_wall2D->setTexture(m_texture);
         m_children.push_back(m_wall2D);
     }
     m_wall2D->setTopo(std::make_unique<MHGeometry::MHPlaneFace>(baseFace));
     m_wall2D->updateTopo();
-    m_wall2D->setTexture(m_texture);
 }
 
 void MHWallEntity::generateWall3D() {
