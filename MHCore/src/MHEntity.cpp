@@ -109,13 +109,18 @@ void MHEntity::setTopo(std::unique_ptr<MHGeometry::MHTopoBase> topo) {
     m_topo = std::move(topo);
 }
 
+void MHEntity::setTexture(vtkSmartPointer<vtkTexture> texture) {
+    m_texture = texture;
+    m_actor->SetTexture(m_texture);
+}
+
 void MHEntity::createDefaultTexture() {
     vtkSmartPointer<vtkImageData> imageData = vtkSmartPointer<vtkImageData>::New();
     imageData->SetDimensions(1, 1, 1);
     imageData->AllocateScalars(VTK_UNSIGNED_CHAR, 3);
     unsigned char* pixel = static_cast<unsigned char*>(imageData->GetScalarPointer(0, 0, 0));
     pixel[0] = 0;
-    pixel[1] = 0;
+    pixel[1] = 255;
     pixel[2] = 255;
     m_texture = vtkSmartPointer<vtkTexture>::New();
     m_texture->SetInputData(imageData);

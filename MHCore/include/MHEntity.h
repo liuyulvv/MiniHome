@@ -44,6 +44,7 @@ public:
     std::vector<std::shared_ptr<MHEntity>> getChildren() const;
     void addChild(std::shared_ptr<MHEntity> child);
     void setTopo(std::unique_ptr<MHGeometry::MHTopoBase> topo);
+    void setTexture(vtkSmartPointer<vtkTexture> texture);
 
 protected:
     void createDefaultTexture();
