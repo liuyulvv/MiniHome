@@ -17,7 +17,7 @@ namespace MHHouse {
 void MHDrawWallLine::beginDraw() {
     MHCore::MHMainVTKInteractorStyle::getInstance().insertFilter(shared_from_this());
     m_lineEdge = std::make_unique<MHGeometry::MHLineEdge>();
-    m_wallEntity = std::make_unique<MHWallEntity>();
+    m_wallEntity = std::make_shared<MHWallEntity>();
     m_wallEntityShow = false;
     m_drawState = DrawState::FIRST;
 }
@@ -43,13 +43,12 @@ bool MHDrawWallLine::onLeftButtonDown(const MHCore::MHInteractorInfo& interactor
         m_wallEntity->updateWall(*m_lineEdge, MHDrawHouseManager::getDrawWallHeight(), MHDrawHouseManager::getDrawWallWidth(), MHDrawHouseManager::getDrawWallPositionType());
         m_wallEntity->generateWall2D();
         m_wallEntity->generateWall3D();
-        m_wallEntity->show();
+        m_wallEntity->show(false);
         MHWallManager::getInstance().addWall(m_wallEntity);
         MHCore::MHEntityManager::getInstance().addEntity(m_wallEntity);
         MHSpaceManager::getInstance().generateSpaces();
-        m_wallEntity = std::make_unique<MHWallEntity>();
+        m_wallEntity = std::make_shared<MHWallEntity>();
         m_wallEntityShow = false;
-        m_lineEdge = std::make_unique<MHGeometry::MHLineEdge>();
         m_lineEdge->setSourceVertex({interactorInfo.worldX, interactorInfo.worldY, 0});
         MHCore::MHMainVTKInteractorStyle::getInstance().render();
     }
@@ -61,11 +60,6 @@ bool MHDrawWallLine::onLeftButtonUp(const MHCore::MHInteractorInfo& interactorIn
 }
 
 bool MHDrawWallLine::onRightButtonUp(const MHCore::MHInteractorInfo& interactorInfo) {
-    if (m_wallEntity) {
-        m_wallEntity.reset();
-    }
-    m_drawState = DrawState::END;
-    m_wallEntityShow = false;
     MHDrawHouseManager::getInstance().endDraw();
     MHCore::MHMainVTKInteractorStyle::getInstance().render();
     return true;

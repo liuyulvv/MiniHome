@@ -55,7 +55,6 @@ bool MHDrawPillar::onLeftButtonUp(const MHCore::MHInteractorInfo& interactorInfo
 }
 
 bool MHDrawPillar::onRightButtonUp(const MHCore::MHInteractorInfo& interactorInfo) {
-    m_drawState = DrawState::END;
     MHDrawHouseManager::getInstance().endDraw();
     MHCore::MHMainVTKInteractorStyle::getInstance().render();
     return true;

@@ -53,7 +53,6 @@ bool MHDrawWallRectangle::onLeftButtonDown(const MHCore::MHInteractorInfo& inter
         for (int i = 0; i < 4; ++i) {
             m_wallEntities.push_back(std::make_shared<MHWallEntity>());
         }
-        m_lineEdge = std::make_unique<MHGeometry::MHLineEdge>();
         m_drawState = DrawState::FIRST;
     }
     return true;
@@ -64,8 +63,6 @@ bool MHDrawWallRectangle::onLeftButtonUp(const MHCore::MHInteractorInfo& interac
 }
 
 bool MHDrawWallRectangle::onRightButtonUp(const MHCore::MHInteractorInfo& interactorInfo) {
-    m_wallEntities.clear();
-    m_drawState = DrawState::END;
     MHDrawHouseManager::getInstance().endDraw();
     MHCore::MHMainVTKInteractorStyle::getInstance().render();
     return true;
