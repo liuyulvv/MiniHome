@@ -5,9 +5,8 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(MINIHOME_QT_DIR "D:/Qt/6.8.2/msvc2022_64")
-set(MINIHOME_VTK_DIR "D:/VTK-9.4.1/install/lib/cmake/vtk-9.4")
-set(MINIHOME_OCCT_DEBUG_DIR "D:/OCCT-7_9_0_beta2/install/cmake")
-set(MINIHOME_OCCT_RELEASE_DIR "D:/OCCT-7_9_0_beta2/install/cmake")
+set(MINIHOME_VTK_DIR "D:/VTK-9.4.1/install/release/lib/cmake/vtk-9.4")
+set(MINIHOME_OCCT_DIR "D:/OCCT-7_9_0_beta2/occt-vc144-64/occt-vc144-64/cmake")
 
 add_compile_options(/EHsc)
 
