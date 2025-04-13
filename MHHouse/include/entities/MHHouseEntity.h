@@ -26,8 +26,9 @@ public:
     MHHouseEntity& operator=(MHHouseEntity&& entity) = delete;
 
 public:
-    virtual void show(bool forceRender = true) override;
     virtual void updateTopo();
+    virtual void onEnter() override;
+    virtual void onLeave() override;
 
 protected:
     vtkSmartPointer<vtkActor> m_outlineActor;

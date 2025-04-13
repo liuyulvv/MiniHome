@@ -16,6 +16,7 @@
 #include "MHFace.h"
 #include "MHFaceToolKit.h"
 #include "MHPlaneFace.h"
+#include "MHRendererManager.h"
 #include "MHVertex.h"
 
 namespace MHHouse {
@@ -24,24 +25,12 @@ MHHouseEntity::MHHouseEntity(vtkSmartPointer<MHCore::MHRenderer> renderer) : MHC
     m_outlineActor = vtkSmartPointer<vtkActor>::New();
     m_outlineActor->GetProperty()->SetColor(0.0, 0.0, 0.0);
     m_outlineActor->GetProperty()->EdgeVisibilityOn();
+    m_outlineActor->GetProperty()->LightingOff();
     m_actor->GetProperty()->LightingOff();
 }
 
 MHHouseEntity::~MHHouseEntity() {
-    m_renderer->RemoveActor(m_outlineActor);
-}
-
-void MHHouseEntity::show(bool forceRender) {
-    m_renderer->AddActor(m_actor);
-    m_renderer->AddActor(m_outlineActor);
-    for (const auto& child : m_children) {
-        if (child) {
-            child->show(false);
-        }
-    }
-    if (forceRender) {
-        m_renderer->render();
-    }
+    MHCore::MHRendererManager::getInstance().getHoverRenderer()->RemoveActor(m_outlineActor);
 }
 
 void MHHouseEntity::updateTopo() {
@@ -90,6 +79,18 @@ void MHHouseEntity::updateTopo() {
             m_outlineActor->SetMapper(outlineMapper);
         }
     }
+}
+
+void MHHouseEntity::onEnter() {
+    MHCore::MHEntity::onEnter();
+    MHCore::MHRendererManager::getInstance().getHoverRenderer()->AddActor(m_outlineActor);
+    m_outlineActor->GetProperty()->SetColor(0.0, 1.0, 1.0);
+}
+
+void MHHouseEntity::onLeave() {
+    MHCore::MHEntity::onLeave();
+    MHCore::MHRendererManager::getInstance().getHoverRenderer()->RemoveActor(m_outlineActor);
+    m_outlineActor->GetProperty()->SetColor(0.0, 0.0, 0.0);
 }
 
 }  // namespace MHHouse
