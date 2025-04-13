@@ -15,6 +15,7 @@
 #include <memory>
 
 #include "MHDrawBase.h"
+#include "MHDrawPillar.h"
 #include "MHDrawWallLine.h"
 #include "MHDrawWallRectangle.h"
 #include "MHWallEntity.h"
@@ -43,16 +44,23 @@ public:
     static MHWallPositionType getDrawWallPositionType();
     static double getDrawWallHeight();
     static double getDrawWallWidth();
+    static double getDrawPillarHeight();
+    static double getDrawPillarLength();
+    static double getDrawPillarWidth();
 
 private:
     MHDrawType m_drawType = MHDrawType::NONE;
     std::shared_ptr<MHDrawWallLine> m_drawWallLine = nullptr;
     std::shared_ptr<MHDrawWallRectangle> m_drawWallRectangle = nullptr;
+    std::shared_ptr<MHDrawPillar> m_drawPillar = nullptr;
 
 private:
     static MHWallPositionType m_drawWallPositionType;
     static double m_drawWallHeight;
     static double m_drawWallWidth;
+    static double m_drawPillarHeight;
+    static double m_drawPillarLength;
+    static double m_drawPillarWidth;
 };
 
 }  // namespace MHHouse

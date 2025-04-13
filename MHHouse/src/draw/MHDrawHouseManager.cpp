@@ -13,10 +13,14 @@ namespace MHHouse {
 MHWallPositionType MHDrawHouseManager::m_drawWallPositionType = MHWallPositionType::MID;
 double MHDrawHouseManager::m_drawWallHeight = 2800.0;
 double MHDrawHouseManager::m_drawWallWidth = 240.0;
+double MHDrawHouseManager::m_drawPillarHeight = 2800.0;
+double MHDrawHouseManager::m_drawPillarLength = 650.0;
+double MHDrawHouseManager::m_drawPillarWidth = 650.0;
 
 MHDrawHouseManager::MHDrawHouseManager() {
     m_drawWallRectangle.reset(new MHDrawWallRectangle());
     m_drawWallLine.reset(new MHDrawWallLine());
+    m_drawPillar.reset(new MHDrawPillar());
 }
 
 void MHDrawHouseManager::beginDraw(MHDrawType drawType) {
@@ -33,6 +37,9 @@ void MHDrawHouseManager::beginDraw(MHDrawType drawType) {
         case MHDrawType::WALL_LINE:
             m_drawWallLine->beginDraw();
             break;
+        case MHDrawType::PILLAR:
+            m_drawPillar->beginDraw();
+            break;
         default:
             m_drawType = MHDrawType::NONE;
             break;
@@ -46,6 +53,9 @@ void MHDrawHouseManager::endDraw() {
             break;
         case MHDrawType::WALL_LINE:
             m_drawWallLine->endDraw();
+            break;
+        case MHDrawType::PILLAR:
+            m_drawPillar->endDraw();
             break;
         default:
             break;
@@ -63,6 +73,18 @@ double MHDrawHouseManager::getDrawWallHeight() {
 
 double MHDrawHouseManager::getDrawWallWidth() {
     return m_drawWallWidth;
+}
+
+double MHDrawHouseManager::getDrawPillarHeight() {
+    return m_drawPillarHeight;
+}
+
+double MHDrawHouseManager::getDrawPillarLength() {
+    return m_drawPillarLength;
+}
+
+double MHDrawHouseManager::getDrawPillarWidth() {
+    return m_drawPillarWidth;
 }
 
 }  // namespace MHHouse

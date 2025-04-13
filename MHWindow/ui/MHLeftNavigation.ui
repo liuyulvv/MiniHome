@@ -124,6 +124,37 @@
     <string>直线</string>
    </property>
   </widget>
+  <widget class="QToolButton" name="pillarButton">
+   <property name="geometry">
+    <rect>
+     <x>80</x>
+     <y>80</y>
+     <width>64</width>
+     <height>64</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>64</width>
+     <height>64</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>64</width>
+     <height>64</height>
+    </size>
+   </property>
+   <property name="text">
+    <string>方柱</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

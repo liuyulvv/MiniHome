@@ -7,6 +7,7 @@
 #include "MHSpaceManager.h"
 
 #include "MHFaceToolKit.h"
+#include "MHPillarManager.h"
 #include "MHWallManager.h"
 
 namespace MHHouse {
@@ -17,9 +18,10 @@ MHSpaceManager& MHSpaceManager::getInstance() {
 }
 
 void MHSpaceManager::generateSpaces() {
-    auto walls = MHWallManager::getInstance().getWalls();
     std::vector<std::unique_ptr<MHGeometry::MHEdge>> edges;
     std::vector<MHGeometry::MHPlaneFace> excludeFaces;
+
+    auto walls = MHWallManager::getInstance().getWalls();
     for (const auto& wall : walls) {
         if (wall) {
             auto wallEEdges = wall->getEdges();
@@ -34,6 +36,23 @@ void MHSpaceManager::generateSpaces() {
             }
         }
     }
+
+    auto pillars = MHPillarManager::getInstance().getPillars();
+    for (const auto& pillar : pillars) {
+        if (pillar) {
+            auto pillarEEdges = pillar->getEdges();
+            auto baseFace = pillar->getBaseFace();
+            if (baseFace) {
+                excludeFaces.push_back(*baseFace);
+            }
+            for (auto& edge : pillarEEdges) {
+                if (edge) {
+                    edges.push_back(std::move(edge));
+                }
+            }
+        }
+    }
+
     auto faces = MHGeometry::MHToolKit::makeArrangement(edges);
     std::vector<MHGeometry::MHPlaneFace> spaceFaces;
     for (auto& face : faces) {

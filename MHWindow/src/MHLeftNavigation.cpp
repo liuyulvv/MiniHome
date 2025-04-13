@@ -21,6 +21,7 @@ MHLeftNavigation::MHLeftNavigation(QWidget *parent) : QWidget(parent), ui(new Ui
     m_widgets.push_back(ui->lineButton);
     m_widgets.push_back(ui->rectangleButton);
     m_widgets.push_back(ui->arcButton);
+    m_widgets.push_back(ui->pillarButton);
     m_maxColumn = 2;
     layoutWidget();
     m_vLayout = new QVBoxLayout(this);
@@ -36,6 +37,9 @@ MHLeftNavigation::MHLeftNavigation(QWidget *parent) : QWidget(parent), ui(new Ui
     });
     connect(ui->arcButton, &QToolButton::clicked, this, [this]() {
         MHHouse::MHDrawHouseManager::getInstance().beginDraw(MHHouse::MHDrawType::WALL_ARC);
+    });
+    connect(ui->pillarButton, &QToolButton::clicked, this, [this]() {
+        MHHouse::MHDrawHouseManager::getInstance().beginDraw(MHHouse::MHDrawType::PILLAR);
     });
 }
 
