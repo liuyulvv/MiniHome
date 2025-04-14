@@ -18,6 +18,7 @@ enum class MHDrawType {
     WALL_RECTANGLE,
     WALL_ARC,
     PILLAR,
+    CYLINDER,
 };
 
 class MHDrawBase : public MHCore::MHInteractorFilter, public std::enable_shared_from_this<MHDrawBase> {

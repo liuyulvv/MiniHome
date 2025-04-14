@@ -22,6 +22,7 @@ MHLeftNavigation::MHLeftNavigation(QWidget *parent) : QWidget(parent), ui(new Ui
     m_widgets.push_back(ui->rectangleButton);
     m_widgets.push_back(ui->arcButton);
     m_widgets.push_back(ui->pillarButton);
+    m_widgets.push_back(ui->cylinderButton);
     m_maxColumn = 2;
     layoutWidget();
     m_vLayout = new QVBoxLayout(this);
@@ -40,6 +41,9 @@ MHLeftNavigation::MHLeftNavigation(QWidget *parent) : QWidget(parent), ui(new Ui
     });
     connect(ui->pillarButton, &QToolButton::clicked, this, [this]() {
         MHHouse::MHDrawHouseManager::getInstance().beginDraw(MHHouse::MHDrawType::PILLAR);
+    });
+    connect(ui->cylinderButton, &QToolButton::clicked, this, [this]() {
+        MHHouse::MHDrawHouseManager::getInstance().beginDraw(MHHouse::MHDrawType::CYLINDER);
     });
 }
 

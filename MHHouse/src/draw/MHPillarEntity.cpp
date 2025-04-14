@@ -87,9 +87,7 @@ std::vector<std::unique_ptr<MHGeometry::MHEdge>> MHPillarEntity::getEdges() {
 
 std::unique_ptr<MHGeometry::MHPlaneFace> MHPillarEntity::getBaseFace() const {
     if (m_baseFace) {
-        auto clone = m_baseFace->clone();
-        auto face = dynamic_cast<MHGeometry::MHPlaneFace*>(clone.release());
-        return std::unique_ptr<MHGeometry::MHPlaneFace>(face);
+        return std::make_unique<MHGeometry::MHPlaneFace>(*m_baseFace);
     }
     return nullptr;
 }
