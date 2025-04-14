@@ -47,7 +47,6 @@ public:
     vtkSmartPointer<vtkTransform> getLocaltransform() const;
     std::vector<std::shared_ptr<MHEntity>> getChildren() const;
     void addChild(std::shared_ptr<MHEntity> child);
-    void setTopo(std::unique_ptr<MHGeometry::MHTopoBase> topo);
     void setTexture(vtkSmartPointer<vtkTexture> texture);
 
 protected:
@@ -59,7 +58,6 @@ protected:
     std::string m_id;
     vtkSmartPointer<MHActor> m_actor;
     vtkSmartPointer<vtkTexture> m_texture;
-    std::unique_ptr<MHGeometry::MHTopoBase> m_topo = nullptr;
     std::weak_ptr<MHEntity> m_parent;
     std::vector<std::shared_ptr<MHEntity>> m_children;
     vtkSmartPointer<vtkTransform> m_localTransform;

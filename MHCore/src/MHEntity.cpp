@@ -131,10 +131,6 @@ void MHEntity::addChild(std::shared_ptr<MHEntity> child) {
     }
 }
 
-void MHEntity::setTopo(std::unique_ptr<MHGeometry::MHTopoBase> topo) {
-    m_topo = std::move(topo);
-}
-
 void MHEntity::setTexture(vtkSmartPointer<vtkTexture> texture) {
     m_texture = texture;
     m_actor->SetTexture(m_texture);
@@ -162,9 +158,6 @@ void MHEntity::applyTransform() {
     }
     transform->Concatenate(m_localTransform);
     m_actor->SetUserTransform(transform);
-    if (m_topo) {
-        m_topo->applyTransform(transform);
-    }
 }
 
 }  // namespace MHCore

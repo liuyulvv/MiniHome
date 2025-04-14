@@ -33,51 +33,37 @@ MHHouseEntity::~MHHouseEntity() {
     MHCore::MHRendererManager::getInstance().getHoverRenderer()->RemoveActor(m_outlineActor);
 }
 
-void MHHouseEntity::updateTopo() {
-    if (m_topo) {
-        auto topoType = m_topo->getType();
-        TopoDS_Shape topoDSShape;
-        switch (topoType) {
-            case MHGeometry::MHTopoType::FACE: {
-                auto face = dynamic_cast<MHGeometry::MHFace*>(m_topo.get());
-                auto faceType = face->getFaceType();
-                switch (faceType) {
-                    case MHGeometry::MHFaceType::PLANE_FACE: {
-                        auto planeFace = dynamic_cast<MHGeometry::MHPlaneFace*>(face);
-                        topoDSShape = MHGeometry::MHToolKit::toTopoDSFace(*planeFace);
-                        break;
-                    }
-                }
-                break;
-            }
-        }
-        if (!topoDSShape.IsNull()) {
-            auto shape = IVtkTools_ShapeDataSource::New();
-            shape->SetShape(new IVtkOCC_Shape(topoDSShape));
-            auto source = vtkSmartPointer<IVtkTools_ShapeDataSource>(shape);
-            auto cleanFilter = vtkSmartPointer<vtkCleanPolyData>::New();
-            cleanFilter->SetInputConnection(source->GetOutputPort());
-            cleanFilter->SetTolerance(1e-6);
-            cleanFilter->Update();
-            auto textureMapper = vtkSmartPointer<vtkTextureMapToPlane>::New();
-            textureMapper->SetInputConnection(cleanFilter->GetOutputPort());
-            textureMapper->Update();
-            auto mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-            mapper->SetInputConnection(textureMapper->GetOutputPort());
-            m_actor->SetMapper(mapper);
+void MHHouseEntity::setTopo(const TopoDS_Shape& topo) {
+    m_topo = topo;
+}
 
-            auto featureEdges = vtkSmartPointer<vtkFeatureEdges>::New();
-            featureEdges->SetInputConnection(cleanFilter->GetOutputPort());
-            featureEdges->BoundaryEdgesOn();
-            featureEdges->FeatureEdgesOff();
-            featureEdges->NonManifoldEdgesOff();
-            featureEdges->ManifoldEdgesOff();
-            featureEdges->ColoringOff();
-            featureEdges->Update();
-            auto outlineMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-            outlineMapper->SetInputConnection(featureEdges->GetOutputPort());
-            m_outlineActor->SetMapper(outlineMapper);
-        }
+void MHHouseEntity::updateTopo() {
+    if (!m_topo.IsNull()) {
+        auto shape = IVtkTools_ShapeDataSource::New();
+        shape->SetShape(new IVtkOCC_Shape(m_topo));
+        auto source = vtkSmartPointer<IVtkTools_ShapeDataSource>(shape);
+        auto cleanFilter = vtkSmartPointer<vtkCleanPolyData>::New();
+        cleanFilter->SetInputConnection(source->GetOutputPort());
+        cleanFilter->SetTolerance(1e-6);
+        cleanFilter->Update();
+        auto textureMapper = vtkSmartPointer<vtkTextureMapToPlane>::New();
+        textureMapper->SetInputConnection(cleanFilter->GetOutputPort());
+        textureMapper->Update();
+        auto mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+        mapper->SetInputConnection(textureMapper->GetOutputPort());
+        m_actor->SetMapper(mapper);
+
+        auto featureEdges = vtkSmartPointer<vtkFeatureEdges>::New();
+        featureEdges->SetInputConnection(cleanFilter->GetOutputPort());
+        featureEdges->BoundaryEdgesOn();
+        featureEdges->FeatureEdgesOff();
+        featureEdges->NonManifoldEdgesOff();
+        featureEdges->ManifoldEdgesOff();
+        featureEdges->ColoringOff();
+        featureEdges->Update();
+        auto outlineMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+        outlineMapper->SetInputConnection(featureEdges->GetOutputPort());
+        m_outlineActor->SetMapper(outlineMapper);
     }
 }
 

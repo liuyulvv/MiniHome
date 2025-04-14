@@ -12,6 +12,8 @@
 #define MH_HOUSE_API __declspec(dllimport)
 #endif
 
+#include <TopoDS_Shape.hxx>
+
 #include "MHEntity.h"
 
 namespace MHHouse {
@@ -26,11 +28,13 @@ public:
     MHHouseEntity& operator=(MHHouseEntity&& entity) = delete;
 
 public:
+    virtual void setTopo(const TopoDS_Shape& topo);
     virtual void updateTopo();
     virtual void onEnter() override;
     virtual void onLeave() override;
 
 protected:
+    TopoDS_Shape m_topo;
     vtkSmartPointer<vtkActor> m_outlineActor;
 };
 

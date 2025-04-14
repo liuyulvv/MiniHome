@@ -91,7 +91,7 @@ void MHWallEntity::generateWall2D() {
         m_wall2D->setTexture(m_texture);
         m_children.push_back(m_wall2D);
     }
-    m_wall2D->setTopo(std::make_unique<MHGeometry::MHPlaneFace>(baseFace));
+    m_wall2D->setTopo(MHGeometry::MHToolKit::toTopoDSFace(baseFace));
     m_wall2D->updateTopo();
 }
 
@@ -106,7 +106,7 @@ void MHWallEntity::generateWall3D() {
             auto planeFace = MHGeometry::MHToolKit::edgeToFace(*lineEdge, {0, 0, 1}, m_height);
             auto topoDSFace = MHGeometry::MHToolKit::toTopoDSFace(planeFace);
             auto entity = std::make_shared<MHHouseEntity>();
-            entity->setTopo(std::make_unique<MHGeometry::MHPlaneFace>(planeFace));
+            entity->setTopo(topoDSFace);
             entity->updateTopo();
             entity->setTexture(m_texture);
             m_children.push_back(entity);

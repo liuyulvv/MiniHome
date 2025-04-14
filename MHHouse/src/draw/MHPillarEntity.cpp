@@ -54,7 +54,7 @@ void MHPillarEntity::generatePillar2D() {
         m_pillar2D->setTexture(m_texture);
         m_children.push_back(m_pillar2D);
     }
-    m_pillar2D->setTopo(std::make_unique<MHGeometry::MHPlaneFace>(baseFace));
+    m_pillar2D->setTopo(MHGeometry::MHToolKit::toTopoDSFace(baseFace));
     m_pillar2D->updateTopo();
 }
 
@@ -66,7 +66,7 @@ void MHPillarEntity::generatePillar3D() {
         auto planeFace = MHGeometry::MHToolKit::edgeToFace(*edge, {0, 0, 1}, m_height);
         auto topoDSFace = MHGeometry::MHToolKit::toTopoDSFace(planeFace);
         auto entity = std::make_shared<MHHouseEntity>();
-        entity->setTopo(std::make_unique<MHGeometry::MHPlaneFace>(planeFace));
+        entity->setTopo(topoDSFace);
         entity->updateTopo();
         entity->setTexture(m_texture);
         m_children.push_back(entity);

@@ -75,7 +75,7 @@ void MHSpaceManager::generateSpaces() {
     m_spaces.clear();
     for (auto& face : spaceFaces) {
         auto spaceEntity = std::make_shared<MHSpaceEntity>();
-        spaceEntity->setTopo(std::make_unique<MHGeometry::MHPlaneFace>(face));
+        spaceEntity->setTopo(MHGeometry::MHToolKit::toTopoDSFace(face));
         spaceEntity->updateTopo();
         spaceEntity->show();
         addSpace(spaceEntity);
