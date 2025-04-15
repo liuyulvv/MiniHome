@@ -89,7 +89,7 @@ void MHWallEntity::generateWall2D() {
     if (!m_wall2D) {
         m_wall2D = std::make_shared<MHHouseEntity>();
         m_wall2D->setTexture(m_texture);
-        m_children.push_back(m_wall2D);
+        addChild(m_wall2D);
     }
     m_wall2D->setTopo(MHGeometry::MHToolKit::toTopoDSFace(baseFace));
     m_wall2D->updateTopo();
@@ -109,7 +109,7 @@ void MHWallEntity::generateWall3D() {
             entity->setTopo(topoDSFace);
             entity->updateTopo();
             entity->setTexture(m_texture);
-            m_children.push_back(entity);
+            addChild(entity);
         } else if (edgeType == MHGeometry::MHEdgeType::ARC_EDGE) {
         }
     }

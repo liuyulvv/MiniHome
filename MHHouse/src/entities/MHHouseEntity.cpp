@@ -11,6 +11,7 @@
 #include <vtkPolyDataMapper.h>
 #include <vtkTextureMapToPlane.h>
 
+#include <IVtkTools_DisplayModeFilter.hxx>
 #include <IVtkTools_ShapeDataSource.hxx>
 
 #include "MHFace.h"
@@ -26,7 +27,6 @@ MHHouseEntity::MHHouseEntity(vtkSmartPointer<MHCore::MHRenderer> renderer) : MHC
     m_outlineActor->GetProperty()->SetColor(0.0, 0.0, 0.0);
     m_outlineActor->GetProperty()->EdgeVisibilityOn();
     m_outlineActor->GetProperty()->LightingOff();
-    m_actor->GetProperty()->LightingOff();
 }
 
 MHHouseEntity::~MHHouseEntity() {
@@ -42,19 +42,18 @@ void MHHouseEntity::updateTopo() {
         auto shape = IVtkTools_ShapeDataSource::New();
         shape->SetShape(new IVtkOCC_Shape(m_topo));
         auto source = vtkSmartPointer<IVtkTools_ShapeDataSource>(shape);
-        auto cleanFilter = vtkSmartPointer<vtkCleanPolyData>::New();
-        cleanFilter->SetInputConnection(source->GetOutputPort());
-        cleanFilter->SetTolerance(1e-6);
-        cleanFilter->Update();
+        auto displayFilter = vtkSmartPointer<IVtkTools_DisplayModeFilter>::New();
+        displayFilter->SetInputConnection(source->GetOutputPort());
+        displayFilter->SetDisplayMode(IVtk_DisplayMode::DM_Shading);
         auto textureMapper = vtkSmartPointer<vtkTextureMapToPlane>::New();
-        textureMapper->SetInputConnection(cleanFilter->GetOutputPort());
+        textureMapper->SetInputConnection(displayFilter->GetOutputPort());
         textureMapper->Update();
         auto mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
         mapper->SetInputConnection(textureMapper->GetOutputPort());
         m_actor->SetMapper(mapper);
 
         auto featureEdges = vtkSmartPointer<vtkFeatureEdges>::New();
-        featureEdges->SetInputConnection(cleanFilter->GetOutputPort());
+        featureEdges->SetInputConnection(displayFilter->GetOutputPort());
         featureEdges->BoundaryEdgesOn();
         featureEdges->FeatureEdgesOff();
         featureEdges->NonManifoldEdgesOff();

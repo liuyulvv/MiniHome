@@ -42,7 +42,7 @@ void MHCylinderEntity::generateCylinder2D() {
     if (!m_cylinder2D) {
         m_cylinder2D = std::make_shared<MHHouseEntity>();
         m_cylinder2D->setTexture(m_texture);
-        m_children.push_back(m_cylinder2D);
+        addChild(m_cylinder2D);
     }
     m_cylinder2D->setTopo(MHGeometry::MHToolKit::toTopoDSFace(baseFace));
     m_cylinder2D->updateTopo();
@@ -67,7 +67,7 @@ void MHCylinderEntity::generateCylinder3D() {
         entity->setTopo(topoFace);
         entity->updateTopo();
         entity->setTexture(m_texture);
-        m_children.push_back(entity);
+        addChild(entity);
     }
 }
 
