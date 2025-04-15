@@ -43,6 +43,7 @@ public:
     virtual MHTopoType getType() const = 0;
     virtual std::unique_ptr<MHTopoBase> clone() const = 0;
     virtual void applyTransform(vtkSmartPointer<vtkTransform> transform) = 0;
+    virtual void reversed() = 0;
 };
 
 class MH_GEOMETRY_API MHVertex : public MHTopoBase {
@@ -59,6 +60,7 @@ public:
     virtual MHTopoType getType() const override;
     virtual std::unique_ptr<MHTopoBase> clone() const override;
     virtual void applyTransform(vtkSmartPointer<vtkTransform> transform) override;
+    virtual void reversed() override {}
 
 public:
     MHVertex operator+(const MHVertex& vertex) const;

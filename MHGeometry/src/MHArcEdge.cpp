@@ -52,6 +52,12 @@ const MHVertex& MHArcEdge::getTargetVertex() const {
     return m_targetVertex;
 }
 
+void MHArcEdge::reversed() {
+    std::swap(m_sourceVertex, m_targetVertex);
+    std::swap(m_sourceAngle, m_targetAngle);
+    m_orientation = (m_orientation == MHTopoOrientation::CLOCK_WISE) ? MHTopoOrientation::COUNTER_CLOCK_WISE : MHTopoOrientation::CLOCK_WISE;
+}
+
 const MHVertex& MHArcEdge::getCenter() const {
     return m_center;
 }

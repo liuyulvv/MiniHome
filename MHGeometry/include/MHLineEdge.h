@@ -28,6 +28,7 @@ public:
     virtual void applyTransform(vtkSmartPointer<vtkTransform> transform) override;
     virtual const MHVertex& getSourceVertex() const override;
     virtual const MHVertex& getTargetVertex() const override;
+    virtual void reversed() override;
 
 public:
     void setSourceVertex(const MHVertex& vertex);

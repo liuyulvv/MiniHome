@@ -25,6 +25,7 @@ public:
     virtual MHFaceType getFaceType() const override;
     virtual std::unique_ptr<MHTopoBase> clone() const override;
     virtual void applyTransform(vtkSmartPointer<vtkTransform> transform) override;
+    virtual void reversed() override;
 
 public:
     void addWire(const MHWire& wire);

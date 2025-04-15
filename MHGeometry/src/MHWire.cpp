@@ -66,6 +66,12 @@ void MHWire::applyTransform(vtkSmartPointer<vtkTransform> transform) {
     }
 }
 
+void MHWire::reversed() {
+    for (auto& edge : m_edges) {
+        edge->reversed();
+    }
+}
+
 void MHWire::addEdge(const MHLineEdge& edge) {
     m_edges.push_back(std::make_unique<MHLineEdge>(edge.getSourceVertex(), edge.getTargetVertex()));
 }

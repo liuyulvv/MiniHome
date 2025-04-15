@@ -31,6 +31,7 @@ public:
     virtual MHEdgeType getEdgeType() const = 0;
     virtual const MHVertex& getSourceVertex() const = 0;
     virtual const MHVertex& getTargetVertex() const = 0;
+    virtual void reversed() = 0;
 };
 
 }  // namespace MHGeometry

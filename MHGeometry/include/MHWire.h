@@ -28,6 +28,7 @@ public:
     virtual MHTopoType getType() const override;
     virtual std::unique_ptr<MHTopoBase> clone() const override;
     virtual void applyTransform(vtkSmartPointer<vtkTransform> transform) override;
+    virtual void reversed() override;
 
 public:
     void addEdge(const MHLineEdge& edge);

@@ -22,6 +22,12 @@ void MHPlaneFace::applyTransform(vtkSmartPointer<vtkTransform> transform) {
     }
 }
 
+void MHPlaneFace::reversed() {
+    for (auto& wire : m_wires) {
+        wire.reversed();
+    }
+}
+
 void MHPlaneFace::addWire(const MHWire& wire) {
     m_wires.push_back(wire);
 }

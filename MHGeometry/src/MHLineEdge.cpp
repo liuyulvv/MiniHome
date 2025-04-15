@@ -31,6 +31,10 @@ const MHVertex& MHLineEdge::getTargetVertex() const {
     return m_targetVertex;
 }
 
+void MHLineEdge::reversed() {
+    std::swap(m_sourceVertex, m_targetVertex);
+}
+
 void MHLineEdge::setSourceVertex(const MHVertex& vertex) {
     m_sourceVertex = vertex;
 }
