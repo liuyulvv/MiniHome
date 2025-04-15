@@ -11,6 +11,7 @@
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRep_Builder.hxx>
 #include <Geom_Plane.hxx>
+#include <ShapeFix_Face.hxx>
 #include <Standard_Type.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
@@ -67,9 +68,13 @@ MH_GEOMETRY_API MHFaceType getFaceType(const TopoDS_Face& topoDSFace) {
 }
 
 MH_GEOMETRY_API MHPlaneFace toMHPlaneFace(const TopoDS_Face& topoDSFace, const MHVertex& normal) {
+    ShapeFix_Face shapeFixFace;
+    shapeFixFace.Init(topoDSFace);
+    shapeFixFace.Perform();
+    auto fixedFace = shapeFixFace.Face();
     MHPlaneFace planeFace;
     std::vector<MHWire> wires;
-    for (TopExp_Explorer explorer(topoDSFace, TopAbs_WIRE); explorer.More(); explorer.Next()) {
+    for (TopExp_Explorer explorer(fixedFace, TopAbs_WIRE); explorer.More(); explorer.Next()) {
         const TopoDS_Wire& wire = TopoDS::Wire(explorer.Current());
         wires.push_back(toMHWire(wire));
     }

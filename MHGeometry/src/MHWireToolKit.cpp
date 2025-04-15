@@ -12,6 +12,7 @@
 #include <BRepOffsetAPI_MakeOffset.hxx>
 #include <ShapeAnalysis.hxx>
 #include <ShapeExtend_WireData.hxx>
+#include <ShapeFix_Wire.hxx>
 #include <TopExp_Explorer.hxx>
 #include <TopoDS.hxx>
 #include <gp_Pln.hxx>
@@ -43,8 +44,12 @@ MH_GEOMETRY_API TopoDS_Wire toTopoDSWire(const MHWire& wire) {
 }
 
 MH_GEOMETRY_API MHWire toMHWire(const TopoDS_Wire& topoDSWire) {
+    ShapeFix_Wire shapeFixWire;
+    shapeFixWire.Load(topoDSWire);
+    shapeFixWire.Perform();
+    auto fixedWire = shapeFixWire.Wire();
     MHWire wire;
-    for (TopExp_Explorer edgeExplorer(topoDSWire, TopAbs_EDGE); edgeExplorer.More(); edgeExplorer.Next()) {
+    for (TopExp_Explorer edgeExplorer(fixedWire, TopAbs_EDGE); edgeExplorer.More(); edgeExplorer.Next()) {
         const TopoDS_Edge& topoDSEdge = TopoDS::Edge(edgeExplorer.Current());
         auto edgeType = getEdgeType(topoDSEdge);
         if (edgeType == MHEdgeType::LINE_EDGE) {
