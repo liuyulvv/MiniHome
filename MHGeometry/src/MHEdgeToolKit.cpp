@@ -39,6 +39,9 @@ MH_GEOMETRY_API TopoDS_Edge toTopoDSEdge(const MHArcEdge& arcEdge) {
         std::swap(sourceRadian, targetRadian);
     }
     TopoDS_Edge edge = BRepBuilderAPI_MakeEdge(geomCircle, sourceRadian, targetRadian);
+    if (arcEdge.getOrientation() == MHTopoOrientation::CLOCK_WISE) {
+        edge.Reverse();
+    }
     return edge;
 }
 

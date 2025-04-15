@@ -77,21 +77,12 @@ MH_GEOMETRY_API bool isWireCounterClockWise(const TopoDS_Wire& wire, const MHVer
     return area > 0;
 }
 
-MH_GEOMETRY_API MHWire changeWireDirection(const MHWire& wire, bool counterClockWise, const MHVertex& normal) {
-    if (counterClockWise && isWireCounterClockWise(wire, normal)) {
+MH_GEOMETRY_API MHWire changeWireDirection(MHWire& wire, bool counterClockWise, const MHVertex& normal) {
+    if (counterClockWise == isWireCounterClockWise(wire, normal)) {
         return wire;
     }
-    TopoDS_Wire topoDSWire = toTopoDSWire(wire);
-    TopoDS_Wire reversedWire = TopoDS::Wire(topoDSWire.Reversed());
-    return toMHWire(reversedWire);
-}
-
-MH_GEOMETRY_API TopoDS_Wire changeWireDirection(const TopoDS_Wire& wire, bool counterClockWise, const MHVertex& normal) {
-    if (counterClockWise && isWireCounterClockWise(wire, normal)) {
-        return wire;
-    }
-    TopoDS_Wire reversedWire = TopoDS::Wire(wire.Reversed());
-    return reversedWire;
+    wire.reversed();
+    return wire;
 }
 
 }  // namespace MHGeometry::MHToolKit

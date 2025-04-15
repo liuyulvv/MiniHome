@@ -6,6 +6,7 @@
 
 #include "MHSpaceManager.h"
 
+#include "MHCylinderManager.h"
 #include "MHFaceToolKit.h"
 #include "MHPillarManager.h"
 #include "MHWallManager.h"
@@ -24,12 +25,12 @@ void MHSpaceManager::generateSpaces() {
     auto walls = MHWallManager::getInstance().getWalls();
     for (const auto& wall : walls) {
         if (wall) {
-            auto wallEEdges = wall->getEdges();
+            auto wallEdges = wall->getEdges();
             auto baseFace = wall->getBaseFace();
             if (baseFace) {
                 excludeFaces.push_back(*baseFace);
             }
-            for (auto& edge : wallEEdges) {
+            for (auto& edge : wallEdges) {
                 if (edge) {
                     edges.push_back(std::move(edge));
                 }
@@ -40,15 +41,29 @@ void MHSpaceManager::generateSpaces() {
     auto pillars = MHPillarManager::getInstance().getPillars();
     for (const auto& pillar : pillars) {
         if (pillar) {
-            auto pillarEEdges = pillar->getEdges();
+            auto pillarEdges = pillar->getEdges();
             auto baseFace = pillar->getBaseFace();
             if (baseFace) {
                 excludeFaces.push_back(*baseFace);
             }
-            for (auto& edge : pillarEEdges) {
+            for (auto& edge : pillarEdges) {
                 if (edge) {
                     edges.push_back(std::move(edge));
                 }
+            }
+        }
+    }
+
+    auto cylinders = MHCylinderManager::getInstance().getCylinders();
+    for (const auto& cylinder : cylinders) {
+        if (cylinder) {
+            auto cylinderEdge = cylinder->getEdge();
+            auto baseFace = cylinder->getBaseFace();
+            if (baseFace) {
+                excludeFaces.push_back(*baseFace);
+            }
+            if (cylinderEdge) {
+                edges.push_back(std::move(cylinderEdge));
             }
         }
     }
