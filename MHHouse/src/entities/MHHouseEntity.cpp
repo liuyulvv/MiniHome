@@ -27,6 +27,8 @@ MHHouseEntity::MHHouseEntity(vtkSmartPointer<MHCore::MHRenderer> renderer) : MHC
     m_outlineActor->GetProperty()->SetColor(0.0, 0.0, 0.0);
     m_outlineActor->GetProperty()->EdgeVisibilityOn();
     m_outlineActor->GetProperty()->LightingOff();
+    m_actor->GetProperty()->SetAmbient(0.2);
+    m_actor->GetProperty()->SetDiffuse(0.8);
 }
 
 MHHouseEntity::~MHHouseEntity() {
