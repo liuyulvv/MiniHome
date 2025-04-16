@@ -22,5 +22,7 @@ MH_GEOMETRY_API bool isParallelToXAxis(const MHVertex& vertex1, const MHVertex& 
 MH_GEOMETRY_API bool isParallelToYAxis(const MHVertex& vertex1, const MHVertex& vertex2, double tolerance = 1e-6);
 MH_GEOMETRY_API bool isLeftTurn(const MHVertex& vertex1, const MHVertex& vertex2, const MHVertex& vertex3, double tolerance = 1e-6);
 MH_GEOMETRY_API double angleToXAxis(const MHVertex& vertex1, const MHVertex& vertex2);
+MH_GEOMETRY_API MHVertex projectToLine(const MHVertex& point, const MHVertex& source, const MHVertex& target);
+MH_GEOMETRY_API MHVertex getLineNormal(const MHVertex& source, const MHVertex& target);
 
 }  // namespace MHGeometry::MHToolKit

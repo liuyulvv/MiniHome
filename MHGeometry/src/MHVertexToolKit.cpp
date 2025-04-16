@@ -35,11 +35,10 @@ MH_GEOMETRY_API bool areCollinear(const MHVertex& vertex1, const MHVertex& verte
     if (v1.length() < tolerance || v2.length() < tolerance) {
         return true;
     }
-    auto cross = v1.cross(v2);
-    auto crossLength = cross.length();
-    auto normalizationFactor = v1.length() * v2.length();
-    auto normalizedCrossLength = crossLength / normalizationFactor;
-    return normalizedCrossLength < tolerance;
+    v1 = v1.normalize();
+    v2 = v2.normalize();
+    auto dot = std::abs(v1.dot(v2));
+    return std::abs(dot - 1.0) < tolerance;
 }
 
 MH_GEOMETRY_API bool isParallelToXAxis(const MHVertex& vertex1, const MHVertex& vertex2, double tolerance) {
@@ -76,6 +75,27 @@ MH_GEOMETRY_API double angleToXAxis(const MHVertex& vertex1, const MHVertex& ver
     MHVertex v = vertex2 - vertex1;
     auto angle = std::atan2(v.y, v.x);
     return radianToAngle(angle);
+}
+
+MH_GEOMETRY_API MHVertex projectToLine(const MHVertex& point, const MHVertex& source, const MHVertex& target) {
+    MHVertex lineVector = target - source;
+    double lineLength2 = lineVector.dot(lineVector);
+    if (lineLength2 < 1e-6) {
+        return source;
+    }
+    MHVertex sourceToPoint = point - source;
+    double t = sourceToPoint.dot(lineVector) / lineLength2;
+    return source + lineVector * t;
+}
+
+MH_GEOMETRY_API MHVertex getLineNormal(const MHVertex& source, const MHVertex& target) {
+    MHVertex lineVector = target - source;
+    double length = lineVector.length();
+    if (length < 1e-6) {
+        return {0, 0, 0};
+    }
+    lineVector = lineVector.normalize();
+    return {-lineVector.y, lineVector.x, 0};
 }
 
 }  // namespace MHGeometry::MHToolKit
