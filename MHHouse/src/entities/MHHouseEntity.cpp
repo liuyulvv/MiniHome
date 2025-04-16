@@ -97,6 +97,13 @@ void MHHouseEntity::updateTopo() {
             auto outlineMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
             outlineMapper->SetInputConnection(featureEdges->GetOutputPort());
             m_outlineActor->SetMapper(outlineMapper);
+        } else {
+            auto shape = IVtkTools_ShapeDataSource::New();
+            shape->SetShape(new IVtkOCC_Shape(m_topo));
+            auto source = vtkSmartPointer<IVtkTools_ShapeDataSource>(shape);
+            auto mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+            mapper->SetInputConnection(source->GetOutputPort());
+            m_actor->SetMapper(mapper);
         }
     }
 }
