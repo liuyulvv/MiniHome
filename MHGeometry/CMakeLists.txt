@@ -26,16 +26,16 @@ find_package(OpenCASCADE REQUIRED)
 
 file(GLOB_RECURSE SRCS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
 
-add_library(${PROJECT_NAME} SHARED 
+add_library(${PROJECT_NAME} SHARED
     ${SRCS}
 )
 
 target_include_directories(
-    ${PROJECT_NAME} PUBLIC 
+    ${PROJECT_NAME} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-target_link_libraries(${PROJECT_NAME} PUBLIC 
+target_link_libraries(${PROJECT_NAME} PUBLIC
     ${VTK_LIBRARIES}
     ${OpenCASCADE_LIBRARIES}
 )

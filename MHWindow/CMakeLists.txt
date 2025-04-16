@@ -33,19 +33,19 @@ file(GLOB_RECURSE SRCS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_S
 file(GLOB_RECURSE HEADER_SRCS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/include/*.h")
 file(GLOB_RECURSE UI_SRCS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/resources/ui/*.ui")
 
-add_library(${PROJECT_NAME} SHARED 
+add_library(${PROJECT_NAME} SHARED
     ${HEADER_SRCS}
     ${SRCS}
     ${UI_SRCS}
 )
 target_include_directories(
-    ${PROJECT_NAME} PUBLIC 
+    ${PROJECT_NAME} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
-target_link_libraries(${PROJECT_NAME} PUBLIC 
+target_link_libraries(${PROJECT_NAME} PUBLIC
     MHCore
     MHHouse
-    Qt6::Core 
+    Qt6::Core
     Qt6::Gui
     Qt6::Widgets
     Qt6::OpenGLWidgets

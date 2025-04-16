@@ -14,9 +14,9 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_FLAGS /utf-8)
 
 if (${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/${PROJECT_NAME}/${CMAKE_BUILD_TYPE}/bin)
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/${PROJECT_NAME}/${CMAKE_BUILD_TYPE}/lib)
-    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/${PROJECT_NAME}/${CMAKE_BUILD_TYPE}/lib)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/${PROJECT_NAME}/$<CONFIG>/bin/$<0:>)
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/${PROJECT_NAME}/$<CONFIG>/lib/$<0:>)
+    set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/${PROJECT_NAME}/$<CONFIG>/lib/$<0:>)
 endif()
 
 add_subdirectory(third/fmt)
@@ -37,5 +37,12 @@ add_dependencies(MHHouse MHCore)
 add_subdirectory(MHWindow)
 add_dependencies(MHWindow MHCore MHHouse)
 
+add_custom_target(copy_resources ALL
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_CURRENT_SOURCE_DIR}/resources
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+    COMMENT "Copying resources to runtime directory"
+)
+
 add_subdirectory(MHApp)
-add_dependencies(MiniHome MHWindow MHHouse)
+add_dependencies(MiniHome MHWindow MHHouse copy_resources)
