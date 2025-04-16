@@ -122,6 +122,7 @@
         "qapplication": "cpp",
         "qmainwindow": "cpp",
         "qwidget": "cpp",
-        "qresizeevent": "cpp"
+        "qresizeevent": "cpp",
+        "*.txx": "cpp"
     }
 }
