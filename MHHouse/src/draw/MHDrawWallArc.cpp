@@ -7,6 +7,7 @@
 #include "MHDrawWallArc.h"
 
 #include "MHDrawHouseManager.h"
+#include "MHEdgeToolKit.h"
 #include "MHEntityManager.h"
 #include "MHMainVTKInteractorStyle.h"
 #include "MHSpaceManager.h"
@@ -50,6 +51,15 @@ bool MHDrawWallArc::onLeftButtonDown(const MHCore::MHInteractorInfo& interactorI
         m_midVertex = std::make_unique<MHGeometry::MHVertex>((source + target) / 2.0);
         m_drawState = DrawState::THIRD;
     } else if (m_drawState == DrawState::THIRD) {
+        computeArcEdge(interactorInfo);
+        m_wallEntity->generateWall2D();
+        m_wallEntity->generateWall3D();
+        m_wallEntity->show();
+        MHWallManager::getInstance().addWall(m_wallEntity);
+        MHCore::MHEntityManager::getInstance().addEntity(m_wallEntity);
+        MHSpaceManager::getInstance().generateSpaces();
+        m_wallEntity = std::make_shared<MHWallEntity>();
+        m_drawState = DrawState::FIRST;
     }
     return true;
 }
@@ -65,7 +75,7 @@ bool MHDrawWallArc::onRightButtonUp(const MHCore::MHInteractorInfo& interactorIn
 }
 
 bool MHDrawWallArc::onMouseMove(const MHCore::MHInteractorInfo& interactorInfo) {
-    if (m_drawState == DrawState::END || m_drawState == DrawState::FIRST || !m_lineEdge || !m_wallEntity || !m_midVertex) {
+    if (m_drawState == DrawState::END || m_drawState == DrawState::FIRST || !m_lineEdge || !m_wallEntity) {
         return true;
     }
     if (m_drawState == DrawState::SECOND) {
@@ -74,52 +84,65 @@ bool MHDrawWallArc::onMouseMove(const MHCore::MHInteractorInfo& interactorInfo) 
         m_wallEntity->generateWall2D();
         m_wallEntity->show();
     } else if (m_drawState == DrawState::THIRD && m_midVertex) {
-        MHGeometry::MHVertex current = {interactorInfo.worldX, interactorInfo.worldY, 0};
-        auto source = m_lineEdge->getSourceVertex();
-        auto target = m_lineEdge->getTargetVertex();
-        MHGeometry::MHVertex arcCenter, arcSource, arcTarget;
-        double radius = (source - target).length() / 2.0;
-        if (MHGeometry::MHToolKit::areCollinear(current, source, target)) {
-            if (MHGeometry::MHToolKit::isParallelToYAxis(source, target)) {
-                arcCenter = *m_midVertex;
-                arcSource = source.y > target.y ? source : target;
-                arcTarget = source.y > target.y ? target : source;
-            } else {
-                arcCenter = *m_midVertex;
-                arcSource = source.x > target.x ? source : target;
-                arcTarget = source.x > target.x ? target : source;
-            }
-        } else {
-            MHGeometry::MHVertex direction = *m_midVertex - current;
-            if (direction.length() < 1e-6) {
-                return true;
-            }
-            direction = direction.normalize();
-            auto distanceToCurrent = (*m_midVertex - current).length();
-            auto distanceToSource = (*m_midVertex - source).length();
-            if (std::abs(distanceToCurrent - distanceToSource) > 1e-6) {
-                radius = (distanceToCurrent * distanceToCurrent + distanceToSource * distanceToSource) / (2 * distanceToCurrent);
-            }
-            bool isLeft = MHGeometry::MHToolKit::isLeftTurn(*m_midVertex, current, source);
-            if (std::abs(radius - distanceToCurrent) < 1e-6) {
-                arcCenter = *m_midVertex;
-            } else {
-                arcCenter = current - direction * radius;
-            }
-            if (isLeft) {
-                arcSource = target;
-                arcTarget = source;
-            } else {
-                arcSource = source;
-                arcTarget = target;
-            }
+        if (m_lineEdge->length() < 1e-6) {
+            return true;
         }
-        auto sourceAangle = MHGeometry::MHToolKit::angleToXAxis(arcCenter, arcSource);
-        auto targetAngle = MHGeometry::MHToolKit::angleToXAxis(arcCenter, arcTarget);
-        MHGeometry::MHVertex normal = {0, 0, 1};
-        m_arcEdge = std::make_unique<MHGeometry::MHArcEdge>(arcCenter, normal, radius, sourceAangle, targetAngle);
+        computeArcEdge(interactorInfo);
+        m_wallEntity->updateWall(*m_arcEdge, MHDrawHouseManager::getDrawWallHeight(), MHDrawHouseManager::getDrawWallWidth(), MHDrawHouseManager::getDrawWallPositionType());
+        m_wallEntity->generateWall2D();
+        m_wallEntity->show();
     }
     return true;
+}
+
+void MHDrawWallArc::computeArcEdge(const MHCore::MHInteractorInfo& interactorInfo) {
+    MHGeometry::MHVertex current = {interactorInfo.worldX, interactorInfo.worldY, 0};
+    auto source = m_lineEdge->getSourceVertex();
+    auto target = m_lineEdge->getTargetVertex();
+    auto lineEdgeNormal = MHGeometry::MHToolKit::getLineNormal(source, target);
+    auto normalEndVertex = *m_midVertex + lineEdgeNormal * 100;
+    current = MHGeometry::MHToolKit::projectToLine(current, *m_midVertex, normalEndVertex);
+    MHGeometry::MHVertex arcCenter, arcSource, arcTarget;
+    double radius = (source - target).length() / 2.0;
+    MHGeometry::MHVertex direction = *m_midVertex - current;
+    if (direction.length() < 1e-6) {
+        return;
+    }
+    if (MHGeometry::MHToolKit::areCollinear(current, source, target, 1e-3)) {
+        if (MHGeometry::MHToolKit::isParallelToYAxis(source, target)) {
+            arcCenter = *m_midVertex;
+            arcSource = source.y > target.y ? source : target;
+            arcTarget = source.y > target.y ? target : source;
+        } else {
+            arcCenter = *m_midVertex;
+            arcSource = source.x > target.x ? source : target;
+            arcTarget = source.x > target.x ? target : source;
+        }
+    } else {
+        direction = direction.normalize();
+        auto distanceToCurrent = (*m_midVertex - current).length();
+        auto distanceToSource = (*m_midVertex - source).length();
+        if (std::abs(distanceToCurrent - distanceToSource) > 1e-6) {
+            radius = (distanceToCurrent * distanceToCurrent + distanceToSource * distanceToSource) / (2 * distanceToCurrent);
+        }
+        bool isLeft = MHGeometry::MHToolKit::isLeftTurn(*m_midVertex, current, source);
+        if (std::abs(radius - distanceToCurrent) < 1e-6) {
+            arcCenter = *m_midVertex;
+        } else {
+            arcCenter = current + direction * radius;
+        }
+        if (isLeft) {
+            arcSource = target;
+            arcTarget = source;
+        } else {
+            arcSource = source;
+            arcTarget = target;
+        }
+    }
+    auto sourceAangle = MHGeometry::MHToolKit::angleToXAxis(arcCenter, arcSource);
+    auto targetAngle = MHGeometry::MHToolKit::angleToXAxis(arcCenter, arcTarget);
+    MHGeometry::MHVertex normal = {0, 0, 1};
+    m_arcEdge = std::make_unique<MHGeometry::MHArcEdge>(arcCenter, normal, radius, sourceAangle, targetAngle);
 }
 
 }  // namespace MHHouse

@@ -22,6 +22,7 @@ double MHDrawHouseManager::m_drawCylinderRadius = 325.0;
 MHDrawHouseManager::MHDrawHouseManager() {
     m_drawWallRectangle.reset(new MHDrawWallRectangle());
     m_drawWallLine.reset(new MHDrawWallLine());
+    m_drawWallArc.reset(new MHDrawWallArc());
     m_drawPillar.reset(new MHDrawPillar());
     m_drawCylinder.reset(new MHDrawCylinder());
 }
@@ -39,6 +40,9 @@ void MHDrawHouseManager::beginDraw(MHDrawType drawType) {
             break;
         case MHDrawType::WALL_LINE:
             m_drawWallLine->beginDraw();
+            break;
+        case MHDrawType::WALL_ARC:
+            m_drawWallArc->beginDraw();
             break;
         case MHDrawType::PILLAR:
             m_drawPillar->beginDraw();
@@ -59,6 +63,9 @@ void MHDrawHouseManager::endDraw() {
             break;
         case MHDrawType::WALL_LINE:
             m_drawWallLine->endDraw();
+            break;
+        case MHDrawType::WALL_ARC:
+            m_drawWallArc->endDraw();
             break;
         case MHDrawType::PILLAR:
             m_drawPillar->endDraw();

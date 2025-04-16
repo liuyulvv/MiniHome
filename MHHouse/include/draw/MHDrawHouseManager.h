@@ -17,6 +17,7 @@
 #include "MHDrawBase.h"
 #include "MHDrawCylinder.h"
 #include "MHDrawPillar.h"
+#include "MHDrawWallArc.h"
 #include "MHDrawWallLine.h"
 #include "MHDrawWallRectangle.h"
 #include "MHWallEntity.h"
@@ -55,6 +56,7 @@ private:
     MHDrawType m_drawType = MHDrawType::NONE;
     std::shared_ptr<MHDrawWallLine> m_drawWallLine = nullptr;
     std::shared_ptr<MHDrawWallRectangle> m_drawWallRectangle = nullptr;
+    std::shared_ptr<MHDrawWallArc> m_drawWallArc = nullptr;
     std::shared_ptr<MHDrawPillar> m_drawPillar = nullptr;
     std::shared_ptr<MHDrawCylinder> m_drawCylinder = nullptr;
 

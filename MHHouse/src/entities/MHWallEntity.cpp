@@ -77,6 +77,35 @@ void MHWallEntity::generateWall2D() {
         m_edges.push_back(std::make_unique<MHGeometry::MHLineEdge>(outerTargetVertex, innerTargetVertex));
         m_edges.push_back(std::make_unique<MHGeometry::MHLineEdge>(innerTargetVertex, innerSourceVertex));
     } else {
+        auto arcEdge = static_cast<MHGeometry::MHArcEdge*>(m_midEdge.get());
+        if (arcEdge->getRadius() < m_width / 2) {
+            return;
+        }
+        m_edges.clear();
+        switch (m_positionType) {
+            case MHWallPositionType::LEFT: {
+                break;
+            }
+            case MHWallPositionType::MID: {
+                auto innerEdge = std::make_unique<MHGeometry::MHArcEdge>(arcEdge->getCenter(), arcEdge->getNormal(), arcEdge->getRadius() - m_width / 2, arcEdge->getSourceAngle(), arcEdge->getTargetAngle());
+                auto outerEdge = std::make_unique<MHGeometry::MHArcEdge>(arcEdge->getCenter(), arcEdge->getNormal(), arcEdge->getRadius() + m_width / 2, arcEdge->getSourceAngle(), arcEdge->getTargetAngle());
+                innerEdge->reversed();
+                auto outerSourceVertex = outerEdge->getSourceVertex();
+                auto outerTargetVertex = outerEdge->getTargetVertex();
+                auto innerSourceVertex = innerEdge->getSourceVertex();
+                auto innerTargetVertex = innerEdge->getTargetVertex();
+                auto lineEdge1 = std::make_unique<MHGeometry::MHLineEdge>(outerTargetVertex, innerSourceVertex);
+                auto lineEdge2 = std::make_unique<MHGeometry::MHLineEdge>(innerTargetVertex, outerSourceVertex);
+                m_edges.push_back(std::move(outerEdge));
+                m_edges.push_back(std::move(lineEdge1));
+                m_edges.push_back(std::move(innerEdge));
+                m_edges.push_back(std::move(lineEdge2));
+                break;
+            }
+            case MHWallPositionType::RIGHT: {
+                break;
+            }
+        }
     }
     MHGeometry::MHPlaneFace baseFace;
     MHGeometry::MHWire baseWire;

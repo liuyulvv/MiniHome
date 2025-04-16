@@ -35,6 +35,9 @@ public:
     virtual bool onMouseMove(const MHCore::MHInteractorInfo& interactorInfo) override;
 
 private:
+    void computeArcEdge(const MHCore::MHInteractorInfo& interactorInfo);
+
+private:
     enum class DrawState {
         END,
         FIRST,
