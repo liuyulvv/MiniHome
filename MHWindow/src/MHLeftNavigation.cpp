@@ -16,7 +16,6 @@ namespace MHWindow {
 
 MHLeftNavigation::MHLeftNavigation(QWidget *parent) : QWidget(parent), ui(new Ui::MHLeftNavigation) {
     ui->setupUi(this);
-    ui->arcButton->setEnabled(false);
     m_gridLayout = new QGridLayout(this);
     m_widgets.push_back(ui->lineButton);
     m_widgets.push_back(ui->rectangleButton);

@@ -8,6 +8,7 @@
 
 #include <vector>
 
+#include "MHArcEdge.h"
 #include "MHHouseEntity.h"
 #include "MHLineEdge.h"
 #include "MHPlaneFace.h"
@@ -31,6 +32,7 @@ public:
 
 public:
     void updateWall(const MHGeometry::MHLineEdge& midEdge, double height, double width, MHWallPositionType positionType);
+    void updateWall(const MHGeometry::MHArcEdge& midEdge, double height, double width, MHWallPositionType positionType);
     void generateWall2D();
     void generateWall3D();
     std::vector<std::unique_ptr<MHGeometry::MHEdge>> getEdges();

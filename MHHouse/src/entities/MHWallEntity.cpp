@@ -28,6 +28,13 @@ void MHWallEntity::updateWall(const MHGeometry::MHLineEdge& midEdge, double heig
     m_positionType = positionType;
 }
 
+void MHWallEntity::updateWall(const MHGeometry::MHArcEdge& midEdge, double height, double width, MHWallPositionType positionType) {
+    m_midEdge = std::make_unique<MHGeometry::MHArcEdge>(midEdge);
+    m_height = height;
+    m_width = width;
+    m_positionType = positionType;
+}
+
 void MHWallEntity::generateWall2D() {
     if (!m_midEdge) {
         return;
