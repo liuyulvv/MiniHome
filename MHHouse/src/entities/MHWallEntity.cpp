@@ -6,6 +6,9 @@
 
 #include "MHWallEntity.h"
 
+#include <vtkImageReader2.h>
+#include <vtkImageReader2Factory.h>
+
 #include "MHEntityManager.h"
 #include "MHFaceToolKit.h"
 #include "MHPlaneFace.h"
@@ -144,15 +147,11 @@ std::unique_ptr<MHGeometry::MHPlaneFace> MHWallEntity::getBaseFace() const {
 }
 
 void MHWallEntity::createDefaultTexture() {
-    vtkSmartPointer<vtkImageData> imageData = vtkSmartPointer<vtkImageData>::New();
-    imageData->SetDimensions(1, 1, 1);
-    imageData->AllocateScalars(VTK_UNSIGNED_CHAR, 3);
-    unsigned char* pixel = static_cast<unsigned char*>(imageData->GetScalarPointer(0, 0, 0));
-    pixel[0] = 248;
-    pixel[1] = 248;
-    pixel[2] = 255;
-    m_texture = vtkSmartPointer<vtkTexture>::New();
-    m_texture->SetInputData(imageData);
+    vtkSmartPointer<vtkImageReader2Factory> readerFactory = vtkSmartPointer<vtkImageReader2Factory>::New();
+    vtkSmartPointer<vtkImageReader2> textureReader = readerFactory->CreateImageReader2("textures/default_wall.jpeg");
+    textureReader->SetFileName("textures/default_wall.jpeg");
+    textureReader->Update();
+    m_texture->SetInputConnection(textureReader->GetOutputPort());
     m_texture->InterpolateOn();
 }
 

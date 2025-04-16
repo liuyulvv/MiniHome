@@ -6,6 +6,9 @@
 
 #include "MHSpaceEntity.h"
 
+#include <vtkImageReader2.h>
+#include <vtkImageReader2Factory.h>
+
 namespace MHHouse {
 
 MHSpaceEntity::MHSpaceEntity(vtkSmartPointer<MHCore::MHRenderer> renderer) : MHHouseEntity(renderer) {
@@ -14,15 +17,11 @@ MHSpaceEntity::MHSpaceEntity(vtkSmartPointer<MHCore::MHRenderer> renderer) : MHH
 }
 
 void MHSpaceEntity::createDefaultTexture() {
-    vtkSmartPointer<vtkImageData> imageData = vtkSmartPointer<vtkImageData>::New();
-    imageData->SetDimensions(1, 1, 1);
-    imageData->AllocateScalars(VTK_UNSIGNED_CHAR, 3);
-    unsigned char* pixel = static_cast<unsigned char*>(imageData->GetScalarPointer(0, 0, 0));
-    pixel[0] = 245;
-    pixel[1] = 245;
-    pixel[2] = 245;
-    m_texture = vtkSmartPointer<vtkTexture>::New();
-    m_texture->SetInputData(imageData);
+    vtkSmartPointer<vtkImageReader2Factory> readerFactory = vtkSmartPointer<vtkImageReader2Factory>::New();
+    vtkSmartPointer<vtkImageReader2> textureReader = readerFactory->CreateImageReader2("textures/default_space.jpeg");
+    textureReader->SetFileName("textures/default_space.jpeg");
+    textureReader->Update();
+    m_texture->SetInputConnection(textureReader->GetOutputPort());
     m_texture->InterpolateOn();
 }
 
