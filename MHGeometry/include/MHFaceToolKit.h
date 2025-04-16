@@ -20,5 +20,6 @@ MH_GEOMETRY_API MHPlaneFace toMHPlaneFace(const TopoDS_Face& topoDSFace, const M
 MH_GEOMETRY_API std::vector<MHPlaneFace> makeArrangement(const std::vector<std::unique_ptr<MHEdge>>& edges);
 MH_GEOMETRY_API bool isIntersect(const MHPlaneFace& face1, const MHPlaneFace& face2);
 MH_GEOMETRY_API bool isIntersect(const TopoDS_Face& face1, const TopoDS_Face& face2);
+MH_GEOMETRY_API void getFaceSize(const TopoDS_Face& face, double& width, double& height);
 
 }  // namespace MHGeometry::MHToolKit

@@ -12,6 +12,7 @@ namespace MHGeometry {
 
 enum class MHFaceType {
     PLANE_FACE,
+    CYLINDRICAL_FACE,
 };
 
 class MH_GEOMETRY_API MHFace : public MHTopoBase {

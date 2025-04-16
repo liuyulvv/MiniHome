@@ -7,9 +7,12 @@
 #include "MHFaceToolKit.h"
 
 #include <BOPAlgo_Tools.hxx>
+#include <BRepAdaptor_Surface.hxx>
 #include <BRepAlgoAPI_Common.hxx>
+#include <BRepBndLib.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRep_Builder.hxx>
+#include <Geom_CylindricalSurface.hxx>
 #include <Geom_Plane.hxx>
 #include <ShapeFix_Face.hxx>
 #include <Standard_Type.hxx>
@@ -62,6 +65,8 @@ MH_GEOMETRY_API MHFaceType getFaceType(const TopoDS_Face& topoDSFace) {
     }
     if (surface->DynamicType() == STANDARD_TYPE(Geom_Plane)) {
         return MHFaceType::PLANE_FACE;
+    } else if (surface->DynamicType() == STANDARD_TYPE(Geom_CylindricalSurface)) {
+        return MHFaceType::CYLINDRICAL_FACE;
     } else {
         throw std::runtime_error("Unsupported face type.");
     }
@@ -158,6 +163,61 @@ MH_GEOMETRY_API bool isIntersect(const TopoDS_Face& face1, const TopoDS_Face& fa
         }
     }
     return false;
+}
+
+MH_GEOMETRY_API void getFaceSize(const TopoDS_Face& face, double& width, double& height) {
+    Bnd_Box boundingBox;
+    BRepBndLib::Add(face, boundingBox);
+
+    double xmin, ymin, zmin, xmax, ymax, zmax;
+    boundingBox.Get(xmin, ymin, zmin, xmax, ymax, zmax);
+
+    BRepAdaptor_Surface surface(face);
+    Handle(Geom_Surface) geomSurface = surface.Surface().Surface();
+
+    if (geomSurface->DynamicType() == STANDARD_TYPE(Geom_Plane)) {
+        gp_Pln plane = surface.Plane();
+        gp_Dir normal = plane.Axis().Direction();
+
+        if (fabs(normal.X()) > fabs(normal.Y()) && fabs(normal.X()) > fabs(normal.Z())) {
+            width = ymax - ymin;
+            height = zmax - zmin;
+        } else if (fabs(normal.Y()) > fabs(normal.X()) && fabs(normal.Y()) > fabs(normal.Z())) {
+            width = xmax - xmin;
+            height = zmax - zmin;
+        } else {
+            width = xmax - xmin;
+            height = ymax - ymin;
+        }
+    } else if (geomSurface->DynamicType() == STANDARD_TYPE(Geom_CylindricalSurface)) {
+        Handle(Geom_CylindricalSurface) cylinderSurface = Handle(Geom_CylindricalSurface)::DownCast(geomSurface);
+        double radius = cylinderSurface->Radius();
+        gp_Ax3 axis = cylinderSurface->Position();
+        gp_Dir axisDir = axis.Direction();
+        if (fabs(axisDir.X()) > fabs(axisDir.Y()) && fabs(axisDir.X()) > fabs(axisDir.Z())) {
+            height = xmax - xmin;
+        } else if (fabs(axisDir.Y()) > fabs(axisDir.X()) && fabs(axisDir.Y()) > fabs(axisDir.Z())) {
+            height = ymax - ymin;
+        } else {
+            height = zmax - zmin;
+        }
+
+        double uMin, uMax, vMin, vMax;
+        uMin = surface.FirstUParameter();
+        uMax = surface.LastUParameter();
+        vMin = surface.FirstVParameter();
+        vMax = surface.LastVParameter();
+        double angleRange = uMax - uMin;
+        width = angleRange * radius;
+        if (fabs(angleRange - 2.0 * M_PI) < 1e-6) {
+            width = 2.0 * M_PI * radius;
+        }
+    } else {
+        double dims[3] = {xmax - xmin, ymax - ymin, zmax - zmin};
+        std::sort(dims, dims + 3);
+        width = dims[1];
+        height = dims[2];
+    }
 }
 
 }  // namespace MHGeometry::MHToolKit
