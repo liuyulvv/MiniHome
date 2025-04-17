@@ -11,6 +11,7 @@
 #include <BRepAlgoAPI_Common.hxx>
 #include <BRepBndLib.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
+#include <BRepPrimAPI_MakePrism.hxx>
 #include <BRep_Builder.hxx>
 #include <Geom_CylindricalSurface.hxx>
 #include <Geom_Plane.hxx>
@@ -43,6 +44,22 @@ MH_GEOMETRY_API MHPlaneFace edgeToFace(const MHLineEdge& lineEdge, const MHVerte
     MHPlaneFace planeFace;
     planeFace.addWire(wire);
     return planeFace;
+}
+
+MH_GEOMETRY_API std::vector<TopoDS_Face> makePrism(const MHPlaneFace& face, const MHVertex& direction, double length) {
+    auto topoDSFace = toTopoDSFace(face);
+    BRepPrimAPI_MakePrism prismMaker(topoDSFace, gp_Vec(direction.x, direction.y, direction.z) * length);
+    prismMaker.Build();
+    auto prism = prismMaker.Shape();
+    std::vector<TopoDS_Face> shapes;
+    for (TopExp_Explorer explorer(prism, TopAbs_FACE); explorer.More(); explorer.Next()) {
+        const TopoDS_Face& face = TopoDS::Face(explorer.Current());
+        if (face.IsNull()) {
+            continue;
+        }
+        shapes.push_back(face);
+    }
+    return shapes;
 }
 
 MH_GEOMETRY_API TopoDS_Face toTopoDSFace(const MHPlaneFace& planeFace) {

@@ -10,7 +10,7 @@
 
 namespace MHHouse {
 
-MHWallPositionType MHDrawHouseManager::m_drawWallPositionType = MHWallPositionType::MID;
+MHWallPositionType MHDrawHouseManager::m_drawWallPositionType = MHWallPositionType::RIGHT;
 double MHDrawHouseManager::m_drawWallHeight = 2800.0;
 double MHDrawHouseManager::m_drawWallWidth = 240.0;
 double MHDrawHouseManager::m_drawPillarHeight = 2800.0;

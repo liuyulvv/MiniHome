@@ -14,6 +14,7 @@
 namespace MHGeometry::MHToolKit {
 
 MH_GEOMETRY_API MHPlaneFace edgeToFace(const MHLineEdge& lineEdge, const MHVertex& direction, double length);
+MH_GEOMETRY_API std::vector<TopoDS_Face> makePrism(const MHPlaneFace& face, const MHVertex& direction, double length);
 MH_GEOMETRY_API TopoDS_Face toTopoDSFace(const MHPlaneFace& planeFace);
 MH_GEOMETRY_API MHFaceType getFaceType(const TopoDS_Face& topoDSFace);
 MH_GEOMETRY_API MHPlaneFace toMHPlaneFace(const TopoDS_Face& topoDSFace, const MHVertex& normal);
