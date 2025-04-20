@@ -21,54 +21,54 @@ MHWallEntity::MHWallEntity(vtkSmartPointer<MHCore::MHRenderer> renderer) : MHHou
     m_actor->SetTexture(m_texture);
 }
 
-void MHWallEntity::updateWall(const MHGeometry::MHLineEdge& midEdge, double height, double width, MHWallPositionType positionType) {
-    m_midEdge = std::make_unique<MHGeometry::MHLineEdge>(midEdge);
+void MHWallEntity::updateWall(const MHGeometry::MHLineEdge& positionEdge, double height, double width, MHWallPositionType positionType) {
+    m_positionEdge = std::make_unique<MHGeometry::MHLineEdge>(positionEdge);
     m_height = height;
     m_width = width;
     m_positionType = positionType;
 }
 
-void MHWallEntity::updateWall(const MHGeometry::MHArcEdge& midEdge, double height, double width, MHWallPositionType positionType) {
-    m_midEdge = std::make_unique<MHGeometry::MHArcEdge>(midEdge);
+void MHWallEntity::updateWall(const MHGeometry::MHArcEdge& positionEdge, double height, double width, MHWallPositionType positionType) {
+    m_positionEdge = std::make_unique<MHGeometry::MHArcEdge>(positionEdge);
     m_height = height;
     m_width = width;
     m_positionType = positionType;
 }
 
 void MHWallEntity::generateWall2D() {
-    if (!m_midEdge) {
+    if (!m_positionEdge) {
         return;
     }
-    auto edgeType = m_midEdge->getEdgeType();
+    auto edgeType = m_positionEdge->getEdgeType();
     if (edgeType == MHGeometry::MHEdgeType::LINE_EDGE) {
-        auto lineEdge = static_cast<MHGeometry::MHLineEdge*>(m_midEdge.get());
+        auto lineEdge = static_cast<MHGeometry::MHLineEdge*>(m_positionEdge.get());
         if (lineEdge->length() < 1e-6) {
             return;
         }
-        auto edgeDirection = (m_midEdge->getTargetVertex() - m_midEdge->getSourceVertex()).normalize();
+        auto edgeDirection = (m_positionEdge->getTargetVertex() - m_positionEdge->getSourceVertex()).normalize();
         auto edgeNormal = edgeDirection.cross(MHGeometry::MHVertex(0, 0, 1)).normalize();
         m_edges.clear();
         MHGeometry::MHVertex innerSourceVertex, innerTargetVertex, outerSourceVertex, outerTargetVertex;
         switch (m_positionType) {
             case MHWallPositionType::LEFT: {
-                innerSourceVertex = m_midEdge->getSourceVertex() - edgeNormal * m_width;
-                innerTargetVertex = m_midEdge->getTargetVertex() - edgeNormal * m_width;
-                outerSourceVertex = m_midEdge->getSourceVertex();
-                outerTargetVertex = m_midEdge->getTargetVertex();
+                innerSourceVertex = m_positionEdge->getSourceVertex() - edgeNormal * m_width;
+                innerTargetVertex = m_positionEdge->getTargetVertex() - edgeNormal * m_width;
+                outerSourceVertex = m_positionEdge->getSourceVertex();
+                outerTargetVertex = m_positionEdge->getTargetVertex();
                 break;
             }
             case MHWallPositionType::MID: {
-                innerSourceVertex = m_midEdge->getSourceVertex() - edgeNormal * m_width / 2;
-                innerTargetVertex = m_midEdge->getTargetVertex() - edgeNormal * m_width / 2;
-                outerSourceVertex = m_midEdge->getSourceVertex() + edgeNormal * m_width / 2;
-                outerTargetVertex = m_midEdge->getTargetVertex() + edgeNormal * m_width / 2;
+                innerSourceVertex = m_positionEdge->getSourceVertex() - edgeNormal * m_width / 2;
+                innerTargetVertex = m_positionEdge->getTargetVertex() - edgeNormal * m_width / 2;
+                outerSourceVertex = m_positionEdge->getSourceVertex() + edgeNormal * m_width / 2;
+                outerTargetVertex = m_positionEdge->getTargetVertex() + edgeNormal * m_width / 2;
                 break;
             }
             case MHWallPositionType::RIGHT: {
-                innerSourceVertex = m_midEdge->getSourceVertex();
-                innerTargetVertex = m_midEdge->getTargetVertex();
-                outerSourceVertex = m_midEdge->getSourceVertex() + edgeNormal * m_width;
-                outerTargetVertex = m_midEdge->getTargetVertex() + edgeNormal * m_width;
+                innerSourceVertex = m_positionEdge->getSourceVertex();
+                innerTargetVertex = m_positionEdge->getTargetVertex();
+                outerSourceVertex = m_positionEdge->getSourceVertex() + edgeNormal * m_width;
+                outerTargetVertex = m_positionEdge->getTargetVertex() + edgeNormal * m_width;
                 break;
             }
         }
@@ -77,7 +77,7 @@ void MHWallEntity::generateWall2D() {
         m_edges.push_back(std::make_unique<MHGeometry::MHLineEdge>(outerTargetVertex, innerTargetVertex));
         m_edges.push_back(std::make_unique<MHGeometry::MHLineEdge>(innerTargetVertex, innerSourceVertex));
     } else {
-        auto arcEdge = static_cast<MHGeometry::MHArcEdge*>(m_midEdge.get());
+        auto arcEdge = static_cast<MHGeometry::MHArcEdge*>(m_positionEdge.get());
         if (m_positionType == MHWallPositionType::MID && arcEdge->getRadius() < m_width / 2) {
             return;
         }
@@ -161,6 +161,7 @@ void MHWallEntity::generateWall2D() {
     }
     m_wall2D->setTopo(MHGeometry::MHToolKit::toTopoDSFace(baseFace));
     m_wall2D->updateTopo();
+    m_wall2D->setLayerMask(MHCore::MHEntityLayerMask::LAYER_2D);
 }
 
 void MHWallEntity::generateWall3D() {
@@ -174,6 +175,7 @@ void MHWallEntity::generateWall3D() {
         entity->updateTopo();
         entity->setTexture(m_texture);
         addChild(entity);
+        entity->setLayerMask(MHCore::MHEntityLayerMask::LAYER_3D);
     }
 }
 
@@ -201,6 +203,39 @@ std::unique_ptr<MHGeometry::MHPlaneFace> MHWallEntity::getBaseFace() const {
         auto clone = m_baseFace->clone();
         auto face = dynamic_cast<MHGeometry::MHPlaneFace*>(clone.release());
         return std::unique_ptr<MHGeometry::MHPlaneFace>(face);
+    }
+    return nullptr;
+}
+
+std::unique_ptr<MHGeometry::MHEdge> MHWallEntity::getMidEdge() const {
+    if (m_positionEdge) {
+        auto clone = m_positionEdge->clone();
+        auto edge = dynamic_cast<MHGeometry::MHEdge*>(clone.release());
+        auto result = std::unique_ptr<MHGeometry::MHEdge>(edge);
+        auto edgeType = result->getEdgeType();
+        if (edgeType == MHGeometry::MHEdgeType::LINE_EDGE) {
+            auto edgeDirection = (m_positionEdge->getTargetVertex() - m_positionEdge->getSourceVertex()).normalize();
+            auto edgeNormal = edgeDirection.cross(MHGeometry::MHVertex(0, 0, 1)).normalize();
+            if (m_positionType == MHWallPositionType::LEFT) {
+                vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+                transform->Identity();
+                transform->Translate(-m_width / 2 * edgeNormal.x, -m_width / 2 * edgeNormal.y, -m_width / 2 * edgeNormal.z);
+                result->applyTransform(transform);
+            } else if (m_positionType == MHWallPositionType::RIGHT) {
+                vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+                transform->Identity();
+                transform->Translate(m_width / 2 * edgeNormal.x, m_width / 2 * edgeNormal.y, m_width / 2 * edgeNormal.z);
+                result->applyTransform(transform);
+            }
+        } else {
+            auto arcEdge = static_cast<MHGeometry::MHArcEdge*>(m_positionEdge.get());
+            if (m_positionType == MHWallPositionType::LEFT) {
+                result = std::make_unique<MHGeometry::MHArcEdge>(arcEdge->getCenter(), arcEdge->getNormal(), arcEdge->getRadius() + m_width / 2, arcEdge->getSourceAngle(), arcEdge->getTargetAngle());
+            } else if (m_positionType == MHWallPositionType::RIGHT) {
+                result = std::make_unique<MHGeometry::MHArcEdge>(arcEdge->getCenter(), arcEdge->getNormal(), arcEdge->getRadius() - m_width / 2, arcEdge->getSourceAngle(), arcEdge->getTargetAngle());
+            }
+        }
+        return result;
     }
     return nullptr;
 }

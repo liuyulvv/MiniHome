@@ -31,18 +31,19 @@ public:
     MHWallEntity& operator=(MHWallEntity&& entity) = delete;
 
 public:
-    void updateWall(const MHGeometry::MHLineEdge& midEdge, double height, double width, MHWallPositionType positionType);
-    void updateWall(const MHGeometry::MHArcEdge& midEdge, double height, double width, MHWallPositionType positionType);
+    void updateWall(const MHGeometry::MHLineEdge& positionEdge, double height, double width, MHWallPositionType positionType);
+    void updateWall(const MHGeometry::MHArcEdge& positionEdge, double height, double width, MHWallPositionType positionType);
     void generateWall2D();
     void generateWall3D();
     std::vector<std::unique_ptr<MHGeometry::MHEdge>> getEdges();
     std::unique_ptr<MHGeometry::MHPlaneFace> getBaseFace() const;
+    std::unique_ptr<MHGeometry::MHEdge> getMidEdge() const;
 
 private:
     void createDefaultTexture();
 
 private:
-    std::unique_ptr<MHGeometry::MHEdge> m_midEdge = nullptr;
+    std::unique_ptr<MHGeometry::MHEdge> m_positionEdge = nullptr;
     double m_height = 2800.0;
     double m_width = 240.0;
     MHWallPositionType m_positionType = MHWallPositionType::LEFT;
