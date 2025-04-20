@@ -74,6 +74,9 @@ MH_GEOMETRY_API bool isLeftTurn(const MHVertex& vertex1, const MHVertex& vertex2
 MH_GEOMETRY_API double angleToXAxis(const MHVertex& vertex1, const MHVertex& vertex2) {
     MHVertex v = vertex2 - vertex1;
     auto angle = std::atan2(v.y, v.x);
+    if (angle < 0) {
+        angle += 2 * std::numbers::pi;
+    }
     return radianToAngle(angle);
 }
 
