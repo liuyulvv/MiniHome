@@ -18,6 +18,9 @@ double MHDrawHouseManager::m_drawPillarLength = 650.0;
 double MHDrawHouseManager::m_drawPillarWidth = 650.0;
 double MHDrawHouseManager::m_drawCylinderHeight = 2800.0;
 double MHDrawHouseManager::m_drawCylinderRadius = 325.0;
+double MHDrawHouseManager::m_drawHoleHeight = 2000.0;
+double MHDrawHouseManager::m_drawHoleLength = 1200.0;
+double MHDrawHouseManager::m_drawHoleWidth = 240.0;
 
 MHDrawHouseManager::MHDrawHouseManager() {
     m_drawWallRectangle.reset(new MHDrawWallRectangle());
@@ -25,6 +28,7 @@ MHDrawHouseManager::MHDrawHouseManager() {
     m_drawWallArc.reset(new MHDrawWallArc());
     m_drawPillar.reset(new MHDrawPillar());
     m_drawCylinder.reset(new MHDrawCylinder());
+    m_drawHole.reset(new MHDrawHole());
 }
 
 void MHDrawHouseManager::beginDraw(MHDrawType drawType) {
@@ -50,6 +54,9 @@ void MHDrawHouseManager::beginDraw(MHDrawType drawType) {
         case MHDrawType::CYLINDER:
             m_drawCylinder->beginDraw();
             break;
+        case MHDrawType::HOLE:
+            m_drawHole->beginDraw();
+            break;
         default:
             m_drawType = MHDrawType::NONE;
             break;
@@ -72,6 +79,9 @@ void MHDrawHouseManager::endDraw() {
             break;
         case MHDrawType::CYLINDER:
             m_drawCylinder->endDraw();
+            break;
+        case MHDrawType::HOLE:
+            m_drawHole->endDraw();
             break;
         default:
             break;
@@ -109,6 +119,18 @@ double MHDrawHouseManager::getDrawCylinderHeight() {
 
 double MHDrawHouseManager::getDrawCylinderRadius() {
     return m_drawCylinderRadius;
+}
+
+double MHDrawHouseManager::getDrawHoleHeight() {
+    return m_drawHoleHeight;
+}
+
+double MHDrawHouseManager::getDrawHoleLength() {
+    return m_drawHoleLength;
+}
+
+double MHDrawHouseManager::getDrawHoleWidth() {
+    return m_drawHoleWidth;
 }
 
 }  // namespace MHHouse

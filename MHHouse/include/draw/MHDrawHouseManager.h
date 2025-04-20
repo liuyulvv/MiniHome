@@ -16,6 +16,7 @@
 
 #include "MHDrawBase.h"
 #include "MHDrawCylinder.h"
+#include "MHDrawHole.h"
 #include "MHDrawPillar.h"
 #include "MHDrawWallArc.h"
 #include "MHDrawWallLine.h"
@@ -51,6 +52,9 @@ public:
     static double getDrawPillarWidth();
     static double getDrawCylinderHeight();
     static double getDrawCylinderRadius();
+    static double getDrawHoleHeight();
+    static double getDrawHoleLength();
+    static double getDrawHoleWidth();
 
 private:
     MHDrawType m_drawType = MHDrawType::NONE;
@@ -59,6 +63,7 @@ private:
     std::shared_ptr<MHDrawWallArc> m_drawWallArc = nullptr;
     std::shared_ptr<MHDrawPillar> m_drawPillar = nullptr;
     std::shared_ptr<MHDrawCylinder> m_drawCylinder = nullptr;
+    std::shared_ptr<MHDrawHole> m_drawHole = nullptr;
 
 private:
     static MHWallPositionType m_drawWallPositionType;
@@ -69,6 +74,9 @@ private:
     static double m_drawPillarWidth;
     static double m_drawCylinderHeight;
     static double m_drawCylinderRadius;
+    static double m_drawHoleHeight;
+    static double m_drawHoleLength;
+    static double m_drawHoleWidth;
 };
 
 }  // namespace MHHouse
