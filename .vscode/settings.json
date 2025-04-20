@@ -5,6 +5,7 @@
         "AUTORCC",
         "AUTOUIC",
         "interactor",
+        "mesher",
         "MHUI",
         "MHVTK",
         "MINIHOME",
