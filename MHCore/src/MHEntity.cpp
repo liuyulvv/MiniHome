@@ -120,6 +120,10 @@ vtkSmartPointer<vtkTransform> MHEntity::getLocaltransform() const {
     return transform;
 }
 
+std::weak_ptr<MHEntity> MHEntity::getParent() const {
+    return m_parent;
+}
+
 std::vector<std::shared_ptr<MHEntity>> MHEntity::getChildren() const {
     return m_children;
 }
@@ -134,6 +138,22 @@ void MHEntity::addChild(std::shared_ptr<MHEntity> child) {
 void MHEntity::setTexture(vtkSmartPointer<vtkTexture> texture) {
     m_texture = texture;
     m_actor->SetTexture(m_texture);
+}
+
+void MHEntity::enableLayerMask(MHEntityLayerMask layerMask) {
+    m_layerMask = static_cast<MHEntityLayerMask>(static_cast<unsigned int>(m_layerMask) | static_cast<unsigned int>(layerMask));
+}
+
+void MHEntity::disableLayerMask(MHEntityLayerMask layerMask) {
+    m_layerMask = static_cast<MHEntityLayerMask>(static_cast<unsigned int>(m_layerMask) & ~static_cast<unsigned int>(layerMask));
+}
+
+void MHEntity::setLayerMask(MHEntityLayerMask layerMask) {
+    m_layerMask = layerMask;
+}
+
+MHEntityLayerMask MHEntity::getLayerMask() const {
+    return m_layerMask;
 }
 
 void MHEntity::createDefaultTexture() {

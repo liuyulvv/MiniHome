@@ -7,6 +7,8 @@
 #include "MHMainVTKInteractorStyle.h"
 
 #include <vtkMath.h>
+#include <vtkPoints.h>
+#include <vtkProp3DCollection.h>
 #include <vtkRenderWindow.h>
 
 #include "MHActor.h"
@@ -55,9 +57,11 @@ void MHMainVTKInteractorStyle::init(vtkRenderWindowInteractor* interactor) {
     if (m_currentInteractorType == MHInteractorType::Top2D) {
         mainRender->SetActiveCamera(m_camera2D);
         hoverRender->SetActiveCamera(m_camera2D);
+        m_layerMask = MHEntityLayerMask::LAYER_2D;
     } else {
         mainRender->SetActiveCamera(m_camera3D);
         hoverRender->SetActiveCamera(m_camera3D);
+        m_layerMask = MHEntityLayerMask::LAYER_3D;
     }
     m_cellPicker = vtkSmartPointer<vtkCellPicker>::New();
 }
@@ -101,14 +105,55 @@ std::shared_ptr<MHEntity> MHMainVTKInteractorStyle::pickEntity() {
     auto clickPos = m_interactor->GetEventPosition();
     auto mainRender = MHRendererManager::getInstance().getMainRenderer();
     m_cellPicker->Pick(clickPos[0], clickPos[1], 0, mainRender);
-    auto pickedActor = m_cellPicker->GetActor();
-    if (pickedActor) {
-        auto actor = dynamic_cast<MHActor*>(pickedActor);
-        if (actor) {
-            return actor->getEntity();
+    auto pickedProps = m_cellPicker->GetProp3Ds();
+    auto pickedPositions = m_cellPicker->GetPickedPositions();
+    pickedProps->InitTraversal();
+    auto propSize = pickedProps->GetNumberOfItems();
+    auto positionSize = pickedPositions->GetNumberOfPoints();
+    auto cameraPosition = mainRender->GetActiveCamera()->GetPosition();
+    double minDistance = std::numeric_limits<double>::max();
+    std::shared_ptr<MHEntity> pickedEntity = nullptr;
+    for (int i = 0; i < propSize && i < positionSize; ++i) {
+        auto pickedProp = pickedProps->GetNextProp3D();
+        auto pickedActor = dynamic_cast<MHActor*>(pickedProp);
+        if (pickedActor) {
+            auto pickedPosition = pickedPositions->GetPoint(i);
+            auto actor = dynamic_cast<MHActor*>(pickedActor);
+            if (actor) {
+                auto entity = actor->getEntity();
+                if (entity && (entity->getLayerMask() & m_layerMask)) {
+                    auto distance = sqrt(pow(pickedPosition[0] - cameraPosition[0], 2) + pow(pickedPosition[1] - cameraPosition[1], 2) + pow(pickedPosition[2] - cameraPosition[2], 2));
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        pickedEntity = entity;
+                    }
+                }
+            }
         }
     }
-    return nullptr;
+    return pickedEntity;
+}
+
+std::vector<std::shared_ptr<MHEntity>> MHMainVTKInteractorStyle::pickEntities() {
+    std::vector<std::shared_ptr<MHEntity>> entities;
+    auto clickPos = m_interactor->GetEventPosition();
+    auto mainRender = MHRendererManager::getInstance().getMainRenderer();
+    m_cellPicker->Pick(clickPos[0], clickPos[1], 0, mainRender);
+    auto pickedActors = m_cellPicker->GetActors();
+    pickedActors->InitTraversal();
+    for (int i = 0; i < pickedActors->GetNumberOfItems(); ++i) {
+        auto pickedActor = pickedActors->GetNextActor();
+        if (pickedActor) {
+            auto actor = dynamic_cast<MHActor*>(pickedActor);
+            if (actor) {
+                auto entity = actor->getEntity();
+                if (entity && (entity->getLayerMask() & m_layerMask)) {
+                    entities.push_back(entity);
+                }
+            }
+        }
+    }
+    return entities;
 }
 
 void MHMainVTKInteractorStyle::fillInteractorInfo() {

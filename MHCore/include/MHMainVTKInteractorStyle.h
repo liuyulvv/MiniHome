@@ -57,6 +57,7 @@ public:
     void insertFilter(std::shared_ptr<MHInteractorFilter> filter);
     void removeFilter(std::shared_ptr<MHInteractorFilter> filter);
     std::shared_ptr<MHEntity> pickEntity();
+    std::vector<std::shared_ptr<MHEntity>> pickEntities();
 
 private:
     void fillInteractorInfo();
@@ -84,6 +85,7 @@ private:
     int m_lastY;
     bool m_leftPressed;
     bool m_rightPressed;
+    MHEntityLayerMask m_layerMask = MHEntityLayerMask::NONE;
     std::shared_ptr<MHEntity> m_hoveredEntity = nullptr;
 };
 

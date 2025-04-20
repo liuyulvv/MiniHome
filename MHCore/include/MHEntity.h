@@ -20,6 +20,17 @@
 
 namespace MHCore {
 
+enum class MHEntityLayerMask : unsigned int {
+    ALL = 0xFFFFFFFF,
+    NONE = 0x00000000,
+    LAYER_2D = 0x00000001,
+    LAYER_3D = 0x00000010,
+};
+
+inline unsigned int operator&(MHEntityLayerMask a, MHEntityLayerMask b) {
+    return static_cast<unsigned int>(a) & static_cast<unsigned int>(b);
+}
+
 class MH_CORE_API MHEntity : public std::enable_shared_from_this<MHEntity> {
 public:
     explicit MHEntity(vtkSmartPointer<MHRenderer> renderer = nullptr);
@@ -45,9 +56,14 @@ public:
     void rotateZ(double angle);
     vtkSmartPointer<vtkTransform> getGlobalTransform() const;
     vtkSmartPointer<vtkTransform> getLocaltransform() const;
+    std::weak_ptr<MHEntity> getParent() const;
     std::vector<std::shared_ptr<MHEntity>> getChildren() const;
     void addChild(std::shared_ptr<MHEntity> child);
     void setTexture(vtkSmartPointer<vtkTexture> texture);
+    void enableLayerMask(MHEntityLayerMask layerMask);
+    void disableLayerMask(MHEntityLayerMask layerMask);
+    void setLayerMask(MHEntityLayerMask layerMask);
+    MHEntityLayerMask getLayerMask() const;
 
 protected:
     void createDefaultTexture();
@@ -61,6 +77,7 @@ protected:
     std::weak_ptr<MHEntity> m_parent;
     std::vector<std::shared_ptr<MHEntity>> m_children;
     vtkSmartPointer<vtkTransform> m_localTransform;
+    MHEntityLayerMask m_layerMask = MHEntityLayerMask::ALL;
     bool m_hovered = false;
 };
 
