@@ -55,19 +55,10 @@ void MHCylinderEntity::generateCylinder3D() {
     if (!m_baseFace || !m_edge) {
         return;
     }
-    auto topoShape = MHGeometry::MHToolKit::toTopoDSFace(*m_baseFace);
-    BRepPrimAPI_MakePrism makePrism(topoShape, gp_Vec(0, 0, m_height));
-    TopoDS_Shape prism = makePrism.Shape();
-    auto bottomShape = makePrism.FirstShape();
-    auto topShape = makePrism.LastShape();
-    for (TopExp_Explorer explorer(prism, TopAbs_FACE); explorer.More(); explorer.Next()) {
-        auto currentShape = explorer.Current();
-        if (currentShape.IsSame(topShape) || currentShape.IsSame(bottomShape)) {
-            continue;
-        }
+    auto topoDSShapes = MHGeometry::MHToolKit::makePrism(*m_baseFace, MHGeometry::MHVertex(0, 0, 1), m_height);
+    for (int i = 0; i < topoDSShapes.size(); ++i) {
         auto entity = std::make_shared<MHHouseEntity>();
-        const TopoDS_Face& topoFace = TopoDS::Face(explorer.Current());
-        entity->setTopo(topoFace);
+        entity->setTopo(topoDSShapes[i]);
         entity->updateTopo();
         entity->setTexture(m_texture);
         addChild(entity);

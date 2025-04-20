@@ -65,11 +65,10 @@ void MHPillarEntity::generatePillar3D() {
     if (!m_baseFace || m_edges.empty()) {
         return;
     }
-    for (const auto& edge : m_edges) {
-        auto planeFace = MHGeometry::MHToolKit::edgeToFace(*edge, {0, 0, 1}, m_height);
-        auto topoDSFace = MHGeometry::MHToolKit::toTopoDSFace(planeFace);
+    auto topoDSShapes = MHGeometry::MHToolKit::makePrism(*m_baseFace, MHGeometry::MHVertex(0, 0, 1), m_height);
+    for (int i = 0; i < topoDSShapes.size(); ++i) {
         auto entity = std::make_shared<MHHouseEntity>();
-        entity->setTopo(topoDSFace);
+        entity->setTopo(topoDSShapes[i]);
         entity->updateTopo();
         entity->setTexture(m_texture);
         addChild(entity);
