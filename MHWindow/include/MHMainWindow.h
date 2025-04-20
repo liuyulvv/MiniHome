@@ -17,6 +17,7 @@
 
 #include "MHLeftNavigation.h"
 #include "MHMainVTKWindow.h"
+#include "MHMainWindowStatusBar.h"
 
 namespace Ui {
 class MHMainWindow;
@@ -34,11 +35,15 @@ public:
     MHMainWindow& operator=(const MHMainWindow& window) = delete;
     MHMainWindow& operator=(MHMainWindow&& window) = delete;
 
+public:
+    void toggleLeftPanel();
+
 private:
     Ui::MHMainWindow* ui;
     QDockWidget* m_leftDockWidget;
     MHLeftNavigation* m_leftNavigation;
     MHMainVTKWindow* m_vtkWindow;
+    MHMainWindowStatusBar* m_statusBar;
 };
 
 }  // namespace MHWindow

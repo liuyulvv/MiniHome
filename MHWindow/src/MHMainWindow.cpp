@@ -20,13 +20,24 @@ MHMainWindow::MHMainWindow() : ui(new Ui::MHMainWindow) {
     addDockWidget(Qt::LeftDockWidgetArea, m_leftDockWidget);
     m_vtkWindow = new MHMainVTKWindow(this);
     setCentralWidget(m_vtkWindow);
+    m_statusBar = new MHMainWindowStatusBar(statusBar());
+    connect(m_statusBar, &MHMainWindowStatusBar::leftNavigationButtonClicked, this, &MHMainWindow::toggleLeftPanel);
 }
 
 MHMainWindow::~MHMainWindow() {
     delete m_vtkWindow;
     delete m_leftNavigation;
     delete m_leftDockWidget;
+    delete m_statusBar;
     delete ui;
+}
+
+void MHMainWindow::toggleLeftPanel() {
+    if (m_leftDockWidget->isVisible()) {
+        m_leftDockWidget->hide();
+    } else {
+        m_leftDockWidget->show();
+    }
 }
 
 }  // namespace MHWindow

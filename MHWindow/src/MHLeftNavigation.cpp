@@ -16,15 +16,16 @@ namespace MHWindow {
 
 MHLeftNavigation::MHLeftNavigation(QWidget *parent) : QWidget(parent), ui(new Ui::MHLeftNavigation) {
     ui->setupUi(this);
-    m_gridLayout = new QGridLayout(this);
+    m_gridLayout = new QGridLayout();
     m_widgets.push_back(ui->lineButton);
     m_widgets.push_back(ui->rectangleButton);
     m_widgets.push_back(ui->arcButton);
     m_widgets.push_back(ui->pillarButton);
     m_widgets.push_back(ui->cylinderButton);
+    m_widgets.push_back(ui->holeButton);
     m_maxColumn = 2;
     layoutWidget();
-    m_vLayout = new QVBoxLayout(this);
+    m_vLayout = new QVBoxLayout();
     m_vLayout->addLayout(m_gridLayout);
     m_vLayout->addSpacerItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum));
     setLayout(m_vLayout);
@@ -43,6 +44,9 @@ MHLeftNavigation::MHLeftNavigation(QWidget *parent) : QWidget(parent), ui(new Ui
     });
     connect(ui->cylinderButton, &QToolButton::clicked, this, [this]() {
         MHHouse::MHDrawHouseManager::getInstance().beginDraw(MHHouse::MHDrawType::CYLINDER);
+    });
+    connect(ui->holeButton, &QToolButton::clicked, this, [this]() {
+        MHHouse::MHDrawHouseManager::getInstance().beginDraw(MHHouse::MHDrawType::HOLE);
     });
 }
 
