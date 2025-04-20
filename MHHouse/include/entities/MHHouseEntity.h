@@ -32,10 +32,13 @@ public:
     virtual void updateTopo();
     virtual void onEnter() override;
     virtual void onLeave() override;
+    virtual void setPolygonOffset(double factor, double units);
 
 protected:
     TopoDS_Shape m_topo;
     vtkSmartPointer<vtkActor> m_outlineActor;
+    double m_offsetFactor = 0.0;
+    double m_offsetUnits = 0.0;
 };
 
 }  // namespace MHHouse

@@ -75,6 +75,8 @@ void MHHouseEntity::updateTopo() {
                 textureMapper->Update();
                 auto mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
                 mapper->SetInputConnection(textureMapper->GetOutputPort());
+                mapper->SetResolveCoincidentTopologyToPolygonOffset();
+                mapper->SetRelativeCoincidentTopologyPolygonOffsetParameters(m_offsetFactor, m_offsetUnits);
                 m_actor->SetMapper(mapper);
                 auto featureEdges = vtkSmartPointer<vtkFeatureEdges>::New();
                 featureEdges->SetInputConnection(displayFilter->GetOutputPort());
@@ -128,6 +130,8 @@ void MHHouseEntity::updateTopo() {
                 }
                 auto mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
                 mapper->SetInputData(polyData);
+                mapper->SetResolveCoincidentTopologyToPolygonOffset();
+                mapper->SetRelativeCoincidentTopologyPolygonOffsetParameters(m_offsetFactor, m_offsetUnits);
                 m_actor->SetMapper(mapper);
                 auto featureEdges = vtkSmartPointer<vtkFeatureEdges>::New();
                 featureEdges->SetInputData(polyData);
@@ -163,6 +167,11 @@ void MHHouseEntity::onLeave() {
     MHCore::MHEntity::onLeave();
     MHCore::MHRendererManager::getInstance().getHoverRenderer()->RemoveActor(m_outlineActor);
     m_outlineActor->GetProperty()->SetColor(0.0, 0.0, 0.0);
+}
+
+void MHHouseEntity::setPolygonOffset(double factor, double units) {
+    m_offsetFactor = factor;
+    m_offsetUnits = units;
 }
 
 }  // namespace MHHouse
