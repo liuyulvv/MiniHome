@@ -28,10 +28,16 @@ MHWallEntity::MHWallEntity(vtkSmartPointer<MHCore::MHRenderer> renderer) : MHHou
 void MHWallEntity::destroy() {
     MHWallManager::getInstance().removeWall(m_id);
     MHSpaceManager::getInstance().generateSpaces();
+    std::vector<std::shared_ptr<MHHoleEntity>> holes;
     for (const auto& hole : m_holeEntities) {
-        hole.second->destroy();
+        holes.push_back(hole.second);
     }
     m_holeEntities.clear();
+    for (const auto& hole : holes) {
+        if (hole) {
+            hole->destroy();
+        }
+    }
     MHHouseEntity::destroy();
 }
 
