@@ -50,18 +50,23 @@ MHMainVTKInteractorStyle::~MHMainVTKInteractorStyle() {
 void MHMainVTKInteractorStyle::init(vtkRenderWindowInteractor* interactor) {
     m_interactor = interactor;
     m_interactor->SetInteractorStyle(this);
-    auto mainRender = MHRendererManager::getInstance().getMainRenderer();
+    auto main3DRender = MHRendererManager::getInstance().getMain3DRenderer();
+    auto main2DRender = MHRendererManager::getInstance().getMain2DRenderer();
     auto hoverRender = MHRendererManager::getInstance().getHoverRenderer();
-    m_interactor->SetRenderWindow(mainRender->GetRenderWindow());
-    SetCurrentRenderer(mainRender);
+    main2DRender->SetActiveCamera(m_camera2D);
+    main3DRender->SetActiveCamera(m_camera3D);
     if (m_currentInteractorType == MHInteractorType::Top2D) {
-        mainRender->SetActiveCamera(m_camera2D);
         hoverRender->SetActiveCamera(m_camera2D);
+        m_interactor->GetRenderWindow()->RemoveRenderer(main3DRender);
+        m_interactor->GetRenderWindow()->AddRenderer(main2DRender);
         m_layerMask = MHEntityLayerMask::LAYER_2D;
+        SetCurrentRenderer(main2DRender);
     } else {
-        mainRender->SetActiveCamera(m_camera3D);
         hoverRender->SetActiveCamera(m_camera3D);
+        m_interactor->GetRenderWindow()->RemoveRenderer(main2DRender);
+        m_interactor->GetRenderWindow()->AddRenderer(main3DRender);
         m_layerMask = MHEntityLayerMask::LAYER_3D;
+        SetCurrentRenderer(main3DRender);
     }
     m_cellPicker = vtkSmartPointer<vtkCellPicker>::New();
 }
@@ -75,14 +80,23 @@ void MHMainVTKInteractorStyle::switchTo(MHInteractorType type) {
         return;
     }
     m_currentInteractorType = type;
-    auto mainRender = MHRendererManager::getInstance().getMainRenderer();
+    auto main3DRender = MHRendererManager::getInstance().getMain3DRenderer();
+    auto main2DRender = MHRendererManager::getInstance().getMain2DRenderer();
     auto hoverRender = MHRendererManager::getInstance().getHoverRenderer();
     if (m_currentInteractorType == MHInteractorType::Top2D) {
-        mainRender->SetActiveCamera(m_camera2D);
+        SetCurrentRenderer(main2DRender);
+        m_interactor->GetRenderWindow()->RemoveRenderer(main3DRender);
+        m_interactor->GetRenderWindow()->AddRenderer(main2DRender);
+        MHRendererManager::getInstance().setActiveMainRenderer(main2DRender);
         hoverRender->SetActiveCamera(m_camera2D);
+        m_layerMask = MHEntityLayerMask::LAYER_2D;
     } else {
-        mainRender->SetActiveCamera(m_camera3D);
+        SetCurrentRenderer(main3DRender);
+        m_interactor->GetRenderWindow()->RemoveRenderer(main2DRender);
+        m_interactor->GetRenderWindow()->AddRenderer(main3DRender);
+        MHRendererManager::getInstance().setActiveMainRenderer(main3DRender);
         hoverRender->SetActiveCamera(m_camera3D);
+        m_layerMask = MHEntityLayerMask::LAYER_3D;
     }
     render();
 }
@@ -103,7 +117,7 @@ void MHMainVTKInteractorStyle::removeFilter(std::shared_ptr<MHInteractorFilter> 
 
 std::shared_ptr<MHEntity> MHMainVTKInteractorStyle::pickEntity() {
     auto clickPos = m_interactor->GetEventPosition();
-    auto mainRender = MHRendererManager::getInstance().getMainRenderer();
+    auto mainRender = MHRendererManager::getInstance().getActiveMainRenderer();
     m_cellPicker->Pick(clickPos[0], clickPos[1], 0, mainRender);
     auto pickedProps = m_cellPicker->GetProp3Ds();
     auto pickedPositions = m_cellPicker->GetPickedPositions();
@@ -137,7 +151,7 @@ std::shared_ptr<MHEntity> MHMainVTKInteractorStyle::pickEntity() {
 std::vector<std::shared_ptr<MHEntity>> MHMainVTKInteractorStyle::pickEntities() {
     std::vector<std::shared_ptr<MHEntity>> entities;
     auto clickPos = m_interactor->GetEventPosition();
-    auto mainRender = MHRendererManager::getInstance().getMainRenderer();
+    auto mainRender = MHRendererManager::getInstance().getActiveMainRenderer();
     m_cellPicker->Pick(clickPos[0], clickPos[1], 0, mainRender);
     auto pickedActors = m_cellPicker->GetActors();
     pickedActors->InitTraversal();
@@ -161,7 +175,7 @@ void MHMainVTKInteractorStyle::fillInteractorInfo() {
     m_interactorInfo.screenX = pos[0];
     m_interactorInfo.screenY = pos[1];
     double worldPos[4];
-    auto mainRender = MHRendererManager::getInstance().getMainRenderer();
+    auto mainRender = MHRendererManager::getInstance().getActiveMainRenderer();
     mainRender->SetDisplayPoint(m_interactorInfo.screenX, m_interactorInfo.screenY, 0);
     mainRender->DisplayToWorld();
     mainRender->GetWorldPoint(worldPos);

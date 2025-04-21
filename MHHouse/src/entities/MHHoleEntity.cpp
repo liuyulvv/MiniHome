@@ -10,6 +10,7 @@
 #include <vtkImageReader2Factory.h>
 
 #include "MHFaceToolKit.h"
+#include "MHRendererManager.h"
 
 namespace MHHouse {
 
@@ -56,7 +57,7 @@ void MHHoleEntity::generateHole2D() {
         face2D.applyTransform(transform);
 
         if (!m_hole2D) {
-            m_hole2D = std::make_shared<MHHouseEntity>();
+            m_hole2D = std::make_shared<MHHouseEntity>(MHCore::MHRendererManager::getInstance().getMain2DRenderer());
             m_hole2D->setTexture(m_texture);
             addChild(m_hole2D);
             m_hole2D->setPolygonOffset(-1.0, -1.0);
@@ -94,7 +95,7 @@ void MHHoleEntity::generateHole2D() {
         face2D.applyTransform(transform);
 
         if (!m_hole2D) {
-            m_hole2D = std::make_shared<MHHouseEntity>();
+            m_hole2D = std::make_shared<MHHouseEntity>(MHCore::MHRendererManager::getInstance().getMain2DRenderer());
             m_hole2D->setTexture(m_texture);
             addChild(m_hole2D);
             m_hole2D->setPolygonOffset(-1.0, -1.0);

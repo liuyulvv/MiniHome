@@ -9,11 +9,8 @@
 #include <vtkImageReader2.h>
 #include <vtkImageReader2Factory.h>
 
-#include <BRepPrimAPI_MakePrism.hxx>
-#include <TopExp_Explorer.hxx>
-#include <TopoDS.hxx>
-
 #include "MHFaceToolKit.h"
+#include "MHRendererManager.h"
 
 namespace MHHouse {
 
@@ -43,7 +40,7 @@ void MHCylinderEntity::generateCylinder2D() {
     transform->Translate(0, 0, m_height);
     baseFace.applyTransform(transform);
     if (!m_cylinder2D) {
-        m_cylinder2D = std::make_shared<MHHouseEntity>();
+        m_cylinder2D = std::make_shared<MHHouseEntity>(MHCore::MHRendererManager::getInstance().getMain2DRenderer());
         m_cylinder2D->setTexture(m_texture);
         addChild(m_cylinder2D);
         m_cylinder2D->setLayerMask(MHCore::MHEntityLayerMask::LAYER_2D);
@@ -58,7 +55,7 @@ void MHCylinderEntity::generateCylinder3D() {
     }
     auto topoDSShapes = MHGeometry::MHToolKit::makePrism(*m_baseFace, MHGeometry::MHVertex(0, 0, 1), m_height);
     for (int i = 0; i < topoDSShapes.size(); ++i) {
-        auto entity = std::make_shared<MHHouseEntity>();
+        auto entity = std::make_shared<MHHouseEntity>(MHCore::MHRendererManager::getInstance().getMain3DRenderer());
         entity->setTopo(topoDSShapes[i]);
         entity->updateTopo();
         entity->setTexture(m_texture);

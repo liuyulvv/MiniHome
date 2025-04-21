@@ -17,7 +17,7 @@ namespace MHCore {
 
 MHEntity::MHEntity(vtkSmartPointer<MHRenderer> renderer) : m_renderer(renderer) {
     if (!m_renderer) {
-        m_renderer = MHRendererManager::getInstance().getMainRenderer();
+        m_renderer = MHRendererManager::getInstance().getMain3DRenderer();
     }
     m_localTransform = vtkSmartPointer<vtkTransform>::New();
     m_localTransform->Identity();
@@ -45,7 +45,7 @@ void MHEntity::show(bool forceRender) {
         }
     }
     if (forceRender) {
-        m_renderer->render();
+        MHRendererManager::getInstance().getActiveMainRenderer()->render();
     }
 }
 

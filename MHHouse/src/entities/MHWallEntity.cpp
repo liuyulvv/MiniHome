@@ -12,6 +12,7 @@
 #include "MHEntityManager.h"
 #include "MHFaceToolKit.h"
 #include "MHPlaneFace.h"
+#include "MHRendererManager.h"
 
 namespace MHHouse {
 
@@ -155,7 +156,7 @@ void MHWallEntity::generateWall2D() {
     transform->Translate(0, 0, m_height);
     baseFace.applyTransform(transform);
     if (!m_wall2D) {
-        m_wall2D = std::make_shared<MHHouseEntity>();
+        m_wall2D = std::make_shared<MHHouseEntity>(MHCore::MHRendererManager::getInstance().getMain2DRenderer());
         m_wall2D->setTexture(m_texture);
         addChild(m_wall2D);
     }
@@ -170,7 +171,7 @@ void MHWallEntity::generateWall3D() {
     }
     auto topoDSShapes = MHGeometry::MHToolKit::makePrism(*m_baseFace, MHGeometry::MHVertex(0, 0, 1), m_height);
     for (int i = 0; i < topoDSShapes.size(); ++i) {
-        auto entity = std::make_shared<MHHouseEntity>();
+        auto entity = std::make_shared<MHHouseEntity>(MHCore::MHRendererManager::getInstance().getMain3DRenderer());
         entity->setTopo(topoDSShapes[i]);
         entity->updateTopo();
         entity->setTexture(m_texture);

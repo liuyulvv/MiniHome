@@ -9,11 +9,13 @@
 #include <vtkCamera.h>
 #include <vtkRendererCollection.h>
 
+#include "MHRendererManager.h"
+
 namespace MHCore {
 
 void MHMainVTKRenderWindow::Render() {
     double bounds[6];
-    auto renderer = this->GetRenderers()->GetFirstRenderer();
+    auto renderer = MHRendererManager::getInstance().getActiveMainRenderer();
     renderer->ComputeVisiblePropBounds(bounds);
     double dx = bounds[1] - bounds[0];
     double dy = bounds[3] - bounds[2];

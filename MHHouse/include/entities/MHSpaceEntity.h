@@ -6,6 +6,8 @@
  * @date 2025-04-12
  */
 
+#include <memory>
+
 #include "MHHouseEntity.h"
 
 namespace MHHouse {
@@ -19,8 +21,16 @@ public:
     MHSpaceEntity& operator=(const MHSpaceEntity& entity) = delete;
     MHSpaceEntity& operator=(MHSpaceEntity&& entity) = delete;
 
+public:
+    void updateSpace(const TopoDS_Shape& topo);
+    void generateSpace2D();
+    void generateSpace3D();
+
 private:
     void createDefaultTexture();
+
+private:
+    std::shared_ptr<MHHouseEntity> m_space2DEntity = nullptr;
 };
 
 }  // namespace MHHouse

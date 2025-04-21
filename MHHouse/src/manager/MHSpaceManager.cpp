@@ -90,8 +90,9 @@ void MHSpaceManager::generateSpaces() {
     m_spaces.clear();
     for (auto& face : spaceFaces) {
         auto spaceEntity = std::make_shared<MHSpaceEntity>();
-        spaceEntity->setTopo(MHGeometry::MHToolKit::toTopoDSFace(face));
-        spaceEntity->updateTopo();
+        spaceEntity->updateSpace(MHGeometry::MHToolKit::toTopoDSFace(face));
+        spaceEntity->generateSpace2D();
+        spaceEntity->generateSpace3D();
         spaceEntity->show();
         addSpace(spaceEntity);
     }

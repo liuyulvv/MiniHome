@@ -33,8 +33,24 @@ private:
     ~MHRendererManager() = default;
 
 public:
-    vtkSmartPointer<MHRenderer> getMainRenderer() const {
-        return m_mainRenderer;
+    void setActiveMainRenderer(vtkSmartPointer<MHRenderer> renderer) {
+        m_activeMainRenderer = renderer;
+    }
+
+    vtkSmartPointer<MHRenderer> getActiveMainRenderer() const {
+        return m_activeMainRenderer;
+    }
+
+    std::vector<vtkSmartPointer<MHRenderer>> getActiveRenderers() const {
+        return {m_activeMainRenderer, m_hoverRenderer};
+    }
+
+    vtkSmartPointer<MHRenderer> getMain3DRenderer() const {
+        return m_main3DRenderer;
+    }
+
+    vtkSmartPointer<MHRenderer> getMain2DRenderer() const {
+        return m_main2DRenderer;
     }
 
     vtkSmartPointer<MHRenderer> getHoverRenderer() const {
@@ -42,7 +58,9 @@ public:
     }
 
 private:
-    vtkSmartPointer<MHRenderer> m_mainRenderer = nullptr;
+    vtkSmartPointer<MHRenderer> m_activeMainRenderer = nullptr;
+    vtkSmartPointer<MHRenderer> m_main3DRenderer = nullptr;
+    vtkSmartPointer<MHRenderer> m_main2DRenderer = nullptr;
     vtkSmartPointer<MHRenderer> m_hoverRenderer = nullptr;
 };
 

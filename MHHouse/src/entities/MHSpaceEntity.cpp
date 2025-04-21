@@ -9,11 +9,32 @@
 #include <vtkImageReader2.h>
 #include <vtkImageReader2Factory.h>
 
+#include "MHRendererManager.h"
+
 namespace MHHouse {
 
 MHSpaceEntity::MHSpaceEntity(vtkSmartPointer<MHCore::MHRenderer> renderer) : MHHouseEntity(renderer) {
     createDefaultTexture();
     m_actor->SetTexture(m_texture);
+}
+
+void MHSpaceEntity::updateSpace(const TopoDS_Shape& topo) {
+    m_topo = topo;
+}
+
+void MHSpaceEntity::generateSpace2D() {
+    if (!m_space2DEntity) {
+        m_space2DEntity = std::make_shared<MHHouseEntity>(MHCore::MHRendererManager::getInstance().getMain2DRenderer());
+        addChild(m_space2DEntity);
+    }
+    m_space2DEntity->setTopo(m_topo);
+    m_space2DEntity->updateTopo();
+    m_space2DEntity->setTexture(m_texture);
+}
+
+void MHSpaceEntity::generateSpace3D() {
+    updateTopo();
+    setTexture(m_texture);
 }
 
 void MHSpaceEntity::createDefaultTexture() {
