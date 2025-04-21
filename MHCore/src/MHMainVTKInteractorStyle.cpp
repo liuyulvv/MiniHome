@@ -126,6 +126,7 @@ std::shared_ptr<MHEntity> MHMainVTKInteractorStyle::pickEntity() {
     auto positionSize = pickedPositions->GetNumberOfPoints();
     auto cameraPosition = mainRender->GetActiveCamera()->GetPosition();
     double minDistance = std::numeric_limits<double>::max();
+    int pickerOrder = 0;
     std::shared_ptr<MHEntity> pickedEntity = nullptr;
     for (int i = 0; i < propSize && i < positionSize; ++i) {
         auto pickedProp = pickedProps->GetNextProp3D();
@@ -135,7 +136,16 @@ std::shared_ptr<MHEntity> MHMainVTKInteractorStyle::pickEntity() {
             auto actor = dynamic_cast<MHActor*>(pickedActor);
             if (actor) {
                 auto entity = actor->getEntity();
-                if (entity && (entity->getLayerMask() & m_layerMask)) {
+                if (entity && entity->isPickable() && (entity->getLayerMask() & m_layerMask)) {
+                    if (entity->getPickerOrder() < pickerOrder) {
+                        continue;
+                    }
+                    if (entity->getPickerOrder() > pickerOrder) {
+                        pickedEntity = entity;
+                        pickerOrder = entity->getPickerOrder();
+                        minDistance = std::numeric_limits<double>::max();
+                        continue;
+                    }
                     auto distance = sqrt(pow(pickedPosition[0] - cameraPosition[0], 2) + pow(pickedPosition[1] - cameraPosition[1], 2) + pow(pickedPosition[2] - cameraPosition[2], 2));
                     if (distance < minDistance) {
                         minDistance = distance;

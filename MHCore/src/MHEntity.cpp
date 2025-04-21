@@ -163,6 +163,27 @@ MHEntityLayerMask MHEntity::getLayerMask() const {
     return m_layerMask;
 }
 
+bool MHEntity::isPickable() const {
+    return m_pickable;
+}
+
+void MHEntity::setPickable(bool pickable) {
+    m_pickable = pickable;
+}
+
+int MHEntity::getPickerOrder() const {
+    return m_pickerOrder;
+}
+
+void MHEntity::setPickerOrder(int order) {
+    m_pickerOrder = order;
+    for (auto& child : m_children) {
+        if (child) {
+            child->setPickerOrder(order);
+        }
+    }
+}
+
 void MHEntity::createDefaultTexture() {
     vtkSmartPointer<vtkImageData> imageData = vtkSmartPointer<vtkImageData>::New();
     imageData->SetDimensions(1, 1, 1);

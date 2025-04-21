@@ -72,6 +72,10 @@ public:
     void disableLayerMask(MHEntityLayerMask layerMask);
     void setLayerMask(MHEntityLayerMask layerMask);
     MHEntityLayerMask getLayerMask() const;
+    bool isPickable() const;
+    void setPickable(bool pickable);
+    int getPickerOrder() const;
+    void setPickerOrder(int order);
 
 protected:
     void createDefaultTexture();
@@ -90,6 +94,8 @@ protected:
     MHEntityLayerMask m_layerMask = MHEntityLayerMask::ALL;
     bool m_selected = false;
     bool m_hovered = false;
+    bool m_pickable = true;
+    int m_pickerOrder = 0;
 };
 
 }  // namespace MHCore
