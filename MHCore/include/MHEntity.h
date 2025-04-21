@@ -11,6 +11,7 @@
 #include <vtkTransform.h>
 
 #include <array>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -31,6 +32,12 @@ inline unsigned int operator&(MHEntityLayerMask a, MHEntityLayerMask b) {
     return static_cast<unsigned int>(a) & static_cast<unsigned int>(b);
 }
 
+struct MHEntityInteractorInfo {
+    bool selected = false;
+    bool hovered = false;
+    std::set<std::string> keyPressed;
+};
+
 class MH_CORE_API MHEntity : public std::enable_shared_from_this<MHEntity> {
 public:
     explicit MHEntity(vtkSmartPointer<MHRenderer> renderer = nullptr);
@@ -45,6 +52,7 @@ public:
     virtual void destroy();
     virtual void onEnter();
     virtual void onLeave();
+    virtual void onSelected(const MHEntityInteractorInfo& info);
 
 public:
     const std::string& getId() const;
@@ -80,6 +88,7 @@ protected:
     std::vector<std::shared_ptr<MHEntity>> m_children;
     vtkSmartPointer<vtkTransform> m_localTransform;
     MHEntityLayerMask m_layerMask = MHEntityLayerMask::ALL;
+    bool m_selected = false;
     bool m_hovered = false;
 };
 

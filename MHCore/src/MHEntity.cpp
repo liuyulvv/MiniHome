@@ -70,6 +70,10 @@ void MHEntity::onLeave() {
     m_hovered = false;
 }
 
+void MHEntity::onSelected(const MHEntityInteractorInfo& info) {
+    m_selected = info.selected;
+}
+
 const std::string& MHEntity::getId() const {
     return m_id;
 }

@@ -12,6 +12,9 @@
 #define MH_CORE_API __declspec(dllimport)
 #endif
 
+#include <set>
+#include <string>
+
 namespace MHCore {
 
 struct MH_CORE_API MHInteractorInfo {
@@ -19,6 +22,7 @@ struct MH_CORE_API MHInteractorInfo {
     int screenY;
     double worldX;
     double worldY;
+    std::set<std::string> pressedKeys;
 };
 
 class MH_CORE_API MHInteractorFilter {
@@ -37,6 +41,8 @@ public:
     virtual bool onRightButtonDown(const MHInteractorInfo& interactorInfo);
     virtual bool onRightButtonUp(const MHInteractorInfo& interactorInfo);
     virtual bool onMouseMove(const MHInteractorInfo& interactorInfo);
+    virtual bool onKeyPress(const MHInteractorInfo& interactorInfo);
+    virtual bool onKeyRelease(const MHInteractorInfo& interactorInfo);
 };
 
 }  // namespace MHCore

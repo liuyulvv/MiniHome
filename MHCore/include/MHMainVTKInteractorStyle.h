@@ -58,6 +58,7 @@ public:
     void removeFilter(std::shared_ptr<MHInteractorFilter> filter);
     std::shared_ptr<MHEntity> pickEntity();
     std::vector<std::shared_ptr<MHEntity>> pickEntities();
+    void setSelectedEntity(std::shared_ptr<MHEntity> entity);
 
 private:
     void fillInteractorInfo();
@@ -69,6 +70,8 @@ public:
     virtual void OnRightButtonUp() override;
     virtual void OnMouseMove() override;
     virtual void OnChar() override;
+    virtual void OnKeyPress() override;
+    virtual void OnKeyRelease() override;
 
 private:
     static MHMainVTKInteractorStyle* m_instance;
@@ -86,7 +89,9 @@ private:
     bool m_leftPressed;
     bool m_rightPressed;
     MHEntityLayerMask m_layerMask = MHEntityLayerMask::NONE;
+    std::shared_ptr<MHEntity> m_selectedEntity = nullptr;
     std::shared_ptr<MHEntity> m_hoveredEntity = nullptr;
+    bool m_mouseMoveUpdateCamera = false;
 };
 
 }  // namespace MHCore

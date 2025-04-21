@@ -30,11 +30,10 @@ namespace MHHouse {
 
 MHHouseEntity::MHHouseEntity(vtkSmartPointer<MHCore::MHRenderer> renderer) : MHCore::MHEntity(renderer) {
     m_outlineActor = vtkSmartPointer<vtkActor>::New();
-    m_outlineActor->GetProperty()->SetColor(0.0, 0.0, 0.0);
     m_outlineActor->GetProperty()->EdgeVisibilityOn();
     m_outlineActor->GetProperty()->LightingOff();
-    m_actor->GetProperty()->SetAmbient(0.2);
-    m_actor->GetProperty()->SetDiffuse(0.8);
+    m_actor->GetProperty()->SetAmbient(1.0);
+    m_actor->GetProperty()->SetDiffuse(0.2);
 }
 
 MHHouseEntity::~MHHouseEntity() {
@@ -159,14 +158,30 @@ void MHHouseEntity::updateTopo() {
 
 void MHHouseEntity::onEnter() {
     MHCore::MHEntity::onEnter();
+    if (m_selected) {
+        return;
+    }
     MHCore::MHRendererManager::getInstance().getHoverRenderer()->AddActor(m_outlineActor);
-    m_outlineActor->GetProperty()->SetColor(0.0, 1.0, 1.0);
+    m_outlineActor->SetTexture(m_hoveredTexture);
 }
 
 void MHHouseEntity::onLeave() {
     MHCore::MHEntity::onLeave();
+    if (m_selected) {
+        return;
+    }
     MHCore::MHRendererManager::getInstance().getHoverRenderer()->RemoveActor(m_outlineActor);
-    m_outlineActor->GetProperty()->SetColor(0.0, 0.0, 0.0);
+}
+
+void MHHouseEntity::onSelected(const MHCore::MHEntityInteractorInfo& info) {
+    MHEntity::onSelected(info);
+    if (m_selected) {
+        MHCore::MHRendererManager::getInstance().getHoverRenderer()->AddActor(m_outlineActor);
+        m_outlineActor->SetTexture(m_selectedTexture);
+    } else {
+        MHCore::MHRendererManager::getInstance().getHoverRenderer()->RemoveActor(m_outlineActor);
+        m_outlineActor->SetTexture(m_hoveredTexture);
+    }
 }
 
 void MHHouseEntity::setPolygonOffset(double factor, double units) {

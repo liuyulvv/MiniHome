@@ -28,4 +28,12 @@ bool MHInteractorFilter::onMouseMove(const MHInteractorInfo& interactorInfo) {
     return false;
 }
 
+bool MHInteractorFilter::onKeyPress(const MHInteractorInfo& interactorInfo) {
+    return false;
+}
+
+bool MHInteractorFilter::onKeyRelease(const MHInteractorInfo& interactorInfo) {
+    return false;
+}
+
 }  // namespace MHCore

@@ -170,6 +170,17 @@ std::vector<std::shared_ptr<MHEntity>> MHMainVTKInteractorStyle::pickEntities() 
     return entities;
 }
 
+void MHMainVTKInteractorStyle::setSelectedEntity(std::shared_ptr<MHEntity> entity) {
+    if (m_selectedEntity) {
+        m_selectedEntity->onSelected({false, false, m_interactorInfo.pressedKeys});
+    }
+    m_selectedEntity = entity;
+    if (m_selectedEntity) {
+        m_selectedEntity->onSelected({true, false, m_interactorInfo.pressedKeys});
+    }
+    render();
+}
+
 void MHMainVTKInteractorStyle::fillInteractorInfo() {
     auto pos = m_interactor->GetEventPosition();
     m_interactorInfo.screenX = pos[0];
@@ -203,6 +214,12 @@ void MHMainVTKInteractorStyle::OnLeftButtonUp() {
             return;
         }
     }
+    if (m_mouseMoveUpdateCamera) {
+        m_mouseMoveUpdateCamera = false;
+        return;
+    }
+    auto entity = pickEntity();
+    setSelectedEntity(entity);
 }
 
 void MHMainVTKInteractorStyle::OnRightButtonDown() {
@@ -223,6 +240,10 @@ void MHMainVTKInteractorStyle::OnRightButtonUp() {
             return;
         }
     }
+    if (m_mouseMoveUpdateCamera) {
+        m_mouseMoveUpdateCamera = false;
+        return;
+    }
 }
 
 void MHMainVTKInteractorStyle::OnMouseMove() {
@@ -232,7 +253,9 @@ void MHMainVTKInteractorStyle::OnMouseMove() {
             return;
         }
     }
+    m_mouseMoveUpdateCamera = false;
     if ((m_leftPressed && m_currentInteractorType == MHInteractorType::Top2D) || m_rightPressed) {
+        m_mouseMoveUpdateCamera = true;
         this->Pan();
         return;
     } else if (m_leftPressed && m_currentInteractorType == MHInteractorType::Top3D) {
@@ -260,6 +283,7 @@ void MHMainVTKInteractorStyle::OnMouseMove() {
         camera->SetViewUp(0, 0, 1);
         m_lastX = m_interactorInfo.screenX;
         m_lastY = m_interactorInfo.screenY;
+        m_mouseMoveUpdateCamera = true;
         render();
         return;
     }
@@ -286,11 +310,68 @@ void MHMainVTKInteractorStyle::OnMouseMove() {
     }
 }
 
-void MHMainVTKInteractorStyle::OnChar() {
-    if (m_interactor->GetKeyCode() == '2') {
-        switchTo(MHInteractorType::Top2D);
-    } else if (m_interactor->GetKeyCode() == '3') {
-        switchTo(MHInteractorType::Top3D);
+void MHMainVTKInteractorStyle::OnChar() {}
+
+void MHMainVTKInteractorStyle::OnKeyPress() {
+    if (m_interactor->GetControlKey()) {
+        m_interactorInfo.pressedKeys.insert("CTRL");
+    }
+    if (m_interactor->GetShiftKey()) {
+        m_interactorInfo.pressedKeys.insert("SHIFT");
+    }
+    if (m_interactor->GetAltKey()) {
+        m_interactorInfo.pressedKeys.insert("ALT");
+    }
+    std::string key = m_interactor->GetKeySym();
+    std::transform(key.begin(), key.end(), key.begin(), ::toupper);
+    if (!key.empty()) {
+        if (key.length() == 1 && std::isalnum(key[0])) {
+            m_interactorInfo.pressedKeys.insert(key);
+        }
+    }
+    for (const auto& filter : m_interactorFilters) {
+        if (filter->onKeyPress(m_interactorInfo)) {
+            return;
+        }
+    }
+}
+
+void MHMainVTKInteractorStyle::OnKeyRelease() {
+    bool ctrl = m_interactor->GetControlKey();
+    bool shift = m_interactor->GetShiftKey();
+    bool alt = m_interactor->GetAltKey();
+    if (!ctrl) {
+        m_interactorInfo.pressedKeys.erase("CTRL");
+    }
+    if (!shift) {
+        m_interactorInfo.pressedKeys.erase("SHIFT");
+    }
+    if (!alt) {
+        m_interactorInfo.pressedKeys.erase("ALT");
+    }
+    std::string key = m_interactor->GetKeySym();
+    std::transform(key.begin(), key.end(), key.begin(), ::toupper);
+    if (!key.empty()) {
+        if (key.length() == 1 && std::isalnum(key[0])) {
+            m_interactorInfo.pressedKeys.erase(key);
+        }
+    }
+    for (const auto& filter : m_interactorFilters) {
+        if (filter->onKeyRelease(m_interactorInfo)) {
+            return;
+        }
+    }
+    if (!ctrl && !shift && !alt) {
+        if (key == "2") {
+            switchTo(MHInteractorType::Top2D);
+            return;
+        } else if (key == "3") {
+            switchTo(MHInteractorType::Top3D);
+            return;
+        } else if (key == "ESCAPE") {
+            setSelectedEntity(nullptr);
+            return;
+        }
     }
 }
 
