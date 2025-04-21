@@ -87,6 +87,7 @@ void MHDrawHouseManager::endDraw() {
             break;
     }
     m_drawType = MHDrawType::NONE;
+    MHCore::MHMainVTKInteractorStyle::getInstance().render();
 }
 
 MHWallPositionType MHDrawHouseManager::getDrawWallPositionType() {
