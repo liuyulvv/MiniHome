@@ -74,6 +74,8 @@ protected:
     std::string m_id;
     vtkSmartPointer<MHActor> m_actor;
     vtkSmartPointer<vtkTexture> m_texture;
+    vtkSmartPointer<vtkTexture> m_selectedTexture;
+    vtkSmartPointer<vtkTexture> m_hoveredTexture;
     std::weak_ptr<MHEntity> m_parent;
     std::vector<std::shared_ptr<MHEntity>> m_children;
     vtkSmartPointer<vtkTransform> m_localTransform;

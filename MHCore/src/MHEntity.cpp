@@ -6,6 +6,9 @@
 
 #include "MHEntity.h"
 
+#include <vtkImageReader2.h>
+#include <vtkImageReader2Factory.h>
+
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
@@ -167,6 +170,22 @@ void MHEntity::createDefaultTexture() {
     m_texture = vtkSmartPointer<vtkTexture>::New();
     m_texture->SetInputData(imageData);
     m_texture->InterpolateOn();
+
+    vtkSmartPointer<vtkImageReader2Factory> selectReaderFactory = vtkSmartPointer<vtkImageReader2Factory>::New();
+    vtkSmartPointer<vtkImageReader2> selectTextureReader = selectReaderFactory->CreateImageReader2("textures/default_select.png");
+    selectTextureReader->SetFileName("textures/default_select.png");
+    selectTextureReader->Update();
+    m_selectedTexture = vtkSmartPointer<vtkTexture>::New();
+    m_selectedTexture->SetInputConnection(selectTextureReader->GetOutputPort());
+    m_selectedTexture->InterpolateOn();
+
+    vtkSmartPointer<vtkImageReader2Factory> hoverReaderFactory = vtkSmartPointer<vtkImageReader2Factory>::New();
+    vtkSmartPointer<vtkImageReader2> hoverTextureReader = selectReaderFactory->CreateImageReader2("textures/default_hover.png");
+    hoverTextureReader->SetFileName("textures/default_hover.png");
+    hoverTextureReader->Update();
+    m_hoveredTexture = vtkSmartPointer<vtkTexture>::New();
+    m_hoveredTexture->SetInputConnection(hoverTextureReader->GetOutputPort());
+    m_hoveredTexture->InterpolateOn();
 }
 
 void MHEntity::applyTransform() {
