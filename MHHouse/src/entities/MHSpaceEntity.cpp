@@ -18,6 +18,8 @@ MHSpaceEntity::MHSpaceEntity(vtkSmartPointer<MHCore::MHRenderer> renderer) : MHH
     m_actor->SetTexture(m_texture);
 }
 
+void MHSpaceEntity::onDelete() {}
+
 void MHSpaceEntity::updateSpace(const TopoDS_Shape& topo) {
     m_topo = topo;
 }

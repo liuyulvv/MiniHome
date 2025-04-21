@@ -22,6 +22,9 @@ public:
     MHSpaceEntity& operator=(MHSpaceEntity&& entity) = delete;
 
 public:
+    virtual void onDelete() override;
+
+public:
     void updateSpace(const TopoDS_Shape& topo);
     void generateSpace2D();
     void generateSpace3D();

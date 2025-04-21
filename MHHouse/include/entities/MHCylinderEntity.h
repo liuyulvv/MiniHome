@@ -24,6 +24,9 @@ public:
     MHCylinderEntity& operator=(MHCylinderEntity&& entity) = delete;
 
 public:
+    virtual void destroy() override;
+
+public:
     void updateCylinder(const MHGeometry::MHVertex& center, double radius, double height);
     void generateCylinder2D();
     void generateCylinder3D();

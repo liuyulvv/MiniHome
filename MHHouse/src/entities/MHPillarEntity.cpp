@@ -10,7 +10,9 @@
 #include <vtkImageReader2Factory.h>
 
 #include "MHFaceToolKit.h"
+#include "MHPillarManager.h"
 #include "MHRendererManager.h"
+#include "MHSpaceManager.h"
 
 namespace MHHouse {
 
@@ -18,6 +20,12 @@ MHPillarEntity::MHPillarEntity(vtkSmartPointer<MHCore::MHRenderer> renderer) : M
     m_actor->GetProperty()->EdgeVisibilityOff();
     createDefaultTexture();
     m_actor->SetTexture(m_texture);
+}
+
+void MHPillarEntity::destroy() {
+    MHHouseEntity::destroy();
+    MHPillarManager::getInstance().removePillar(m_id);
+    MHSpaceManager::getInstance().generateSpaces();
 }
 
 void MHPillarEntity::updatePillar(const MHGeometry::MHLineEdge& midEdge, double height, double length, double width) {
@@ -64,10 +72,10 @@ void MHPillarEntity::generatePillar2D() {
 }
 
 void MHPillarEntity::generatePillar3D() {
-    if (!m_baseFace || m_edges.empty()) {
+    if (!m_baseFace) {
         return;
     }
-    auto topoDSShapes = MHGeometry::MHToolKit::makePrism(*m_baseFace, MHGeometry::MHVertex(0, 0, 1), m_height);
+    auto topoDSShapes = MHGeometry::MHToolKit::makePrismFace(*m_baseFace, MHGeometry::MHVertex(0, 0, 1), m_height);
     for (int i = 0; i < topoDSShapes.size(); ++i) {
         auto entity = std::make_shared<MHHouseEntity>(MHCore::MHRendererManager::getInstance().getMain3DRenderer());
         entity->setTopo(topoDSShapes[i]);

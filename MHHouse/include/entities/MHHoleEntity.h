@@ -14,6 +14,8 @@
 
 namespace MHHouse {
 
+class MHWallEntity;
+
 class MHHoleEntity : public MHHouseEntity {
 public:
     explicit MHHoleEntity(vtkSmartPointer<MHCore::MHRenderer> renderer = nullptr);
@@ -24,12 +26,19 @@ public:
     MHHoleEntity& operator=(MHHoleEntity&& entity) = delete;
 
 public:
-    void updateHole(const MHGeometry::MHVertex& midVertex, std::unique_ptr<MHGeometry::MHEdge> midEdge, double height, double length, double width);
+    virtual void destroy() override;
+    virtual void onEnter() override;
+    virtual void onLeave() override;
+    virtual void onSelected(const MHCore::MHEntityInteractorInfo& info) override;
+
+public:
+    void updateHole(std::shared_ptr<MHWallEntity> wallEntity, const MHGeometry::MHVertex& midVertex, std::unique_ptr<MHGeometry::MHEdge> midEdge, double height, double length, double width);
     void generateHole2D();
     void generateHole3D();
     std::vector<std::unique_ptr<MHGeometry::MHEdge>> getEdges();
     std::unique_ptr<MHGeometry::MHPlaneFace> getBaseFace() const;
     std::shared_ptr<MHHouseEntity> getHole2D() const;
+    TopoDS_Shape getSolidShape() const;
 
 private:
     void createDefaultTexture();
@@ -43,6 +52,9 @@ private:
     std::vector<std::unique_ptr<MHGeometry::MHEdge>> m_edges;
     std::unique_ptr<MHGeometry::MHPlaneFace> m_baseFace = nullptr;
     std::shared_ptr<MHHouseEntity> m_hole2D = nullptr;
+    vtkSmartPointer<vtkTexture> m_hole2DTexture = nullptr;
+    std::shared_ptr<MHWallEntity> m_wallEntity = nullptr;
+    TopoDS_Shape m_solidShape;
 };
 
 }  // namespace MHHouse

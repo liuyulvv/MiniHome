@@ -9,6 +9,7 @@
 #include <BOPAlgo_Tools.hxx>
 #include <BRepAdaptor_Surface.hxx>
 #include <BRepAlgoAPI_Common.hxx>
+#include <BRepAlgoAPI_Cut.hxx>
 #include <BRepBndLib.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepPrimAPI_MakePrism.hxx>
@@ -46,7 +47,7 @@ MH_GEOMETRY_API MHPlaneFace edgeToFace(const MHLineEdge& lineEdge, const MHVerte
     return planeFace;
 }
 
-MH_GEOMETRY_API std::vector<TopoDS_Face> makePrism(const MHPlaneFace& face, const MHVertex& direction, double length) {
+MH_GEOMETRY_API std::vector<TopoDS_Face> makePrismFace(const MHPlaneFace& face, const MHVertex& direction, double length) {
     auto topoDSFace = toTopoDSFace(face);
     BRepPrimAPI_MakePrism prismMaker(topoDSFace, gp_Vec(direction.x, direction.y, direction.z) * length);
     prismMaker.Build();
@@ -60,6 +61,14 @@ MH_GEOMETRY_API std::vector<TopoDS_Face> makePrism(const MHPlaneFace& face, cons
         shapes.push_back(face);
     }
     return shapes;
+}
+
+MH_GEOMETRY_API TopoDS_Shape makePrismSolid(const MHPlaneFace& face, const MHVertex& direction, double length) {
+    auto topoDSFace = toTopoDSFace(face);
+    BRepPrimAPI_MakePrism prismMaker(topoDSFace, gp_Vec(direction.x, direction.y, direction.z) * length);
+    prismMaker.Build();
+    auto prism = prismMaker.Shape();
+    return prism;
 }
 
 MH_GEOMETRY_API TopoDS_Face toTopoDSFace(const MHPlaneFace& planeFace) {
@@ -180,6 +189,38 @@ MH_GEOMETRY_API bool isIntersect(const TopoDS_Face& face1, const TopoDS_Face& fa
         }
     }
     return false;
+}
+
+MH_GEOMETRY_API TopoDS_Shape booleanDifference(const TopoDS_Shape& mainShape, const std::vector<TopoDS_Shape>& toolShapes) {
+    TopoDS_Shape result = mainShape;
+    for (const auto& toolShape : toolShapes) {
+        if (toolShape.IsNull()) {
+            continue;
+        }
+        BRepAlgoAPI_Cut cut(result, toolShape);
+        cut.Build();
+        if (!cut.IsDone()) {
+            continue;
+        }
+        TopoDS_Shape cutResult = cut.Shape();
+        if (cutResult.IsNull()) {
+            continue;
+        }
+        result = cutResult;
+    }
+    return result;
+}
+
+MH_GEOMETRY_API std::vector<TopoDS_Face> getFaces(const TopoDS_Shape& shape) {
+    std::vector<TopoDS_Face> shapes;
+    for (TopExp_Explorer explorer(shape, TopAbs_FACE); explorer.More(); explorer.Next()) {
+        const TopoDS_Face& face = TopoDS::Face(explorer.Current());
+        if (face.IsNull()) {
+            continue;
+        }
+        shapes.push_back(face);
+    }
+    return shapes;
 }
 
 }  // namespace MHGeometry::MHToolKit

@@ -53,6 +53,7 @@ public:
     virtual void onEnter();
     virtual void onLeave();
     virtual void onSelected(const MHEntityInteractorInfo& info);
+    virtual void onDelete();
 
 public:
     const std::string& getId() const;
@@ -92,6 +93,7 @@ protected:
     std::vector<std::shared_ptr<MHEntity>> m_children;
     vtkSmartPointer<vtkTransform> m_localTransform;
     MHEntityLayerMask m_layerMask = MHEntityLayerMask::ALL;
+    bool m_shown = false;
     bool m_selected = false;
     bool m_hovered = false;
     bool m_pickable = true;

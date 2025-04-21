@@ -9,14 +9,22 @@
 #include <vtkImageReader2.h>
 #include <vtkImageReader2Factory.h>
 
+#include "MHCylinderManager.h"
 #include "MHFaceToolKit.h"
 #include "MHRendererManager.h"
+#include "MHSpaceManager.h"
 
 namespace MHHouse {
 
 MHCylinderEntity::MHCylinderEntity(vtkSmartPointer<MHCore::MHRenderer> renderer) : MHHouseEntity(renderer) {
     createDefaultTexture();
     m_actor->SetTexture(m_texture);
+}
+
+void MHCylinderEntity::destroy() {
+    MHHouseEntity::destroy();
+    MHCylinderManager::getInstance().removeCylinder(m_id);
+    MHSpaceManager::getInstance().generateSpaces();
 }
 
 void MHCylinderEntity::updateCylinder(const MHGeometry::MHVertex& center, double radius, double height) {
@@ -50,10 +58,10 @@ void MHCylinderEntity::generateCylinder2D() {
 }
 
 void MHCylinderEntity::generateCylinder3D() {
-    if (!m_baseFace || !m_edge) {
+    if (!m_baseFace) {
         return;
     }
-    auto topoDSShapes = MHGeometry::MHToolKit::makePrism(*m_baseFace, MHGeometry::MHVertex(0, 0, 1), m_height);
+    auto topoDSShapes = MHGeometry::MHToolKit::makePrismFace(*m_baseFace, MHGeometry::MHVertex(0, 0, 1), m_height);
     for (int i = 0; i < topoDSShapes.size(); ++i) {
         auto entity = std::make_shared<MHHouseEntity>(MHCore::MHRendererManager::getInstance().getMain3DRenderer());
         entity->setTopo(topoDSShapes[i]);

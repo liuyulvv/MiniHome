@@ -14,6 +14,7 @@
 #include <boost/uuid/uuid_io.hpp>
 
 #include "MHActor.h"
+#include "MHEntityManager.h"
 #include "MHRendererManager.h"
 
 namespace MHCore {
@@ -40,6 +41,7 @@ MHEntity::~MHEntity() {
 }
 
 void MHEntity::show(bool forceRender) {
+    m_shown = true;
     m_renderer->AddActor(m_actor);
     m_actor->setEntity(shared_from_this());
     for (const auto& child : m_children) {
@@ -53,6 +55,7 @@ void MHEntity::show(bool forceRender) {
 }
 
 void MHEntity::destroy() {
+    MHEntityManager::getInstance().removeEntity(m_id);
     m_renderer->RemoveActor(m_actor);
     m_actor->setEntity(nullptr);
     for (const auto& child : m_children) {
@@ -72,6 +75,10 @@ void MHEntity::onLeave() {
 
 void MHEntity::onSelected(const MHEntityInteractorInfo& info) {
     m_selected = info.selected;
+}
+
+void MHEntity::onDelete() {
+    destroy();
 }
 
 const std::string& MHEntity::getId() const {

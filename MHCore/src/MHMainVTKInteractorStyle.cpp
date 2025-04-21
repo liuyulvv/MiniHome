@@ -381,6 +381,12 @@ void MHMainVTKInteractorStyle::OnKeyRelease() {
         } else if (key == "ESCAPE") {
             setSelectedEntity(nullptr);
             return;
+        } else if (key == "DELETE") {
+            if (m_selectedEntity) {
+                m_selectedEntity->onDelete();
+                m_selectedEntity = nullptr;
+                render();
+            }
         }
     }
 }

@@ -11,8 +11,11 @@
 
 #include "MHEntityManager.h"
 #include "MHFaceToolKit.h"
+#include "MHHoleEntity.h"
 #include "MHPlaneFace.h"
 #include "MHRendererManager.h"
+#include "MHSpaceManager.h"
+#include "MHWallManager.h"
 
 namespace MHHouse {
 
@@ -20,6 +23,16 @@ MHWallEntity::MHWallEntity(vtkSmartPointer<MHCore::MHRenderer> renderer) : MHHou
     m_actor->GetProperty()->EdgeVisibilityOff();
     createDefaultTexture();
     m_actor->SetTexture(m_texture);
+}
+
+void MHWallEntity::destroy() {
+    MHWallManager::getInstance().removeWall(m_id);
+    MHSpaceManager::getInstance().generateSpaces();
+    for (const auto& hole : m_holeEntities) {
+        hole.second->destroy();
+    }
+    m_holeEntities.clear();
+    MHHouseEntity::destroy();
 }
 
 void MHWallEntity::updateWall(const MHGeometry::MHLineEdge& positionEdge, double height, double width, MHWallPositionType positionType) {
@@ -166,10 +179,25 @@ void MHWallEntity::generateWall2D() {
 }
 
 void MHWallEntity::generateWall3D() {
-    if (!m_baseFace || m_edges.empty()) {
+    if (!m_baseFace) {
         return;
     }
-    auto topoDSShapes = MHGeometry::MHToolKit::makePrism(*m_baseFace, MHGeometry::MHVertex(0, 0, 1), m_height);
+    m_children.clear();
+    if (m_wall2D) {
+        addChild(m_wall2D);
+    }
+    std::vector<TopoDS_Face> topoDSShapes;
+    if (m_holeEntities.empty()) {
+        topoDSShapes = MHGeometry::MHToolKit::makePrismFace(*m_baseFace, MHGeometry::MHVertex(0, 0, 1), m_height);
+    } else {
+        auto topoDSShape = MHGeometry::MHToolKit::makePrismSolid(*m_baseFace, MHGeometry::MHVertex(0, 0, 1), m_height);
+        std::vector<TopoDS_Shape> holeShapes;
+        for (const auto& hole : m_holeEntities) {
+            holeShapes.push_back(hole.second->getSolidShape());
+        }
+        auto solidShape = MHGeometry::MHToolKit::booleanDifference(topoDSShape, holeShapes);
+        topoDSShapes = MHGeometry::MHToolKit::getFaces(solidShape);
+    }
     for (int i = 0; i < topoDSShapes.size(); ++i) {
         auto entity = std::make_shared<MHHouseEntity>(MHCore::MHRendererManager::getInstance().getMain3DRenderer());
         entity->setTopo(topoDSShapes[i]);
@@ -177,6 +205,9 @@ void MHWallEntity::generateWall3D() {
         entity->setTexture(m_texture);
         addChild(entity);
         entity->setLayerMask(MHCore::MHEntityLayerMask::LAYER_3D);
+    }
+    if (m_shown) {
+        show();
     }
 }
 
@@ -239,6 +270,29 @@ std::unique_ptr<MHGeometry::MHEdge> MHWallEntity::getMidEdge() const {
         return result;
     }
     return nullptr;
+}
+
+void MHWallEntity::addHole(std::shared_ptr<MHHoleEntity> holeEntity) {
+    if (holeEntity) {
+        m_holeEntities[holeEntity->getId()] = holeEntity;
+    }
+}
+
+void MHWallEntity::removeHole(std::shared_ptr<MHHoleEntity> holeEntity) {
+    if (holeEntity) {
+        auto it = m_holeEntities.find(holeEntity->getId());
+        if (it != m_holeEntities.end()) {
+            m_holeEntities.erase(it);
+        }
+    }
+}
+
+void MHWallEntity::removeHole(const std::string& holeId) {
+    auto it = m_holeEntities.find(holeId);
+    if (it != m_holeEntities.end()) {
+        m_holeEntities.erase(it);
+    }
+    generateWall3D();
 }
 
 void MHWallEntity::createDefaultTexture() {

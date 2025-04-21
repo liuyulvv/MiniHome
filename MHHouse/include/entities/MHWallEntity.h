@@ -6,6 +6,7 @@
  * @date 2025-04-12
  */
 
+#include <unordered_map>
 #include <vector>
 
 #include "MHArcEdge.h"
@@ -14,6 +15,8 @@
 #include "MHPlaneFace.h"
 
 namespace MHHouse {
+
+class MHHoleEntity;
 
 enum class MHWallPositionType {
     LEFT,
@@ -31,6 +34,9 @@ public:
     MHWallEntity& operator=(MHWallEntity&& entity) = delete;
 
 public:
+    virtual void destroy() override;
+
+public:
     void updateWall(const MHGeometry::MHLineEdge& positionEdge, double height, double width, MHWallPositionType positionType);
     void updateWall(const MHGeometry::MHArcEdge& positionEdge, double height, double width, MHWallPositionType positionType);
     void generateWall2D();
@@ -38,6 +44,9 @@ public:
     std::vector<std::unique_ptr<MHGeometry::MHEdge>> getEdges();
     std::unique_ptr<MHGeometry::MHPlaneFace> getBaseFace() const;
     std::unique_ptr<MHGeometry::MHEdge> getMidEdge() const;
+    void addHole(std::shared_ptr<MHHoleEntity> holeEntity);
+    void removeHole(std::shared_ptr<MHHoleEntity> holeEntity);
+    void removeHole(const std::string& holeId);
 
 private:
     void createDefaultTexture();
@@ -51,6 +60,7 @@ private:
     std::unique_ptr<MHGeometry::MHPlaneFace> m_baseFace = nullptr;
     std::shared_ptr<MHHouseEntity> m_wall2D = nullptr;
     vtkSmartPointer<vtkTexture> m_wall2DTexture = nullptr;
+    std::unordered_map<std::string, std::shared_ptr<MHHoleEntity>> m_holeEntities;
 };
 
 }  // namespace MHHouse

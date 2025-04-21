@@ -144,7 +144,6 @@ void MHHouseEntity::updateTopo() {
                 outlineMapper->SetInputConnection(featureEdges->GetOutputPort());
                 m_outlineActor->SetMapper(outlineMapper);
             }
-
         } else {
             auto shape = IVtkTools_ShapeDataSource::New();
             shape->SetShape(new IVtkOCC_Shape(m_topo));
@@ -163,6 +162,11 @@ void MHHouseEntity::onEnter() {
     }
     MHCore::MHRendererManager::getInstance().getHoverRenderer()->AddActor(m_outlineActor);
     m_outlineActor->SetTexture(m_hoveredTexture);
+    for (auto& child : m_children) {
+        if (child) {
+            child->onEnter();
+        }
+    }
 }
 
 void MHHouseEntity::onLeave() {
@@ -171,6 +175,11 @@ void MHHouseEntity::onLeave() {
         return;
     }
     MHCore::MHRendererManager::getInstance().getHoverRenderer()->RemoveActor(m_outlineActor);
+    for (auto& child : m_children) {
+        if (child) {
+            child->onLeave();
+        }
+    }
 }
 
 void MHHouseEntity::onSelected(const MHCore::MHEntityInteractorInfo& info) {
@@ -182,6 +191,16 @@ void MHHouseEntity::onSelected(const MHCore::MHEntityInteractorInfo& info) {
         MHCore::MHRendererManager::getInstance().getHoverRenderer()->RemoveActor(m_outlineActor);
         m_outlineActor->SetTexture(m_hoveredTexture);
     }
+    for (auto& child : m_children) {
+        if (child) {
+            child->onSelected(info);
+        }
+    }
+}
+
+void MHHouseEntity::onDelete() {
+    MHEntity::onDelete();
+    MHCore::MHRendererManager::getInstance().getHoverRenderer()->RemoveActor(m_outlineActor);
 }
 
 void MHHouseEntity::setPolygonOffset(double factor, double units) {

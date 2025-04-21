@@ -33,6 +33,7 @@ public:
     virtual void onEnter() override;
     virtual void onLeave() override;
     virtual void onSelected(const MHCore::MHEntityInteractorInfo& info) override;
+    virtual void onDelete() override;
     virtual void setPolygonOffset(double factor, double units);
 
 protected:

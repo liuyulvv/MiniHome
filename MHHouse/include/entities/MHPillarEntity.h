@@ -23,6 +23,9 @@ public:
     MHPillarEntity& operator=(MHPillarEntity&& entity) = delete;
 
 public:
+    virtual void destroy() override;
+
+public:
     void updatePillar(const MHGeometry::MHLineEdge& midEdge, double height, double length, double width);
     void generatePillar2D();
     void generatePillar3D();

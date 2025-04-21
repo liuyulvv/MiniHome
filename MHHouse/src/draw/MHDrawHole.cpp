@@ -6,8 +6,12 @@
 
 #include "MHDrawHole.h"
 
+#include <vtkImageReader2.h>
+#include <vtkImageReader2Factory.h>
+
 #include "MHDrawHouseManager.h"
 #include "MHEntityManager.h"
+#include "MHHoleManager.h"
 #include "MHMainVTKInteractorStyle.h"
 #include "MHVertexToolKit.h"
 
@@ -52,6 +56,7 @@ bool MHDrawHole::onLeftButtonDown(const MHCore::MHInteractorInfo& interactorInfo
         m_holeEntity->generateHole3D();
         m_holeEntity->show(false);
         MHCore::MHEntityManager::getInstance().addEntity(m_holeEntity);
+        MHHoleManager::getInstance().addHole(m_holeEntity);
         m_holeEntity = std::make_shared<MHHoleEntity>();
         MHCore::MHMainVTKInteractorStyle::getInstance().render();
     }
@@ -77,15 +82,12 @@ bool MHDrawHole::onMouseMove(const MHCore::MHInteractorInfo& interactorInfo) {
 }
 
 void MHDrawHole::createTextures() {
-    vtkSmartPointer<vtkImageData> validImageData = vtkSmartPointer<vtkImageData>::New();
-    validImageData->SetDimensions(1, 1, 1);
-    validImageData->AllocateScalars(VTK_UNSIGNED_CHAR, 3);
-    unsigned char* validPixel = static_cast<unsigned char*>(validImageData->GetScalarPointer(0, 0, 0));
-    validPixel[0] = 0;
-    validPixel[1] = 255;
-    validPixel[2] = 255;
+    vtkSmartPointer<vtkImageReader2Factory> readerFactory2D = vtkSmartPointer<vtkImageReader2Factory>::New();
+    vtkSmartPointer<vtkImageReader2> textureReader2D = readerFactory2D->CreateImageReader2("textures/default_pillar_2D.png");
+    textureReader2D->SetFileName("textures/default_pillar_2D.png");
+    textureReader2D->Update();
     m_validTexture = vtkSmartPointer<vtkTexture>::New();
-    m_validTexture->SetInputData(validImageData);
+    m_validTexture->SetInputConnection(textureReader2D->GetOutputPort());
     m_validTexture->InterpolateOn();
 
     vtkSmartPointer<vtkImageData> invalidImageData = vtkSmartPointer<vtkImageData>::New();
@@ -103,16 +105,10 @@ void MHDrawHole::createTextures() {
 void MHDrawHole::pickWall() {
     auto entities = MHCore::MHMainVTKInteractorStyle::getInstance().pickEntities();
     for (const auto& entity : entities) {
-        auto houseEntity = std::dynamic_pointer_cast<MHHouseEntity>(entity);
-        if (houseEntity) {
-            auto weakParent = houseEntity->getParent();
-            if (auto parent = weakParent.lock()) {
-                auto wallEntity = std::dynamic_pointer_cast<MHWallEntity>(parent);
-                if (wallEntity) {
-                    m_wallEntity = wallEntity;
-                    return;
-                }
-            }
+        auto wallEntity = std::dynamic_pointer_cast<MHWallEntity>(entity);
+        if (wallEntity) {
+            m_wallEntity = wallEntity;
+            return;
         }
     }
     m_wallEntity = nullptr;
@@ -140,7 +136,7 @@ void MHDrawHole::updateHole(const MHCore::MHInteractorInfo& interactorInfo) {
             direction = direction.normalize();
             midVertex = arcEdge->getCenter() + direction * arcEdge->getRadius();
         }
-        m_holeEntity->updateHole(midVertex, std::move(midEdge), MHDrawHouseManager::getDrawHoleHeight(), MHDrawHouseManager::getDrawHoleLength(), MHDrawHouseManager::getDrawHoleWidth());
+        m_holeEntity->updateHole(m_wallEntity, midVertex, std::move(midEdge), MHDrawHouseManager::getDrawHoleHeight(), MHDrawHouseManager::getDrawHoleLength(), MHDrawHouseManager::getDrawHoleWidth());
         m_holeEntity->generateHole2D();
         m_holeEntity->getHole2D()->setTexture(m_validTexture);
         m_holeEntity->show();
@@ -148,7 +144,7 @@ void MHDrawHole::updateHole(const MHCore::MHInteractorInfo& interactorInfo) {
         MHGeometry::MHVertex source = {interactorInfo.worldX - MHDrawHouseManager::getDrawHoleLength() / 2, interactorInfo.worldY, 0};
         MHGeometry::MHVertex target = {interactorInfo.worldX + MHDrawHouseManager::getDrawHoleLength() / 2, interactorInfo.worldY, 0};
         auto midEdge = std::make_unique<MHGeometry::MHLineEdge>(source, target);
-        m_holeEntity->updateHole(MHGeometry::MHVertex(interactorInfo.worldX, interactorInfo.worldY, 0), std::move(midEdge), MHDrawHouseManager::getDrawHoleHeight(), MHDrawHouseManager::getDrawHoleLength(), MHDrawHouseManager::getDrawHoleWidth());
+        m_holeEntity->updateHole(nullptr, MHGeometry::MHVertex(interactorInfo.worldX, interactorInfo.worldY, 0), std::move(midEdge), MHDrawHouseManager::getDrawHoleHeight(), MHDrawHouseManager::getDrawHoleLength(), MHDrawHouseManager::getDrawHoleWidth());
         m_holeEntity->generateHole2D();
         m_holeEntity->getHole2D()->setTexture(m_invalidTexture);
         m_holeEntity->show();
