@@ -170,6 +170,10 @@ MHEntityLayerMask MHEntity::getLayerMask() const {
     return m_layerMask;
 }
 
+vtkSmartPointer<MHActor> MHEntity::getActor() const {
+    return m_actor;
+}
+
 bool MHEntity::isPickable() const {
     return m_pickable;
 }

@@ -73,6 +73,7 @@ public:
     void disableLayerMask(MHEntityLayerMask layerMask);
     void setLayerMask(MHEntityLayerMask layerMask);
     MHEntityLayerMask getLayerMask() const;
+    vtkSmartPointer<MHActor> getActor() const;
     bool isPickable() const;
     void setPickable(bool pickable);
     int getPickerOrder() const;
