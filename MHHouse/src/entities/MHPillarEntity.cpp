@@ -55,7 +55,7 @@ void MHPillarEntity::generatePillar2D() {
     baseFace.applyTransform(transform);
     if (!m_pillar2D) {
         m_pillar2D = std::make_shared<MHHouseEntity>(MHCore::MHRendererManager::getInstance().getMain2DRenderer());
-        m_pillar2D->setTexture(m_texture);
+        m_pillar2D->setTexture(m_pillar2DTexture);
         addChild(m_pillar2D);
         m_pillar2D->setLayerMask(MHCore::MHEntityLayerMask::LAYER_2D);
     }
@@ -104,6 +104,14 @@ void MHPillarEntity::createDefaultTexture() {
     textureReader->Update();
     m_texture->SetInputConnection(textureReader->GetOutputPort());
     m_texture->InterpolateOn();
+
+    vtkSmartPointer<vtkImageReader2Factory> readerFactory2D = vtkSmartPointer<vtkImageReader2Factory>::New();
+    vtkSmartPointer<vtkImageReader2> textureReader2D = readerFactory2D->CreateImageReader2("textures/default_pillar_2D.png");
+    textureReader2D->SetFileName("textures/default_pillar_2D.png");
+    textureReader2D->Update();
+    m_pillar2DTexture = vtkSmartPointer<vtkTexture>::New();
+    m_pillar2DTexture->SetInputConnection(textureReader2D->GetOutputPort());
+    m_pillar2DTexture->InterpolateOn();
 }
 
 }  // namespace MHHouse

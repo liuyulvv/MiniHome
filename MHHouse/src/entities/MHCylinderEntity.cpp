@@ -41,7 +41,7 @@ void MHCylinderEntity::generateCylinder2D() {
     baseFace.applyTransform(transform);
     if (!m_cylinder2D) {
         m_cylinder2D = std::make_shared<MHHouseEntity>(MHCore::MHRendererManager::getInstance().getMain2DRenderer());
-        m_cylinder2D->setTexture(m_texture);
+        m_cylinder2D->setTexture(m_cylinder2DTexture);
         addChild(m_cylinder2D);
         m_cylinder2D->setLayerMask(MHCore::MHEntityLayerMask::LAYER_2D);
     }
@@ -82,6 +82,14 @@ void MHCylinderEntity::createDefaultTexture() {
     textureReader->Update();
     m_texture->SetInputConnection(textureReader->GetOutputPort());
     m_texture->InterpolateOn();
+
+    vtkSmartPointer<vtkImageReader2Factory> readerFactory2D = vtkSmartPointer<vtkImageReader2Factory>::New();
+    vtkSmartPointer<vtkImageReader2> textureReader2D = readerFactory2D->CreateImageReader2("textures/default_pillar_2D.png");
+    textureReader2D->SetFileName("textures/default_pillar_2D.png");
+    textureReader2D->Update();
+    m_cylinder2DTexture = vtkSmartPointer<vtkTexture>::New();
+    m_cylinder2DTexture->SetInputConnection(textureReader2D->GetOutputPort());
+    m_cylinder2DTexture->InterpolateOn();
 }
 
 }  // namespace MHHouse

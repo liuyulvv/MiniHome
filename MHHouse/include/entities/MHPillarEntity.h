@@ -40,6 +40,7 @@ private:
     std::vector<std::unique_ptr<MHGeometry::MHLineEdge>> m_edges;
     std::unique_ptr<MHGeometry::MHPlaneFace> m_baseFace = nullptr;
     std::shared_ptr<MHHouseEntity> m_pillar2D = nullptr;
+    vtkSmartPointer<vtkTexture> m_pillar2DTexture = nullptr;
 };
 
 }  // namespace MHHouse

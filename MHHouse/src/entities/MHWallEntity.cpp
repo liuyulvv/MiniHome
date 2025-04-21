@@ -157,7 +157,7 @@ void MHWallEntity::generateWall2D() {
     baseFace.applyTransform(transform);
     if (!m_wall2D) {
         m_wall2D = std::make_shared<MHHouseEntity>(MHCore::MHRendererManager::getInstance().getMain2DRenderer());
-        m_wall2D->setTexture(m_texture);
+        m_wall2D->setTexture(m_wall2DTexture);
         addChild(m_wall2D);
     }
     m_wall2D->setTopo(MHGeometry::MHToolKit::toTopoDSFace(baseFace));
@@ -248,6 +248,14 @@ void MHWallEntity::createDefaultTexture() {
     textureReader->Update();
     m_texture->SetInputConnection(textureReader->GetOutputPort());
     m_texture->InterpolateOn();
+
+    vtkSmartPointer<vtkImageReader2Factory> readerFactory2D = vtkSmartPointer<vtkImageReader2Factory>::New();
+    vtkSmartPointer<vtkImageReader2> textureReader2D = readerFactory2D->CreateImageReader2("textures/default_wall_2D.png");
+    textureReader2D->SetFileName("textures/default_wall_2D.png");
+    textureReader2D->Update();
+    m_wall2DTexture = vtkSmartPointer<vtkTexture>::New();
+    m_wall2DTexture->SetInputConnection(textureReader2D->GetOutputPort());
+    m_wall2DTexture->InterpolateOn();
 }
 
 }  // namespace MHHouse
