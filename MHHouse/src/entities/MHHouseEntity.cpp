@@ -40,6 +40,15 @@ MHHouseEntity::~MHHouseEntity() {
     MHCore::MHRendererManager::getInstance().getHoverRenderer()->RemoveActor(m_outlineActor);
 }
 
+void MHHouseEntity::show(bool forceRender) {
+    MHEntity::show(forceRender);
+    for (auto& child : m_children) {
+        if (child) {
+            child->getActor()->setEntity(shared_from_this());
+        }
+    }
+}
+
 void MHHouseEntity::setTopo(const TopoDS_Shape& topo) {
     m_topo = topo;
 }

@@ -28,6 +28,7 @@ public:
     MHHouseEntity& operator=(MHHouseEntity&& entity) = delete;
 
 public:
+    virtual void show(bool forceRender = true) override;
     virtual void setTopo(const TopoDS_Shape& topo);
     virtual void updateTopo();
     virtual void onEnter() override;
