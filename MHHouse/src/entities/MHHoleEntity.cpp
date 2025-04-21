@@ -32,8 +32,8 @@ void MHHoleEntity::destroy() {
     }
 }
 
-void MHHoleEntity::onEnter() {
-    MHHouseEntity::onEnter();
+void MHHoleEntity::onEnter(const MHCore::MHEntityInteractorInfo &info) {
+    MHHouseEntity::onEnter(info);
     if (m_selected) {
         return;
     }
@@ -41,20 +41,20 @@ void MHHoleEntity::onEnter() {
     m_outlineActor->SetTexture(m_hoveredTexture);
     for (auto &child : m_children) {
         if (child && !child->isSame(m_hole2D)) {
-            child->onEnter();
+            child->onEnter(info);
         }
     }
 }
 
-void MHHoleEntity::onLeave() {
-    MHHouseEntity::onLeave();
+void MHHoleEntity::onLeave(const MHCore::MHEntityInteractorInfo &info) {
+    MHHouseEntity::onLeave(info);
     if (m_selected) {
         return;
     }
     MHCore::MHRendererManager::getInstance().getHoverRenderer()->RemoveActor(m_outlineActor);
     for (auto &child : m_children) {
         if (child && !child->isSame(m_hole2D)) {
-            child->onLeave();
+            child->onLeave(info);
         }
     }
 }

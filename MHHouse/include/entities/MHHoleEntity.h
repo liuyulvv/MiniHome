@@ -27,8 +27,8 @@ public:
 
 public:
     virtual void destroy() override;
-    virtual void onEnter() override;
-    virtual void onLeave() override;
+    virtual void onEnter(const MHCore::MHEntityInteractorInfo& info) override;
+    virtual void onLeave(const MHCore::MHEntityInteractorInfo& info) override;
     virtual void onSelected(const MHCore::MHEntityInteractorInfo& info) override;
 
 public:

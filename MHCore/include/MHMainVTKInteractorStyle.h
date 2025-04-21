@@ -88,6 +88,9 @@ private:
     int m_lastY;
     bool m_leftPressed;
     bool m_rightPressed;
+    bool m_ctrlPressed = false;
+    bool m_shiftPressed = false;
+    bool m_altPressed = false;
     MHEntityLayerMask m_layerMask = MHEntityLayerMask::NONE;
     std::shared_ptr<MHEntity> m_selectedEntity = nullptr;
     std::shared_ptr<MHEntity> m_hoveredEntity = nullptr;

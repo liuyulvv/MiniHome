@@ -164,8 +164,8 @@ void MHHouseEntity::updateTopo() {
     }
 }
 
-void MHHouseEntity::onEnter() {
-    MHCore::MHEntity::onEnter();
+void MHHouseEntity::onEnter(const MHCore::MHEntityInteractorInfo& info) {
+    MHCore::MHEntity::onEnter(info);
     if (m_selected) {
         return;
     }
@@ -173,20 +173,20 @@ void MHHouseEntity::onEnter() {
     m_outlineActor->SetTexture(m_hoveredTexture);
     for (auto& child : m_children) {
         if (child) {
-            child->onEnter();
+            child->onEnter(info);
         }
     }
 }
 
-void MHHouseEntity::onLeave() {
-    MHCore::MHEntity::onLeave();
+void MHHouseEntity::onLeave(const MHCore::MHEntityInteractorInfo& info) {
+    MHCore::MHEntity::onLeave(info);
     if (m_selected) {
         return;
     }
     MHCore::MHRendererManager::getInstance().getHoverRenderer()->RemoveActor(m_outlineActor);
     for (auto& child : m_children) {
         if (child) {
-            child->onLeave();
+            child->onLeave(info);
         }
     }
 }

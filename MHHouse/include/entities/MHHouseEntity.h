@@ -31,8 +31,8 @@ public:
     virtual void show(bool forceRender = true) override;
     virtual void setTopo(const TopoDS_Shape& topo);
     virtual void updateTopo();
-    virtual void onEnter() override;
-    virtual void onLeave() override;
+    virtual void onEnter(const MHCore::MHEntityInteractorInfo& info) override;
+    virtual void onLeave(const MHCore::MHEntityInteractorInfo& info) override;
     virtual void onSelected(const MHCore::MHEntityInteractorInfo& info) override;
     virtual void onDelete() override;
     virtual void setPolygonOffset(double factor, double units);

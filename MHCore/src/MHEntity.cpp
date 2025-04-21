@@ -65,11 +65,11 @@ void MHEntity::destroy() {
     }
 }
 
-void MHEntity::onEnter() {
+void MHEntity::onEnter(const MHEntityInteractorInfo& info) {
     m_hovered = true;
 }
 
-void MHEntity::onLeave() {
+void MHEntity::onLeave(const MHEntityInteractorInfo& info) {
     m_hovered = false;
 }
 

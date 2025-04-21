@@ -35,7 +35,9 @@ inline unsigned int operator&(MHEntityLayerMask a, MHEntityLayerMask b) {
 struct MHEntityInteractorInfo {
     bool selected = false;
     bool hovered = false;
-    std::set<std::string> keyPressed;
+    bool ctrlPressed = false;
+    bool shiftPressed = false;
+    bool altPressed = false;
 };
 
 class MH_CORE_API MHEntity : public std::enable_shared_from_this<MHEntity> {
@@ -50,8 +52,8 @@ public:
 public:
     virtual void show(bool forceRender = true);
     virtual void destroy();
-    virtual void onEnter();
-    virtual void onLeave();
+    virtual void onEnter(const MHEntityInteractorInfo& info);
+    virtual void onLeave(const MHEntityInteractorInfo& info);
     virtual void onSelected(const MHEntityInteractorInfo& info);
     virtual void onDelete();
 

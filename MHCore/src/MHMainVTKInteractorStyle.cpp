@@ -182,11 +182,11 @@ std::vector<std::shared_ptr<MHEntity>> MHMainVTKInteractorStyle::pickEntities() 
 
 void MHMainVTKInteractorStyle::setSelectedEntity(std::shared_ptr<MHEntity> entity) {
     if (m_selectedEntity) {
-        m_selectedEntity->onSelected({false, false, m_interactorInfo.pressedKeys});
+        m_selectedEntity->onSelected({false, false, m_ctrlPressed, m_shiftPressed, m_altPressed});
     }
     m_selectedEntity = entity;
     if (m_selectedEntity) {
-        m_selectedEntity->onSelected({true, false, m_interactorInfo.pressedKeys});
+        m_selectedEntity->onSelected({true, false, m_ctrlPressed, m_shiftPressed, m_altPressed});
     }
     render();
 }
@@ -302,18 +302,18 @@ void MHMainVTKInteractorStyle::OnMouseMove() {
         if (m_hoveredEntity) {
             if (m_hoveredEntity->isSame(entity)) {
             } else {
-                m_hoveredEntity->onLeave();
+                m_hoveredEntity->onLeave({false, false, m_ctrlPressed, m_shiftPressed, m_altPressed});
                 m_hoveredEntity = entity;
-                m_hoveredEntity->onEnter();
+                m_hoveredEntity->onEnter({false, true, m_ctrlPressed, m_shiftPressed, m_altPressed});
             }
         } else {
             m_hoveredEntity = entity;
-            m_hoveredEntity->onEnter();
+            m_hoveredEntity->onEnter({false, true, m_ctrlPressed, m_shiftPressed, m_altPressed});
         }
         render();
     } else {
         if (m_hoveredEntity) {
-            m_hoveredEntity->onLeave();
+            m_hoveredEntity->onLeave({false, false, m_ctrlPressed, m_shiftPressed, m_altPressed});
             m_hoveredEntity = nullptr;
             render();
         }
@@ -325,12 +325,15 @@ void MHMainVTKInteractorStyle::OnChar() {}
 void MHMainVTKInteractorStyle::OnKeyPress() {
     if (m_interactor->GetControlKey()) {
         m_interactorInfo.pressedKeys.insert("CTRL");
+        m_ctrlPressed = true;
     }
     if (m_interactor->GetShiftKey()) {
         m_interactorInfo.pressedKeys.insert("SHIFT");
+        m_shiftPressed = true;
     }
     if (m_interactor->GetAltKey()) {
         m_interactorInfo.pressedKeys.insert("ALT");
+        m_altPressed = true;
     }
     std::string key = m_interactor->GetKeySym();
     std::transform(key.begin(), key.end(), key.begin(), ::toupper);
@@ -352,12 +355,15 @@ void MHMainVTKInteractorStyle::OnKeyRelease() {
     bool alt = m_interactor->GetAltKey();
     if (!ctrl) {
         m_interactorInfo.pressedKeys.erase("CTRL");
+        m_ctrlPressed = false;
     }
     if (!shift) {
         m_interactorInfo.pressedKeys.erase("SHIFT");
+        m_shiftPressed = false;
     }
     if (!alt) {
         m_interactorInfo.pressedKeys.erase("ALT");
+        m_altPressed = false;
     }
     std::string key = m_interactor->GetKeySym();
     std::transform(key.begin(), key.end(), key.begin(), ::toupper);
