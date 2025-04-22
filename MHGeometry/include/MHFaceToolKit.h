@@ -24,5 +24,7 @@ MH_GEOMETRY_API bool isIntersect(const MHPlaneFace& face1, const MHPlaneFace& fa
 MH_GEOMETRY_API bool isIntersect(const TopoDS_Face& face1, const TopoDS_Face& face2);
 MH_GEOMETRY_API TopoDS_Shape booleanDifference(const TopoDS_Shape& mainShape, const std::vector<TopoDS_Shape>& toolShapes);
 MH_GEOMETRY_API std::vector<TopoDS_Face> getFaces(const TopoDS_Shape& shape);
+MH_GEOMETRY_API TopoDS_Shape makeThruSectionSolid(const MHWire& wire1, const MHWire& wire2);
+MH_GEOMETRY_API std::vector<TopoDS_Face> makeThruSectionFace(const MHWire& wire1, const MHWire& wire2);
 
 }  // namespace MHGeometry::MHToolKit

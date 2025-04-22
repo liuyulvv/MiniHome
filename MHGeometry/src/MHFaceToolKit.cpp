@@ -12,6 +12,7 @@
 #include <BRepAlgoAPI_Cut.hxx>
 #include <BRepBndLib.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
+#include <BRepOffsetAPI_ThruSections.hxx>
 #include <BRepPrimAPI_MakePrism.hxx>
 #include <BRep_Builder.hxx>
 #include <Geom_CylindricalSurface.hxx>
@@ -221,6 +222,19 @@ MH_GEOMETRY_API std::vector<TopoDS_Face> getFaces(const TopoDS_Shape& shape) {
         shapes.push_back(face);
     }
     return shapes;
+}
+
+MH_GEOMETRY_API TopoDS_Shape makeThruSectionSolid(const MHWire& wire1, const MHWire& wire2) {
+    BRepOffsetAPI_ThruSections builder(true);
+    builder.AddWire(MHGeometry::MHToolKit::toTopoDSWire(wire1));
+    builder.AddWire(MHGeometry::MHToolKit::toTopoDSWire(wire2));
+    builder.Build();
+    return builder.Shape();
+}
+
+MH_GEOMETRY_API std::vector<TopoDS_Face> makeThruSectionFace(const MHWire& wire1, const MHWire& wire2) {
+    auto solid = makeThruSectionSolid(wire1, wire2);
+    return getFaces(solid);
 }
 
 }  // namespace MHGeometry::MHToolKit
