@@ -92,10 +92,10 @@ void MHWallEntity::generateWall2D() {
                 break;
             }
         }
-        m_edges.push_back(std::make_shared<MHGeometry::MHLineEdge>(innerSourceVertex, outerSourceVertex));
         m_edges.push_back(std::make_shared<MHGeometry::MHLineEdge>(outerSourceVertex, outerTargetVertex));
         m_edges.push_back(std::make_shared<MHGeometry::MHLineEdge>(outerTargetVertex, innerTargetVertex));
         m_edges.push_back(std::make_shared<MHGeometry::MHLineEdge>(innerTargetVertex, innerSourceVertex));
+        m_edges.push_back(std::make_shared<MHGeometry::MHLineEdge>(innerSourceVertex, outerSourceVertex));
     } else {
         auto arcEdge = static_cast<MHGeometry::MHArcEdge*>(m_positionEdge.get());
         if (m_positionType == MHWallPositionType::MID && arcEdge->getRadius() < m_width / 2) {
