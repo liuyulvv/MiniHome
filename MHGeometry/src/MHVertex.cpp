@@ -14,8 +14,8 @@ MHTopoType MHVertex::getType() const {
     return MHTopoType::VERTEX;
 }
 
-std::unique_ptr<MHTopoBase> MHVertex::clone() const {
-    return std::make_unique<MHVertex>(*this);
+std::shared_ptr<MHTopoBase> MHVertex::clone() const {
+    return std::make_shared<MHVertex>(*this);
 }
 
 void MHVertex::applyTransform(vtkSmartPointer<vtkTransform> transform) {

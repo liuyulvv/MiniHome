@@ -34,8 +34,8 @@ MHEdgeType MHArcEdge::getEdgeType() const {
     return MHEdgeType::ARC_EDGE;
 }
 
-std::unique_ptr<MHTopoBase> MHArcEdge::clone() const {
-    return std::make_unique<MHArcEdge>(*this);
+std::shared_ptr<MHTopoBase> MHArcEdge::clone() const {
+    return std::make_shared<MHArcEdge>(*this);
 }
 
 void MHArcEdge::applyTransform(vtkSmartPointer<vtkTransform> transform) {

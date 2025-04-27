@@ -26,18 +26,18 @@ public:
 
 public:
     virtual MHTopoType getType() const override;
-    virtual std::unique_ptr<MHTopoBase> clone() const override;
+    virtual std::shared_ptr<MHTopoBase> clone() const override;
     virtual void applyTransform(vtkSmartPointer<vtkTransform> transform) override;
     virtual void reversed() override;
 
 public:
     void addEdge(const MHLineEdge& edge);
     void addEdge(const MHArcEdge& edge);
-    void addEdge(std::unique_ptr<MHEdge> edge);
-    const std::vector<std::unique_ptr<MHEdge>>& getEdges() const;
+    void addEdge(std::shared_ptr<MHEdge> edge);
+    std::vector<std::shared_ptr<MHEdge>> getEdges() const;
 
 private:
-    std::vector<std::unique_ptr<MHEdge>> m_edges;
+    std::vector<std::shared_ptr<MHEdge>> m_edges;
 };
 
 }  // namespace MHGeometry

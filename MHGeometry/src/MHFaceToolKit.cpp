@@ -120,7 +120,7 @@ MH_GEOMETRY_API MHPlaneFace toMHPlaneFace(const TopoDS_Face& topoDSFace, const M
     return planeFace;
 }
 
-MH_GEOMETRY_API std::vector<MHPlaneFace> makeArrangement(const std::vector<std::unique_ptr<MHEdge>>& edges) {
+MH_GEOMETRY_API std::vector<MHPlaneFace> makeArrangement(std::vector<std::shared_ptr<MHEdge>> edges) {
     BRep_Builder builder;
     TopoDS_Compound edgesCompound;
     TopoDS_Compound wiresCompound;
