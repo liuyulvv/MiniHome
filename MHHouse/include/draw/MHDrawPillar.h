@@ -42,7 +42,7 @@ private:
 
 private:
     DrawState m_drawState = DrawState::END;
-    std::unique_ptr<MHGeometry::MHLineEdge> m_midEdge = nullptr;
+    std::shared_ptr<MHGeometry::MHLineEdge> m_midEdge = nullptr;
     std::shared_ptr<MHPillarEntity> m_pillarEntity = nullptr;
 };
 

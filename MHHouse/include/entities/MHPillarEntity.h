@@ -29,19 +29,19 @@ public:
     void updatePillar(const MHGeometry::MHLineEdge& midEdge, double height, double length, double width);
     void generatePillar2D();
     void generatePillar3D();
-    std::vector<std::unique_ptr<MHGeometry::MHEdge>> getEdges();
-    std::unique_ptr<MHGeometry::MHPlaneFace> getBaseFace() const;
+    std::vector<std::shared_ptr<MHGeometry::MHLineEdge>> getEdges() const;
+    std::shared_ptr<MHGeometry::MHPlaneFace> getBaseFace() const;
 
 private:
     void createDefaultTexture();
 
 private:
-    std::unique_ptr<MHGeometry::MHLineEdge> m_midEdge = nullptr;
+    std::shared_ptr<MHGeometry::MHLineEdge> m_midEdge = nullptr;
     double m_height = 2800;
     double m_length = 650.0;
     double m_width = 650.0;
-    std::vector<std::unique_ptr<MHGeometry::MHLineEdge>> m_edges;
-    std::unique_ptr<MHGeometry::MHPlaneFace> m_baseFace = nullptr;
+    std::vector<std::shared_ptr<MHGeometry::MHLineEdge>> m_edges;
+    std::shared_ptr<MHGeometry::MHPlaneFace> m_baseFace = nullptr;
     std::shared_ptr<MHHouseEntity> m_pillar2D = nullptr;
     vtkSmartPointer<vtkTexture> m_pillar2DTexture = nullptr;
 };

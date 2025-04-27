@@ -41,7 +41,7 @@ private:
 
 private:
     DrawState m_drawState = DrawState::END;
-    std::unique_ptr<MHGeometry::MHVertex> m_centerVertex = nullptr;
+    std::shared_ptr<MHGeometry::MHVertex> m_centerVertex = nullptr;
     std::shared_ptr<MHCylinderEntity> m_cylinderEntity = nullptr;
 };
 

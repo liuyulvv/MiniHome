@@ -17,9 +17,9 @@ namespace MHHouse {
 
 void MHDrawWallArc::beginDraw() {
     MHCore::MHMainVTKInteractorStyle::getInstance().insertFilter(shared_from_this());
-    m_lineEdge = std::make_unique<MHGeometry::MHLineEdge>();
+    m_lineEdge = std::make_shared<MHGeometry::MHLineEdge>();
     m_midVertex = nullptr;
-    m_arcEdge = std::make_unique<MHGeometry::MHArcEdge>();
+    m_arcEdge = std::make_shared<MHGeometry::MHArcEdge>();
     m_wallEntity = std::make_shared<MHWallEntity>();
     m_drawState = DrawState::FIRST;
 }
@@ -48,7 +48,7 @@ bool MHDrawWallArc::onLeftButtonDown(const MHCore::MHInteractorInfo& interactorI
         m_lineEdge->setTargetVertex({interactorInfo.worldX, interactorInfo.worldY, 0});
         auto source = m_lineEdge->getSourceVertex();
         auto target = m_lineEdge->getTargetVertex();
-        m_midVertex = std::make_unique<MHGeometry::MHVertex>((source + target) / 2.0);
+        m_midVertex = std::make_shared<MHGeometry::MHVertex>((source + target) / 2.0);
         m_drawState = DrawState::THIRD;
     } else if (m_drawState == DrawState::THIRD) {
         computeArcEdge(interactorInfo);
@@ -142,7 +142,7 @@ void MHDrawWallArc::computeArcEdge(const MHCore::MHInteractorInfo& interactorInf
     auto sourceAangle = MHGeometry::MHToolKit::angleToXAxis(arcCenter, arcSource);
     auto targetAngle = MHGeometry::MHToolKit::angleToXAxis(arcCenter, arcTarget);
     MHGeometry::MHVertex normal = {0, 0, 1};
-    m_arcEdge = std::make_unique<MHGeometry::MHArcEdge>(arcCenter, normal, radius, sourceAangle, targetAngle);
+    m_arcEdge = std::make_shared<MHGeometry::MHArcEdge>(arcCenter, normal, radius, sourceAangle, targetAngle);
 }
 
 }  // namespace MHHouse

@@ -19,7 +19,7 @@ MHSpaceManager& MHSpaceManager::getInstance() {
 }
 
 void MHSpaceManager::generateSpaces() {
-    std::vector<std::unique_ptr<MHGeometry::MHEdge>> edges;
+    std::vector<std::shared_ptr<MHGeometry::MHEdge>> edges;
     std::vector<MHGeometry::MHPlaneFace> excludeFaces;
 
     auto walls = MHWallManager::getInstance().getWalls();
@@ -32,7 +32,7 @@ void MHSpaceManager::generateSpaces() {
             }
             for (auto& edge : wallEdges) {
                 if (edge) {
-                    edges.push_back(std::move(edge));
+                    edges.push_back(edge);
                 }
             }
         }
@@ -48,7 +48,7 @@ void MHSpaceManager::generateSpaces() {
             }
             for (auto& edge : pillarEdges) {
                 if (edge) {
-                    edges.push_back(std::move(edge));
+                    edges.push_back(edge);
                 }
             }
         }
@@ -63,7 +63,7 @@ void MHSpaceManager::generateSpaces() {
                 excludeFaces.push_back(*baseFace);
             }
             if (cylinderEdge) {
-                edges.push_back(std::move(cylinderEdge));
+                edges.push_back(cylinderEdge);
             }
         }
     }

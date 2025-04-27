@@ -30,18 +30,18 @@ public:
     void updateCylinder(const MHGeometry::MHVertex& center, double radius, double height);
     void generateCylinder2D();
     void generateCylinder3D();
-    std::unique_ptr<MHGeometry::MHArcEdge> getEdge();
-    std::unique_ptr<MHGeometry::MHPlaneFace> getBaseFace() const;
+    std::shared_ptr<MHGeometry::MHArcEdge> getEdge() const;
+    std::shared_ptr<MHGeometry::MHPlaneFace> getBaseFace() const;
 
 private:
     void createDefaultTexture();
 
 private:
-    std::unique_ptr<MHGeometry::MHVertex> m_center;
+    std::shared_ptr<MHGeometry::MHVertex> m_center;
     double m_radius = 325.0;
     double m_height = 2800.0;
-    std::unique_ptr<MHGeometry::MHArcEdge> m_edge = nullptr;
-    std::unique_ptr<MHGeometry::MHPlaneFace> m_baseFace = nullptr;
+    std::shared_ptr<MHGeometry::MHArcEdge> m_edge = nullptr;
+    std::shared_ptr<MHGeometry::MHPlaneFace> m_baseFace = nullptr;
     std::shared_ptr<MHHouseEntity> m_cylinder2D = nullptr;
     vtkSmartPointer<vtkTexture> m_cylinder2DTexture = nullptr;
 };

@@ -32,11 +32,10 @@ public:
     virtual void onSelected(const MHCore::MHEntityInteractorInfo& info) override;
 
 public:
-    void updateHole(std::shared_ptr<MHWallEntity> wallEntity, const MHGeometry::MHVertex& midVertex, std::unique_ptr<MHGeometry::MHEdge> midEdge, double height, double length, double width);
+    void updateHole(std::shared_ptr<MHWallEntity> wallEntity, const MHGeometry::MHVertex& midVertex, std::shared_ptr<MHGeometry::MHEdge> midEdge, double height, double length, double width);
     void generateHole2D();
     void generateHole3D();
-    std::vector<std::unique_ptr<MHGeometry::MHEdge>> getEdges();
-    std::unique_ptr<MHGeometry::MHPlaneFace> getBaseFace() const;
+    std::shared_ptr<MHGeometry::MHPlaneFace> getBaseFace() const;
     std::shared_ptr<MHHouseEntity> getHole2D() const;
     TopoDS_Shape getSolidShape() const;
 
@@ -44,13 +43,12 @@ private:
     void createDefaultTexture();
 
 private:
-    std::unique_ptr<MHGeometry::MHVertex> m_midVertex = nullptr;
-    std::unique_ptr<MHGeometry::MHEdge> m_midEdge = nullptr;
+    std::shared_ptr<MHGeometry::MHVertex> m_midVertex = nullptr;
+    std::shared_ptr<MHGeometry::MHEdge> m_midEdge = nullptr;
     double m_height = 2000;
     double m_length = 1200.0;
     double m_width = 240.0;
-    std::vector<std::unique_ptr<MHGeometry::MHEdge>> m_edges;
-    std::unique_ptr<MHGeometry::MHPlaneFace> m_baseFace = nullptr;
+    std::shared_ptr<MHGeometry::MHPlaneFace> m_baseFace = nullptr;
     std::shared_ptr<MHHouseEntity> m_hole2D = nullptr;
     vtkSmartPointer<vtkTexture> m_hole2DTexture = nullptr;
     std::shared_ptr<MHWallEntity> m_wallEntity = nullptr;

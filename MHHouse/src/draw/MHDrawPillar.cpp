@@ -16,18 +16,18 @@ namespace MHHouse {
 
 void MHDrawPillar::beginDraw() {
     MHCore::MHMainVTKInteractorStyle::getInstance().insertFilter(shared_from_this());
-    m_midEdge = std::make_unique<MHGeometry::MHLineEdge>();
+    m_midEdge = std::make_shared<MHGeometry::MHLineEdge>();
     m_pillarEntity = std::make_shared<MHPillarEntity>();
     m_drawState = DrawState::FIRST;
 }
 
 void MHDrawPillar::endDraw() {
     MHCore::MHMainVTKInteractorStyle::getInstance().removeFilter(shared_from_this());
-    m_midEdge.reset(nullptr);
+    m_midEdge = nullptr;
     if (m_pillarEntity) {
         m_pillarEntity->destroy();
     }
-    m_pillarEntity.reset();
+    m_pillarEntity = nullptr;
     m_drawState = DrawState::END;
 }
 

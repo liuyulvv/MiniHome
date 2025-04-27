@@ -29,7 +29,7 @@ void MHPillarEntity::destroy() {
 }
 
 void MHPillarEntity::updatePillar(const MHGeometry::MHLineEdge& midEdge, double height, double length, double width) {
-    m_midEdge = std::make_unique<MHGeometry::MHLineEdge>(midEdge);
+    m_midEdge = std::make_shared<MHGeometry::MHLineEdge>(midEdge);
     m_height = height;
     m_length = length;
     m_width = width;
@@ -46,17 +46,17 @@ void MHPillarEntity::generatePillar2D() {
     MHGeometry::MHVertex innerTargetVertex = m_midEdge->getTargetVertex() - edgeNormal * m_width / 2;
     MHGeometry::MHVertex outerSourceVertex = m_midEdge->getSourceVertex() + edgeNormal * m_width / 2;
     MHGeometry::MHVertex outerTargetVertex = m_midEdge->getTargetVertex() + edgeNormal * m_width / 2;
-    m_edges.push_back(std::make_unique<MHGeometry::MHLineEdge>(innerSourceVertex, outerSourceVertex));
-    m_edges.push_back(std::make_unique<MHGeometry::MHLineEdge>(outerSourceVertex, outerTargetVertex));
-    m_edges.push_back(std::make_unique<MHGeometry::MHLineEdge>(outerTargetVertex, innerTargetVertex));
-    m_edges.push_back(std::make_unique<MHGeometry::MHLineEdge>(innerTargetVertex, innerSourceVertex));
+    m_edges.push_back(std::make_shared<MHGeometry::MHLineEdge>(innerSourceVertex, outerSourceVertex));
+    m_edges.push_back(std::make_shared<MHGeometry::MHLineEdge>(outerSourceVertex, outerTargetVertex));
+    m_edges.push_back(std::make_shared<MHGeometry::MHLineEdge>(outerTargetVertex, innerTargetVertex));
+    m_edges.push_back(std::make_shared<MHGeometry::MHLineEdge>(innerTargetVertex, innerSourceVertex));
     MHGeometry::MHPlaneFace baseFace;
     MHGeometry::MHWire baseWire;
     for (const auto& edge : m_edges) {
         baseWire.addEdge(*edge);
     }
     baseFace.addWire(baseWire);
-    m_baseFace = std::make_unique<MHGeometry::MHPlaneFace>(baseFace);
+    m_baseFace = std::make_shared<MHGeometry::MHPlaneFace>(baseFace);
     vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
     transform->Identity();
     transform->Translate(0, 0, m_height);
@@ -86,23 +86,12 @@ void MHPillarEntity::generatePillar3D() {
     }
 }
 
-std::vector<std::unique_ptr<MHGeometry::MHEdge>> MHPillarEntity::getEdges() {
-    std::vector<std::unique_ptr<MHGeometry::MHEdge>> edges;
-    for (const auto& edge : m_edges) {
-        auto clone = edge->clone();
-        auto cloneEdge = dynamic_cast<MHGeometry::MHEdge*>(clone.release());
-        auto lineEdge = static_cast<MHGeometry::MHLineEdge*>(cloneEdge);
-        auto newLineEdge = std::unique_ptr<MHGeometry::MHLineEdge>(lineEdge);
-        edges.push_back(std::move(newLineEdge));
-    }
-    return edges;
+std::vector<std::shared_ptr<MHGeometry::MHLineEdge>> MHPillarEntity::getEdges() const {
+    return m_edges;
 }
 
-std::unique_ptr<MHGeometry::MHPlaneFace> MHPillarEntity::getBaseFace() const {
-    if (m_baseFace) {
-        return std::make_unique<MHGeometry::MHPlaneFace>(*m_baseFace);
-    }
-    return nullptr;
+std::shared_ptr<MHGeometry::MHPlaneFace> MHPillarEntity::getBaseFace() const {
+    return m_baseFace;
 }
 
 void MHPillarEntity::createDefaultTexture() {

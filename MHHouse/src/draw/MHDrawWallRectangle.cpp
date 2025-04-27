@@ -16,7 +16,7 @@ namespace MHHouse {
 
 void MHDrawWallRectangle::beginDraw() {
     MHCore::MHMainVTKInteractorStyle::getInstance().insertFilter(shared_from_this());
-    m_lineEdge = std::make_unique<MHGeometry::MHLineEdge>();
+    m_lineEdge = std::make_shared<MHGeometry::MHLineEdge>();
     m_wallEntities.clear();
     for (int i = 0; i < 4; ++i) {
         m_wallEntities.push_back(std::make_shared<MHWallEntity>());
@@ -26,7 +26,7 @@ void MHDrawWallRectangle::beginDraw() {
 
 void MHDrawWallRectangle::endDraw() {
     MHCore::MHMainVTKInteractorStyle::getInstance().removeFilter(shared_from_this());
-    m_lineEdge.reset();
+    m_lineEdge = nullptr;
     for (auto wallEntity : m_wallEntities) {
         if (wallEntity) {
             wallEntity->destroy();

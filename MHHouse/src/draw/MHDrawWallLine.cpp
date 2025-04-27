@@ -16,18 +16,18 @@ namespace MHHouse {
 
 void MHDrawWallLine::beginDraw() {
     MHCore::MHMainVTKInteractorStyle::getInstance().insertFilter(shared_from_this());
-    m_lineEdge = std::make_unique<MHGeometry::MHLineEdge>();
+    m_lineEdge = std::make_shared<MHGeometry::MHLineEdge>();
     m_wallEntity = std::make_shared<MHWallEntity>();
     m_drawState = DrawState::FIRST;
 }
 
 void MHDrawWallLine::endDraw() {
     MHCore::MHMainVTKInteractorStyle::getInstance().removeFilter(shared_from_this());
-    m_lineEdge.reset();
+    m_lineEdge = nullptr;
     if (m_wallEntity) {
         m_wallEntity->destroy();
     }
-    m_wallEntity.reset();
+    m_wallEntity = nullptr;
     m_drawState = DrawState::END;
 }
 

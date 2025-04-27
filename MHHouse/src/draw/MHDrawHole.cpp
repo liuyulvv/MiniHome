@@ -136,15 +136,15 @@ void MHDrawHole::updateHole(const MHCore::MHInteractorInfo& interactorInfo) {
             direction = direction.normalize();
             midVertex = arcEdge->getCenter() + direction * arcEdge->getRadius();
         }
-        m_holeEntity->updateHole(m_wallEntity, midVertex, std::move(midEdge), MHDrawHouseManager::getDrawHoleHeight(), MHDrawHouseManager::getDrawHoleLength(), MHDrawHouseManager::getDrawHoleWidth());
+        m_holeEntity->updateHole(m_wallEntity, midVertex, std::dynamic_pointer_cast<MHGeometry::MHEdge>(midEdge->clone()), MHDrawHouseManager::getDrawHoleHeight(), MHDrawHouseManager::getDrawHoleLength(), MHDrawHouseManager::getDrawHoleWidth());
         m_holeEntity->generateHole2D();
         m_holeEntity->getHole2D()->setTexture(m_validTexture);
         m_holeEntity->show();
     } else {
         MHGeometry::MHVertex source = {interactorInfo.worldX - MHDrawHouseManager::getDrawHoleLength() / 2, interactorInfo.worldY, 0};
         MHGeometry::MHVertex target = {interactorInfo.worldX + MHDrawHouseManager::getDrawHoleLength() / 2, interactorInfo.worldY, 0};
-        auto midEdge = std::make_unique<MHGeometry::MHLineEdge>(source, target);
-        m_holeEntity->updateHole(nullptr, MHGeometry::MHVertex(interactorInfo.worldX, interactorInfo.worldY, 0), std::move(midEdge), MHDrawHouseManager::getDrawHoleHeight(), MHDrawHouseManager::getDrawHoleLength(), MHDrawHouseManager::getDrawHoleWidth());
+        auto midEdge = std::make_shared<MHGeometry::MHLineEdge>(source, target);
+        m_holeEntity->updateHole(nullptr, MHGeometry::MHVertex(interactorInfo.worldX, interactorInfo.worldY, 0), std::dynamic_pointer_cast<MHGeometry::MHEdge>(midEdge->clone()), MHDrawHouseManager::getDrawHoleHeight(), MHDrawHouseManager::getDrawHoleLength(), MHDrawHouseManager::getDrawHoleWidth());
         m_holeEntity->generateHole2D();
         m_holeEntity->getHole2D()->setTexture(m_invalidTexture);
         m_holeEntity->show();

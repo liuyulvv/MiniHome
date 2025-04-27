@@ -28,7 +28,7 @@ void MHCylinderEntity::destroy() {
 }
 
 void MHCylinderEntity::updateCylinder(const MHGeometry::MHVertex& center, double radius, double height) {
-    m_center = std::make_unique<MHGeometry::MHVertex>(center);
+    m_center = std::make_shared<MHGeometry::MHVertex>(center);
     m_radius = radius;
     m_height = height;
 }
@@ -37,12 +37,12 @@ void MHCylinderEntity::generateCylinder2D() {
     if (!m_center) {
         return;
     }
-    m_edge = std::make_unique<MHGeometry::MHArcEdge>(*m_center, m_radius);
+    m_edge = std::make_shared<MHGeometry::MHArcEdge>(*m_center, m_radius);
     MHGeometry::MHPlaneFace baseFace;
     MHGeometry::MHWire baseWire;
     baseWire.addEdge(*m_edge);
     baseFace.addWire(baseWire);
-    m_baseFace = std::make_unique<MHGeometry::MHPlaneFace>(baseFace);
+    m_baseFace = std::make_shared<MHGeometry::MHPlaneFace>(baseFace);
     vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
     transform->Identity();
     transform->Translate(0, 0, m_height);
@@ -72,15 +72,12 @@ void MHCylinderEntity::generateCylinder3D() {
     }
 }
 
-std::unique_ptr<MHGeometry::MHArcEdge> MHCylinderEntity::getEdge() {
-    return std::make_unique<MHGeometry::MHArcEdge>(*m_edge);
+std::shared_ptr<MHGeometry::MHArcEdge> MHCylinderEntity::getEdge() const {
+    return m_edge;
 }
 
-std::unique_ptr<MHGeometry::MHPlaneFace> MHCylinderEntity::getBaseFace() const {
-    if (m_baseFace) {
-        return std::make_unique<MHGeometry::MHPlaneFace>(*m_baseFace);
-    }
-    return nullptr;
+std::shared_ptr<MHGeometry::MHPlaneFace> MHCylinderEntity::getBaseFace() const {
+    return m_baseFace;
 }
 
 void MHCylinderEntity::createDefaultTexture() {

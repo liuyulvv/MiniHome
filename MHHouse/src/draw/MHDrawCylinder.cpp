@@ -16,14 +16,14 @@ namespace MHHouse {
 
 void MHDrawCylinder::beginDraw() {
     MHCore::MHMainVTKInteractorStyle::getInstance().insertFilter(shared_from_this());
-    m_centerVertex = std::make_unique<MHGeometry::MHVertex>();
+    m_centerVertex = std::make_shared<MHGeometry::MHVertex>();
     m_cylinderEntity = std::make_shared<MHCylinderEntity>();
     m_drawState = DrawState::FIRST;
 }
 
 void MHDrawCylinder::endDraw() {
     MHCore::MHMainVTKInteractorStyle::getInstance().removeFilter(shared_from_this());
-    m_centerVertex.reset(nullptr);
+    m_centerVertex.reset();
     if (m_cylinderEntity) {
         m_cylinderEntity->destroy();
     }

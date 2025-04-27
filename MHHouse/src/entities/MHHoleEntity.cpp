@@ -75,10 +75,10 @@ void MHHoleEntity::onSelected(const MHCore::MHEntityInteractorInfo &info) {
     }
 }
 
-void MHHoleEntity::updateHole(std::shared_ptr<MHWallEntity> wallEntity, const MHGeometry::MHVertex &midVertex, std::unique_ptr<MHGeometry::MHEdge> midEdge, double height, double length, double width) {
+void MHHoleEntity::updateHole(std::shared_ptr<MHWallEntity> wallEntity, const MHGeometry::MHVertex &midVertex, std::shared_ptr<MHGeometry::MHEdge> midEdge, double height, double length, double width) {
     m_wallEntity = wallEntity;
-    m_midVertex = std::make_unique<MHGeometry::MHVertex>(midVertex);
-    m_midEdge = std::move(midEdge);
+    m_midVertex = std::make_shared<MHGeometry::MHVertex>(midVertex);
+    m_midEdge = midEdge;
     m_height = height;
     m_length = length;
     m_width = width;
@@ -102,12 +102,12 @@ void MHHoleEntity::generateHole2D() {
 
         MHGeometry::MHPlaneFace face2D;
         MHGeometry::MHWire wire2D;
-        wire2D.addEdge(std::make_unique<MHGeometry::MHLineEdge>(innerSourceVertex, outerSourceVertex));
-        wire2D.addEdge(std::make_unique<MHGeometry::MHLineEdge>(outerSourceVertex, outerTargetVertex));
-        wire2D.addEdge(std::make_unique<MHGeometry::MHLineEdge>(outerTargetVertex, innerTargetVertex));
-        wire2D.addEdge(std::make_unique<MHGeometry::MHLineEdge>(innerTargetVertex, innerSourceVertex));
+        wire2D.addEdge(std::make_shared<MHGeometry::MHLineEdge>(innerSourceVertex, outerSourceVertex));
+        wire2D.addEdge(std::make_shared<MHGeometry::MHLineEdge>(outerSourceVertex, outerTargetVertex));
+        wire2D.addEdge(std::make_shared<MHGeometry::MHLineEdge>(outerTargetVertex, innerTargetVertex));
+        wire2D.addEdge(std::make_shared<MHGeometry::MHLineEdge>(innerTargetVertex, innerSourceVertex));
         face2D.addWire(wire2D);
-        m_baseFace = std::make_unique<MHGeometry::MHPlaneFace>(face2D);
+        m_baseFace = std::make_shared<MHGeometry::MHPlaneFace>(face2D);
         vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
         transform->Identity();
         transform->Translate(0, 0, 2800);
@@ -129,24 +129,24 @@ void MHHoleEntity::generateHole2D() {
         }
         auto angleToXAxis = MHGeometry::MHToolKit::angleToXAxis(arcEdge->getCenter(), *m_midVertex);
         double angle = MHGeometry::MHToolKit::radianToAngle(m_length / 2 / arcEdge->getRadius());
-        auto outerEdge = std::make_unique<MHGeometry::MHArcEdge>(arcEdge->getCenter(), arcEdge->getNormal(), arcEdge->getRadius() + m_width / 2, angleToXAxis - angle, angleToXAxis + angle);
-        auto innerEdge = std::make_unique<MHGeometry::MHArcEdge>(arcEdge->getCenter(), arcEdge->getNormal(), arcEdge->getRadius() - m_width / 2, angleToXAxis - angle, angleToXAxis + angle);
+        auto outerEdge = std::make_shared<MHGeometry::MHArcEdge>(arcEdge->getCenter(), arcEdge->getNormal(), arcEdge->getRadius() + m_width / 2, angleToXAxis - angle, angleToXAxis + angle);
+        auto innerEdge = std::make_shared<MHGeometry::MHArcEdge>(arcEdge->getCenter(), arcEdge->getNormal(), arcEdge->getRadius() - m_width / 2, angleToXAxis - angle, angleToXAxis + angle);
         innerEdge->reversed();
         auto outerSourceVertex = outerEdge->getSourceVertex();
         auto outerTargetVertex = outerEdge->getTargetVertex();
         auto innerSourceVertex = innerEdge->getSourceVertex();
         auto innerTargetVertex = innerEdge->getTargetVertex();
-        auto lineEdge1 = std::make_unique<MHGeometry::MHLineEdge>(outerTargetVertex, innerSourceVertex);
-        auto lineEdge2 = std::make_unique<MHGeometry::MHLineEdge>(innerTargetVertex, outerSourceVertex);
+        auto lineEdge1 = std::make_shared<MHGeometry::MHLineEdge>(outerTargetVertex, innerSourceVertex);
+        auto lineEdge2 = std::make_shared<MHGeometry::MHLineEdge>(innerTargetVertex, outerSourceVertex);
 
         MHGeometry::MHPlaneFace face2D;
         MHGeometry::MHWire wire2D;
-        wire2D.addEdge(std::move(outerEdge));
-        wire2D.addEdge(std::move(lineEdge1));
-        wire2D.addEdge(std::move(innerEdge));
-        wire2D.addEdge(std::move(lineEdge2));
-        face2D.addWire(std::move(wire2D));
-        m_baseFace = std::make_unique<MHGeometry::MHPlaneFace>(face2D);
+        wire2D.addEdge(outerEdge);
+        wire2D.addEdge(lineEdge1);
+        wire2D.addEdge(innerEdge);
+        wire2D.addEdge(lineEdge2);
+        face2D.addWire(wire2D);
+        m_baseFace = std::make_shared<MHGeometry::MHPlaneFace>(face2D);
         vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
         transform->Identity();
         transform->Translate(0, 0, 2800);
@@ -189,15 +189,15 @@ void MHHoleEntity::generateHole3D() {
         MHGeometry::MHVertex topOuterTargetVertex = outerTargetVertex + zAxis * m_height;
 
         MHGeometry::MHWire wireInner;
-        wireInner.addEdge(std::make_unique<MHGeometry::MHLineEdge>(innerSourceVertex, innerTargetVertex));
-        wireInner.addEdge(std::make_unique<MHGeometry::MHLineEdge>(innerTargetVertex, topInnerTargetVertex));
-        wireInner.addEdge(std::make_unique<MHGeometry::MHLineEdge>(topInnerTargetVertex, topInnerSourceVertex));
-        wireInner.addEdge(std::make_unique<MHGeometry::MHLineEdge>(topInnerSourceVertex, innerSourceVertex));
+        wireInner.addEdge(std::make_shared<MHGeometry::MHLineEdge>(innerSourceVertex, innerTargetVertex));
+        wireInner.addEdge(std::make_shared<MHGeometry::MHLineEdge>(innerTargetVertex, topInnerTargetVertex));
+        wireInner.addEdge(std::make_shared<MHGeometry::MHLineEdge>(topInnerTargetVertex, topInnerSourceVertex));
+        wireInner.addEdge(std::make_shared<MHGeometry::MHLineEdge>(topInnerSourceVertex, innerSourceVertex));
         MHGeometry::MHWire wireOuter;
-        wireOuter.addEdge(std::make_unique<MHGeometry::MHLineEdge>(outerSourceVertex, outerTargetVertex));
-        wireOuter.addEdge(std::make_unique<MHGeometry::MHLineEdge>(outerTargetVertex, topOuterTargetVertex));
-        wireOuter.addEdge(std::make_unique<MHGeometry::MHLineEdge>(topOuterTargetVertex, topOuterSourceVertex));
-        wireOuter.addEdge(std::make_unique<MHGeometry::MHLineEdge>(topOuterSourceVertex, outerSourceVertex));
+        wireOuter.addEdge(std::make_shared<MHGeometry::MHLineEdge>(outerSourceVertex, outerTargetVertex));
+        wireOuter.addEdge(std::make_shared<MHGeometry::MHLineEdge>(outerTargetVertex, topOuterTargetVertex));
+        wireOuter.addEdge(std::make_shared<MHGeometry::MHLineEdge>(topOuterTargetVertex, topOuterSourceVertex));
+        wireOuter.addEdge(std::make_shared<MHGeometry::MHLineEdge>(topOuterSourceVertex, outerSourceVertex));
 
         m_solidShape = MHGeometry::MHToolKit::makeThruSectionSolid(wireInner, wireOuter);
     } else {
@@ -207,33 +207,33 @@ void MHHoleEntity::generateHole3D() {
         }
         auto angleToXAxis = MHGeometry::MHToolKit::angleToXAxis(arcEdge->getCenter(), *m_midVertex);
         double angle = MHGeometry::MHToolKit::radianToAngle(m_length / 2 / arcEdge->getRadius());
-        auto outerEdge = std::make_unique<MHGeometry::MHArcEdge>(arcEdge->getCenter(), arcEdge->getNormal(), arcEdge->getRadius() + m_width / 2, angleToXAxis - angle, angleToXAxis + angle);
-        auto innerEdge = std::make_unique<MHGeometry::MHArcEdge>(arcEdge->getCenter(), arcEdge->getNormal(), arcEdge->getRadius() - m_width / 2, angleToXAxis - angle, angleToXAxis + angle);
+        auto outerEdge = std::make_shared<MHGeometry::MHArcEdge>(arcEdge->getCenter(), arcEdge->getNormal(), arcEdge->getRadius() + m_width / 2, angleToXAxis - angle, angleToXAxis + angle);
+        auto innerEdge = std::make_shared<MHGeometry::MHArcEdge>(arcEdge->getCenter(), arcEdge->getNormal(), arcEdge->getRadius() - m_width / 2, angleToXAxis - angle, angleToXAxis + angle);
 
         auto sourceDirection = (outerEdge->getSourceVertex() - innerEdge->getSourceVertex()).normalize();
         auto targetDirection = (outerEdge->getTargetVertex() - innerEdge->getTargetVertex()).normalize();
 
         MHGeometry::MHVertex zAxis(0, 0, 1);
-        auto innerSouce = innerEdge->getSourceVertex();
+        auto innerSource = innerEdge->getSourceVertex();
         auto innerTarget = innerEdge->getTargetVertex();
-        auto topInnerSource = innerSouce + zAxis * m_height;
+        auto topInnerSource = innerSource + zAxis * m_height;
         auto topInnerTarget = innerTarget + zAxis * m_height;
 
-        auto outerSource = innerSouce + sourceDirection * outerEdge->getRadius() * std::abs(std::cos(MHGeometry::MHToolKit::angleToRadian(angle)));
+        auto outerSource = innerSource + sourceDirection * outerEdge->getRadius() * std::abs(std::cos(MHGeometry::MHToolKit::angleToRadian(angle)));
         auto outerTarget = innerTarget + targetDirection * outerEdge->getRadius() * std::abs(std::cos(MHGeometry::MHToolKit::angleToRadian(angle)));
         auto topOuterSource = outerSource + zAxis * m_height;
         auto topOuterTarget = outerTarget + zAxis * m_height;
 
         MHGeometry::MHWire wireInner;
-        wireInner.addEdge(std::make_unique<MHGeometry::MHLineEdge>(innerSouce, innerTarget));
-        wireInner.addEdge(std::make_unique<MHGeometry::MHLineEdge>(innerTarget, topInnerTarget));
-        wireInner.addEdge(std::make_unique<MHGeometry::MHLineEdge>(topInnerTarget, topInnerSource));
-        wireInner.addEdge(std::make_unique<MHGeometry::MHLineEdge>(topInnerSource, innerSouce));
+        wireInner.addEdge(std::make_shared<MHGeometry::MHLineEdge>(innerSource, innerTarget));
+        wireInner.addEdge(std::make_shared<MHGeometry::MHLineEdge>(innerTarget, topInnerTarget));
+        wireInner.addEdge(std::make_shared<MHGeometry::MHLineEdge>(topInnerTarget, topInnerSource));
+        wireInner.addEdge(std::make_shared<MHGeometry::MHLineEdge>(topInnerSource, innerSource));
         MHGeometry::MHWire wireOuter;
-        wireOuter.addEdge(std::make_unique<MHGeometry::MHLineEdge>(outerSource, outerTarget));
-        wireOuter.addEdge(std::make_unique<MHGeometry::MHLineEdge>(outerTarget, topOuterTarget));
-        wireOuter.addEdge(std::make_unique<MHGeometry::MHLineEdge>(topOuterTarget, topOuterSource));
-        wireOuter.addEdge(std::make_unique<MHGeometry::MHLineEdge>(topOuterSource, outerSource));
+        wireOuter.addEdge(std::make_shared<MHGeometry::MHLineEdge>(outerSource, outerTarget));
+        wireOuter.addEdge(std::make_shared<MHGeometry::MHLineEdge>(outerTarget, topOuterTarget));
+        wireOuter.addEdge(std::make_shared<MHGeometry::MHLineEdge>(topOuterTarget, topOuterSource));
+        wireOuter.addEdge(std::make_shared<MHGeometry::MHLineEdge>(topOuterSource, outerSource));
 
         m_solidShape = MHGeometry::MHToolKit::makeThruSectionSolid(wireInner, wireOuter);
     }
@@ -245,12 +245,8 @@ void MHHoleEntity::generateHole3D() {
     }
 }
 
-std::vector<std::unique_ptr<MHGeometry::MHEdge>> MHHoleEntity::getEdges() {
-    return std::vector<std::unique_ptr<MHGeometry::MHEdge>>();
-}
-
-std::unique_ptr<MHGeometry::MHPlaneFace> MHHoleEntity::getBaseFace() const {
-    return std::unique_ptr<MHGeometry::MHPlaneFace>();
+std::shared_ptr<MHGeometry::MHPlaneFace> MHHoleEntity::getBaseFace() const {
+    return m_baseFace;
 }
 
 std::shared_ptr<MHHouseEntity> MHHoleEntity::getHole2D() const {
