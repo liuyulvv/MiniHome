@@ -240,7 +240,6 @@ void MHHoleEntity::generateHole3D() {
     if (m_wallEntity) {
         auto self = shared_from_this();
         m_wallEntity->addHole(std::dynamic_pointer_cast<MHHoleEntity>(self));
-        m_wallEntity->generateWall3D();
         m_wallEntity->show();
     }
 }

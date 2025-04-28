@@ -257,6 +257,7 @@ std::shared_ptr<MHGeometry::MHEdge> MHWallEntity::getMidEdge() const {
 void MHWallEntity::addHole(std::shared_ptr<MHHoleEntity> holeEntity) {
     if (holeEntity) {
         m_holeEntities[holeEntity->getId()] = holeEntity;
+        generateWall3D();
     }
 }
 
@@ -265,6 +266,7 @@ void MHWallEntity::removeHole(std::shared_ptr<MHHoleEntity> holeEntity) {
         auto it = m_holeEntities.find(holeEntity->getId());
         if (it != m_holeEntities.end()) {
             m_holeEntities.erase(it);
+            generateWall3D();
         }
     }
 }
@@ -273,8 +275,8 @@ void MHWallEntity::removeHole(const std::string& holeId) {
     auto it = m_holeEntities.find(holeId);
     if (it != m_holeEntities.end()) {
         m_holeEntities.erase(it);
+        generateWall3D();
     }
-    generateWall3D();
 }
 
 void MHWallEntity::createDefaultTexture() {
