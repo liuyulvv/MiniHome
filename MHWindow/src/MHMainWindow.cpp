@@ -6,6 +6,9 @@
 
 #include "MHMainWindow.h"
 
+#include <QDebug>
+
+#include "MHDrawHouseManager.h"
 #include "ui_MHMainWindow.h"
 
 namespace MHWindow {
@@ -24,6 +27,7 @@ MHMainWindow::MHMainWindow() : ui(new Ui::MHMainWindow) {
     setCentralWidget(m_vtkWindow);
     connect(m_statusBar, &MHMainWindowStatusBar::leftNavigationButtonClicked, this, &MHMainWindow::toggleLeftPanel);
     connect(m_statusBar, &MHMainWindowStatusBar::rightNavigationButtonClicked, this, &MHMainWindow::toggleRightPanel);
+    MHHouse::MHDrawHouseManager::getInstance().setShowRightPanelCallback([this](bool show, MHHouse::MHDrawType drawType) { showRightPanelDraw(show, drawType); });
 }
 
 MHMainWindow::~MHMainWindow() {
@@ -32,6 +36,27 @@ MHMainWindow::~MHMainWindow() {
     delete m_vtkWindow;
     delete m_statusBar;
     delete ui;
+}
+
+void MHMainWindow::showRightPanel(bool show) {
+    if (show) {
+        m_rightNavigation->show();
+    } else {
+        m_rightNavigation->hide();
+    }
+}
+
+void MHMainWindow::showRightPanelDraw(bool show, MHHouse::MHDrawType drawType) {
+    qDebug() << m_rightNavigation->width();
+    switch (drawType) {
+        case MHHouse::MHDrawType::WALL_LINE:
+        case MHHouse::MHDrawType::WALL_RECTANGLE:
+        case MHHouse::MHDrawType::WALL_ARC:
+            m_rightNavigation->showRightNavigationDrawWall(show, drawType);
+            break;
+        default:
+            break;
+    }
 }
 
 void MHMainWindow::toggleLeftPanel() {

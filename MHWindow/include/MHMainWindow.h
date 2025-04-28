@@ -15,6 +15,7 @@
 #include <QHBoxLayout>
 #include <QMainWindow>
 
+#include "MHDrawBase.h"
 #include "MHLeftNavigation.h"
 #include "MHMainVTKWindow.h"
 #include "MHMainWindowStatusBar.h"
@@ -36,7 +37,9 @@ public:
     MHMainWindow& operator=(const MHMainWindow& window) = delete;
     MHMainWindow& operator=(MHMainWindow&& window) = delete;
 
-public:
+private:
+    void showRightPanel(bool show);
+    void showRightPanelDraw(bool show, MHHouse::MHDrawType drawType);
     void toggleLeftPanel();
     void toggleRightPanel();
 

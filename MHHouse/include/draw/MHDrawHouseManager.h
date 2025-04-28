@@ -12,6 +12,7 @@
 #define MH_HOUSE_API __declspec(dllimport)
 #endif
 
+#include <functional>
 #include <memory>
 
 #include "MHDrawBase.h"
@@ -56,6 +57,9 @@ public:
     static double getDrawHoleLength();
     static double getDrawHoleWidth();
 
+public:
+    void setShowRightPanelCallback(std::function<void(bool, MHDrawType)> callback);
+
 private:
     MHDrawType m_drawType = MHDrawType::NONE;
     std::shared_ptr<MHDrawWallLine> m_drawWallLine = nullptr;
@@ -77,6 +81,9 @@ private:
     static double m_drawHoleHeight;
     static double m_drawHoleLength;
     static double m_drawHoleWidth;
+
+private:
+    std::function<void(bool, MHDrawType)> m_showRightPanelCallback = nullptr;
 };
 
 }  // namespace MHHouse

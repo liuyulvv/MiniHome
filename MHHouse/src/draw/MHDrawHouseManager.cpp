@@ -38,6 +38,9 @@ void MHDrawHouseManager::beginDraw(MHDrawType drawType) {
     MHCore::MHMainVTKInteractorStyle::getInstance().switchTo(MHCore::MHInteractorType::Top2D);
     endDraw();
     m_drawType = drawType;
+    if (m_showRightPanelCallback) {
+        m_showRightPanelCallback(true, m_drawType);
+    }
     switch (m_drawType) {
         case MHDrawType::WALL_RECTANGLE:
             m_drawWallRectangle->beginDraw();
@@ -86,6 +89,9 @@ void MHDrawHouseManager::endDraw() {
         default:
             break;
     }
+    if (m_showRightPanelCallback) {
+        m_showRightPanelCallback(false, m_drawType);
+    }
     m_drawType = MHDrawType::NONE;
     MHCore::MHMainVTKInteractorStyle::getInstance().render();
 }
@@ -132,6 +138,10 @@ double MHDrawHouseManager::getDrawHoleLength() {
 
 double MHDrawHouseManager::getDrawHoleWidth() {
     return m_drawHoleWidth;
+}
+
+void MHDrawHouseManager::setShowRightPanelCallback(std::function<void(bool, MHDrawType)> callback) {
+    m_showRightPanelCallback = callback;
 }
 
 }  // namespace MHHouse

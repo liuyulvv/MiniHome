@@ -8,6 +8,10 @@
 
 #include <QWidget>
 
+#include "MHDrawBase.h"
+#include "MHRightNavigationDrawWall.h"
+#include "MHRightNavigationSpace.h"
+
 namespace Ui {
 class MHRightNavigation;
 }
@@ -21,8 +25,13 @@ public:
     explicit MHRightNavigation(QWidget *parent = nullptr);
     ~MHRightNavigation();
 
+public:
+    void showRightNavigationDrawWall(bool show, MHHouse::MHDrawType drawType);
+
 private:
     Ui::MHRightNavigation *ui;
+    MHRightNavigationSpace *m_rightNavigationSpace = nullptr;
+    MHRightNavigationDrawWall *m_rightNavigationDrawWall = nullptr;
 };
 
 }  // namespace MHWindow
