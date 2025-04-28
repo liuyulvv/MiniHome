@@ -43,4 +43,13 @@ std::vector<std::shared_ptr<MHWallEntity>> MHWallManager::getWalls() const {
     return walls;
 }
 
+void MHWallManager::clear() {
+    for (const auto& pair : m_walls) {
+        if (pair.second) {
+            pair.second->destroy();
+        }
+    }
+    m_walls.clear();
+}
+
 }  // namespace MHHouse

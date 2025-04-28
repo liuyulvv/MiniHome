@@ -43,4 +43,13 @@ std::vector<std::shared_ptr<MHHoleEntity>> MHHoleManager::getHoles() const {
     return holes;
 }
 
+void MHHoleManager::clear() {
+    for (auto& pair : m_holes) {
+        if (pair.second) {
+            pair.second->destroy();
+        }
+    }
+    m_holes.clear();
+}
+
 }  // namespace MHHouse

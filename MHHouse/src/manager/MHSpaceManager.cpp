@@ -120,4 +120,13 @@ void MHSpaceManager::removeSpace(std::shared_ptr<MHSpaceEntity> space) {
     }
 }
 
+void MHSpaceManager::clear() {
+    for (auto& space : m_spaces) {
+        if (space.second) {
+            space.second->destroy();
+        }
+    }
+    m_spaces.clear();
+}
+
 }  // namespace MHHouse

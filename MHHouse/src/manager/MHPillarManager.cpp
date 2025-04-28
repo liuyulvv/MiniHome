@@ -43,4 +43,13 @@ std::vector<std::shared_ptr<MHPillarEntity>> MHPillarManager::getPillars() const
     return pillars;
 }
 
+void MHPillarManager::clear() {
+    for (const auto& pair : m_pillars) {
+        if (pair.second) {
+            pair.second->destroy();
+        }
+    }
+    m_pillars.clear();
+}
+
 }  // namespace MHHouse

@@ -43,4 +43,13 @@ std::vector<std::shared_ptr<MHCylinderEntity>> MHCylinderManager::getCylinders()
     return cylinders;
 }
 
+void MHCylinderManager::clear() {
+    for (const auto& pair : m_cylinders) {
+        if (pair.second) {
+            pair.second->destroy();
+        }
+    }
+    m_cylinders.clear();
+}
+
 }  // namespace MHHouse

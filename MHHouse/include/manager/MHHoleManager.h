@@ -6,6 +6,12 @@
  * @date 2025-04-21
  */
 
+#ifdef MH_HOUSE_EXPORTS
+#define MH_HOUSE_API __declspec(dllexport)
+#else
+#define MH_HOUSE_API __declspec(dllimport)
+#endif
+
 #include <map>
 #include <memory>
 
@@ -13,7 +19,7 @@
 
 namespace MHHouse {
 
-class MHHoleManager {
+class MH_HOUSE_API MHHoleManager {
 public:
     static MHHoleManager& getInstance();
     MHHoleManager(const MHHoleManager& manager) = delete;
@@ -26,6 +32,7 @@ public:
     void removeHole(const std::string& holeId);
     void removeHole(std::shared_ptr<MHHoleEntity> hole);
     std::vector<std::shared_ptr<MHHoleEntity>> getHoles() const;
+    void clear();
 
 private:
     MHHoleManager() = default;
