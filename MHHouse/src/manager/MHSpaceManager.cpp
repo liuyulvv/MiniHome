@@ -73,7 +73,7 @@ void MHSpaceManager::generateSpaces() {
     for (auto& face : faces) {
         bool isSpace = true;
         for (auto& excludeFace : excludeFaces) {
-            if (MHGeometry::MHToolKit::isIntersect(face, excludeFace)) {
+            if (MHGeometry::MHToolKit::getFaceIntersectionType(face, excludeFace) == MHGeometry::MHToolKit::MHFaceIntersectionType::FACE) {
                 isSpace = false;
                 break;
             }

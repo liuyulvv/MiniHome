@@ -10,6 +10,7 @@
 #include <BRepAdaptor_Surface.hxx>
 #include <BRepAlgoAPI_Common.hxx>
 #include <BRepAlgoAPI_Cut.hxx>
+#include <BRepAlgoAPI_Section.hxx>
 #include <BRepBndLib.hxx>
 #include <BRepBuilderAPI_MakeFace.hxx>
 #include <BRepOffsetAPI_ThruSections.hxx>
@@ -167,31 +168,6 @@ MH_GEOMETRY_API std::vector<MHPlaneFace> makeArrangement(std::vector<std::shared
     return planeFaces;
 }
 
-MH_GEOMETRY_API bool isIntersect(const MHPlaneFace& face1, const MHPlaneFace& face2) {
-    auto face1TopoDS = toTopoDSFace(face1);
-    auto face2TopoDS = toTopoDSFace(face2);
-    return isIntersect(face1TopoDS, face2TopoDS);
-}
-
-MH_GEOMETRY_API bool isIntersect(const TopoDS_Face& face1, const TopoDS_Face& face2) {
-    BRepAlgoAPI_Common common(face1, face2);
-    common.Build();
-    if (!common.IsDone()) {
-        return false;
-    }
-    auto resultShape = common.Shape();
-    if (resultShape.IsNull()) {
-        return false;
-    }
-    for (TopExp_Explorer explorer(resultShape, TopAbs_FACE); explorer.More(); explorer.Next()) {
-        const TopoDS_Face& face = TopoDS::Face(explorer.Current());
-        if (!face.IsNull()) {
-            return true;
-        }
-    }
-    return false;
-}
-
 MH_GEOMETRY_API TopoDS_Shape booleanDifference(const TopoDS_Shape& mainShape, const std::vector<TopoDS_Shape>& toolShapes) {
     TopoDS_Shape result = mainShape;
     for (const auto& toolShape : toolShapes) {
@@ -235,6 +211,45 @@ MH_GEOMETRY_API TopoDS_Shape makeThruSectionSolid(const MHWire& wire1, const MHW
 MH_GEOMETRY_API std::vector<TopoDS_Face> makeThruSectionFace(const MHWire& wire1, const MHWire& wire2) {
     auto solid = makeThruSectionSolid(wire1, wire2);
     return getFaces(solid);
+}
+
+MH_GEOMETRY_API MHFaceIntersectionType getFaceIntersectionType(const MHPlaneFace& face1, const MHPlaneFace& face2) {
+    auto face1TopoDS = toTopoDSFace(face1);
+    auto face2TopoDS = toTopoDSFace(face2);
+    return getFaceIntersectionType(face1TopoDS, face2TopoDS);
+}
+
+MH_GEOMETRY_API MHFaceIntersectionType getFaceIntersectionType(const TopoDS_Face& face1, const TopoDS_Face& face2) {
+    BRepAlgoAPI_Common common(face1, face2);
+    common.Build();
+    if (!common.IsDone()) {
+        return MHFaceIntersectionType::NONE;
+    }
+    auto resultShape = common.Shape();
+    if (resultShape.IsNull()) {
+        return MHFaceIntersectionType::NONE;
+    }
+    for (TopExp_Explorer explorer(resultShape, TopAbs_FACE); explorer.More(); explorer.Next()) {
+        return MHFaceIntersectionType::FACE;
+    }
+    BRepAlgoAPI_Section section(face1, face2, Standard_False);
+    section.Build();
+    if (!section.IsDone() || section.Shape().IsNull()) {
+        return MHFaceIntersectionType::NONE;
+    }
+    for (TopExp_Explorer edgeExplorer(section.Shape(), TopAbs_EDGE); edgeExplorer.More(); edgeExplorer.Next()) {
+        const TopoDS_Edge& edge = TopoDS::Edge(edgeExplorer.Current());
+        if (!edge.IsNull()) {
+            return MHFaceIntersectionType::EDGE;
+        }
+    }
+    for (TopExp_Explorer vertexExplorer(section.Shape(), TopAbs_VERTEX); vertexExplorer.More(); vertexExplorer.Next()) {
+        const TopoDS_Vertex& vertex = TopoDS::Vertex(vertexExplorer.Current());
+        if (!vertex.IsNull()) {
+            return MHFaceIntersectionType::VERTEX;
+        }
+    }
+    return MHFaceIntersectionType::NONE;
 }
 
 }  // namespace MHGeometry::MHToolKit
