@@ -24,6 +24,7 @@
 #include "MHFaceToolKit.h"
 #include "MHPlaneFace.h"
 #include "MHRendererManager.h"
+#include "MHSpaceManager.h"
 #include "MHVertex.h"
 
 namespace MHHouse {
@@ -210,6 +211,7 @@ void MHHouseEntity::onSelected(const MHCore::MHEntityInteractorInfo& info) {
 void MHHouseEntity::onDelete() {
     MHEntity::onDelete();
     MHCore::MHRendererManager::getInstance().getHoverRenderer()->RemoveActor(m_outlineActor);
+    MHSpaceManager::getInstance().generateSpaces();
 }
 
 void MHHouseEntity::setPolygonOffset(double factor, double units) {

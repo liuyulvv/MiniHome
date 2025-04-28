@@ -12,7 +12,6 @@
 #include "MHFaceToolKit.h"
 #include "MHPillarManager.h"
 #include "MHRendererManager.h"
-#include "MHSpaceManager.h"
 
 namespace MHHouse {
 
@@ -25,7 +24,6 @@ MHPillarEntity::MHPillarEntity(vtkSmartPointer<MHCore::MHRenderer> renderer) : M
 void MHPillarEntity::destroy() {
     MHHouseEntity::destroy();
     MHPillarManager::getInstance().removePillar(m_id);
-    MHSpaceManager::getInstance().generateSpaces();
 }
 
 void MHPillarEntity::updatePillar(const MHGeometry::MHLineEdge& midEdge, double height, double length, double width) {

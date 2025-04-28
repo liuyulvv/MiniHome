@@ -12,7 +12,6 @@
 #include "MHCylinderManager.h"
 #include "MHFaceToolKit.h"
 #include "MHRendererManager.h"
-#include "MHSpaceManager.h"
 
 namespace MHHouse {
 
@@ -24,7 +23,6 @@ MHCylinderEntity::MHCylinderEntity(vtkSmartPointer<MHCore::MHRenderer> renderer)
 void MHCylinderEntity::destroy() {
     MHHouseEntity::destroy();
     MHCylinderManager::getInstance().removeCylinder(m_id);
-    MHSpaceManager::getInstance().generateSpaces();
 }
 
 void MHCylinderEntity::updateCylinder(const MHGeometry::MHVertex& center, double radius, double height) {

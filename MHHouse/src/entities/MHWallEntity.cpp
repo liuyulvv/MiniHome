@@ -14,7 +14,6 @@
 #include "MHHoleEntity.h"
 #include "MHPlaneFace.h"
 #include "MHRendererManager.h"
-#include "MHSpaceManager.h"
 #include "MHWallManager.h"
 
 namespace MHHouse {
@@ -27,7 +26,6 @@ MHWallEntity::MHWallEntity(vtkSmartPointer<MHCore::MHRenderer> renderer) : MHHou
 
 void MHWallEntity::destroy() {
     MHWallManager::getInstance().removeWall(m_id);
-    MHSpaceManager::getInstance().generateSpaces();
     std::vector<std::shared_ptr<MHHoleEntity>> holes;
     for (const auto& hole : m_holeEntities) {
         holes.push_back(hole.second);
