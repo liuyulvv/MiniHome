@@ -52,6 +52,7 @@ public:
 
 private:
     void createDefaultTexture();
+    void updateWallEdges();
 
 private:
     std::shared_ptr<MHGeometry::MHEdge> m_positionEdge = nullptr;
