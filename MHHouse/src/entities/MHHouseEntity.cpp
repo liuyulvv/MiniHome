@@ -38,6 +38,7 @@ MHHouseEntity::MHHouseEntity(vtkSmartPointer<MHCore::MHRenderer> renderer) : MHC
 }
 
 MHHouseEntity::~MHHouseEntity() {
+    destroy();
     MHCore::MHRendererManager::getInstance().getHoverRenderer()->RemoveActor(m_outlineActor);
 }
 
