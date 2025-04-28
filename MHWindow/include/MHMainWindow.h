@@ -12,12 +12,13 @@
 #define MH_WINDOW_API __declspec(dllimport)
 #endif
 
-#include <QDockWidget>
+#include <QHBoxLayout>
 #include <QMainWindow>
 
 #include "MHLeftNavigation.h"
 #include "MHMainVTKWindow.h"
 #include "MHMainWindowStatusBar.h"
+#include "MHRightNavigation.h"
 
 namespace Ui {
 class MHMainWindow;
@@ -37,12 +38,14 @@ public:
 
 public:
     void toggleLeftPanel();
+    void toggleRightPanel();
 
 private:
     Ui::MHMainWindow* ui;
-    QDockWidget* m_leftDockWidget;
     MHLeftNavigation* m_leftNavigation;
+    MHRightNavigation* m_rightNavigation;
     MHMainVTKWindow* m_vtkWindow;
+    QHBoxLayout* m_hLayout;
     MHMainWindowStatusBar* m_statusBar;
 };
 

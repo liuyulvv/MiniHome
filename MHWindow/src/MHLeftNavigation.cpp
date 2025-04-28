@@ -6,8 +6,7 @@
 
 #include "MHLeftNavigation.h"
 
-#include <QResizeEvent>
-#include <QSpacerItem>
+#include <QFile>
 
 #include "MHDrawHouseManager.h"
 #include "ui_MHLeftNavigation.h"
@@ -16,65 +15,35 @@ namespace MHWindow {
 
 MHLeftNavigation::MHLeftNavigation(QWidget *parent) : QWidget(parent), ui(new Ui::MHLeftNavigation) {
     ui->setupUi(this);
-    m_gridLayout = new QGridLayout();
-    m_widgets.push_back(ui->lineButton);
-    m_widgets.push_back(ui->rectangleButton);
-    m_widgets.push_back(ui->arcButton);
-    m_widgets.push_back(ui->pillarButton);
-    m_widgets.push_back(ui->cylinderButton);
-    m_widgets.push_back(ui->holeButton);
-    m_maxColumn = 2;
-    layoutWidget();
-    m_vLayout = new QVBoxLayout();
-    m_vLayout->addLayout(m_gridLayout);
-    m_vLayout->addSpacerItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum));
-    setLayout(m_vLayout);
-
-    connect(ui->lineButton, &QToolButton::clicked, this, [this]() {
-        MHHouse::MHDrawHouseManager::getInstance().beginDraw(MHHouse::MHDrawType::WALL_LINE);
+    QFile qss("styles/MHLeftNavigation.qss");
+    if (qss.open(QFile::ReadOnly)) {
+        setStyleSheet(qss.readAll());
+        qss.close();
+    }
+    m_buttonGroup = new QButtonGroup(this);
+    m_buttonGroup->addButton(ui->houseButton, 0);
+    m_buttonGroup->addButton(ui->ornamentButton, 1);
+    m_buttonGroup->button(0)->setChecked(true);
+    m_buttonGroup->setExclusive(true);
+    connect(ui->houseButton, &QToolButton::clicked, this, [=]() {
+        ui->stackedWidget->setCurrentIndex(0);
     });
-    connect(ui->rectangleButton, &QToolButton::clicked, this, [this]() {
-        MHHouse::MHDrawHouseManager::getInstance().beginDraw(MHHouse::MHDrawType::WALL_RECTANGLE);
+    connect(ui->ornamentButton, &QToolButton::clicked, this, [=]() {
+        ui->stackedWidget->setCurrentIndex(1);
     });
-    connect(ui->arcButton, &QToolButton::clicked, this, [this]() {
-        MHHouse::MHDrawHouseManager::getInstance().beginDraw(MHHouse::MHDrawType::WALL_ARC);
-    });
-    connect(ui->pillarButton, &QToolButton::clicked, this, [this]() {
-        MHHouse::MHDrawHouseManager::getInstance().beginDraw(MHHouse::MHDrawType::PILLAR);
-    });
-    connect(ui->cylinderButton, &QToolButton::clicked, this, [this]() {
-        MHHouse::MHDrawHouseManager::getInstance().beginDraw(MHHouse::MHDrawType::CYLINDER);
-    });
-    connect(ui->holeButton, &QToolButton::clicked, this, [this]() {
-        MHHouse::MHDrawHouseManager::getInstance().beginDraw(MHHouse::MHDrawType::HOLE);
-    });
+    m_house = new MHLeftNavigationHouse();
+    m_ornament = new MHLeftNavigationOrnament();
+    ui->stackedWidget->addWidget(m_house);
+    ui->stackedWidget->addWidget(m_ornament);
+    ui->stackedWidget->setCurrentIndex(0);
+    setAutoFillBackground(true);
 }
 
 MHLeftNavigation::~MHLeftNavigation() {
-    m_widgets.clear();
-    delete m_gridLayout;
-    delete m_vLayout;
+    delete m_buttonGroup;
+    delete m_house;
+    delete m_ornament;
     delete ui;
-}
-
-void MHLeftNavigation::resizeEvent(QResizeEvent *event) {
-    if (event->size().width() < 152) {
-        m_maxColumn = 1;
-        layoutWidget();
-    } else {
-        m_maxColumn = 2;
-        layoutWidget();
-    }
-    QWidget::resizeEvent(event);
-}
-
-void MHLeftNavigation::layoutWidget() {
-    for (int i = 0; i < m_widgets.size(); i++) {
-        m_gridLayout->removeWidget(m_widgets[i]);
-    }
-    for (int i = 0; i < m_widgets.size(); i++) {
-        m_gridLayout->addWidget(m_widgets[i], i / m_maxColumn, i % m_maxColumn);
-    }
 }
 
 }  // namespace MHWindow

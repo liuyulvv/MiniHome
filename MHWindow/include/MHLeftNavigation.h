@@ -6,10 +6,11 @@
  * @date 2025-03-17
  */
 
-#include <QGridLayout>
-#include <QVBoxLayout>
+#include <QButtonGroup>
 #include <QWidget>
-#include <vector>
+
+#include "MHLeftNavigationHouse.h"
+#include "MHLeftNavigationOrnament.h"
 
 namespace Ui {
 class MHLeftNavigation;
@@ -24,18 +25,11 @@ public:
     explicit MHLeftNavigation(QWidget *parent = nullptr);
     ~MHLeftNavigation();
 
-protected:
-    void resizeEvent(QResizeEvent *event) override;
-
-private:
-    void layoutWidget();
-
 private:
     Ui::MHLeftNavigation *ui = nullptr;
-    QGridLayout *m_gridLayout = nullptr;
-    QVBoxLayout *m_vLayout = nullptr;
-    int m_maxColumn = 2;
-    std::vector<QWidget *> m_widgets;
+    QButtonGroup *m_buttonGroup = nullptr;
+    MHLeftNavigationHouse *m_house = nullptr;
+    MHLeftNavigationOrnament *m_ornament = nullptr;
 };
 
 }  // namespace MHWindow

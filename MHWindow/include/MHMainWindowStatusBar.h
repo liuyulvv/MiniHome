@@ -25,6 +25,7 @@ public:
 
 signals:
     void leftNavigationButtonClicked();
+    void rightNavigationButtonClicked();
 
 private:
     void setupUi();
@@ -32,8 +33,9 @@ private:
 private:
     QStatusBar* m_statusBar;
 
-    QWidget* m_leftWidget;
+    QWidget* m_widget;
     QToolButton* m_leftNavigationButton;
+    QToolButton* m_rightNavigationButton;
 };
 
 }  // namespace MHWindow

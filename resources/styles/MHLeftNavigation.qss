@@ -1,0 +1,18 @@
+QToolButton {
+    background-color: #f0f0f0;
+    border: 1px solid #d0d0d0;
+    border-radius: 5px;
+    color: #000000;
+}
+
+QToolButton:hover {
+    background-color: #e0e0e0;
+}
+
+QToolButton:pressed {
+    background-color: #e0e0e0;
+}
+
+QToolButton:checked {
+    background-color: #e0e0e0;
+}
