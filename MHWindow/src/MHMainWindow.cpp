@@ -6,8 +6,6 @@
 
 #include "MHMainWindow.h"
 
-#include <QDebug>
-
 #include "MHDrawHouseManager.h"
 #include "ui_MHMainWindow.h"
 
@@ -16,13 +14,20 @@ namespace MHWindow {
 MHMainWindow::MHMainWindow() : ui(new Ui::MHMainWindow) {
     ui->setupUi(this);
     m_vtkWindow = new MHMainVTKWindow(this);
+    m_vtkLayout = new QGridLayout(m_vtkWindow);
+    m_vtkLayout->setContentsMargins(0, 0, 0, 0);
+    m_vtkLayout->setSpacing(0);
     m_hLayout = new QHBoxLayout(m_vtkWindow);
     m_hLayout->setContentsMargins(0, 0, 0, 0);
+    m_topNavigation = new MHTopNavigation();
     m_leftNavigation = new MHLeftNavigation();
     m_rightNavigation = new MHRightNavigation();
     m_hLayout->addWidget(m_leftNavigation);
     m_hLayout->addStretch();
     m_hLayout->addWidget(m_rightNavigation);
+    m_vtkLayout->addWidget(m_topNavigation, 0, 0);
+    m_vtkLayout->addLayout(m_hLayout, 1, 0);
+    m_vtkWindow->setLayout(m_vtkLayout);
     m_statusBar = new MHMainWindowStatusBar(statusBar());
     setCentralWidget(m_vtkWindow);
     connect(m_statusBar, &MHMainWindowStatusBar::leftNavigationButtonClicked, this, &MHMainWindow::toggleLeftPanel);
@@ -31,8 +36,11 @@ MHMainWindow::MHMainWindow() : ui(new Ui::MHMainWindow) {
 }
 
 MHMainWindow::~MHMainWindow() {
+    delete m_topNavigation;
     delete m_leftNavigation;
     delete m_rightNavigation;
+    delete m_hLayout;
+    delete m_vtkLayout;
     delete m_vtkWindow;
     delete m_statusBar;
     delete ui;
@@ -47,7 +55,6 @@ void MHMainWindow::showRightPanel(bool show) {
 }
 
 void MHMainWindow::showRightPanelDraw(bool show, MHHouse::MHDrawType drawType) {
-    qDebug() << m_rightNavigation->width();
     switch (drawType) {
         case MHHouse::MHDrawType::WALL_LINE:
         case MHHouse::MHDrawType::WALL_RECTANGLE:

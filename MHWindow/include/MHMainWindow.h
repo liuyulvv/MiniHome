@@ -12,6 +12,7 @@
 #define MH_WINDOW_API __declspec(dllimport)
 #endif
 
+#include <QGridLayout>
 #include <QHBoxLayout>
 #include <QMainWindow>
 
@@ -20,6 +21,7 @@
 #include "MHMainVTKWindow.h"
 #include "MHMainWindowStatusBar.h"
 #include "MHRightNavigation.h"
+#include "MHTopNavigation.h"
 
 namespace Ui {
 class MHMainWindow;
@@ -45,10 +47,12 @@ private:
 
 private:
     Ui::MHMainWindow* ui;
+    MHTopNavigation* m_topNavigation;
     MHLeftNavigation* m_leftNavigation;
     MHRightNavigation* m_rightNavigation;
     MHMainVTKWindow* m_vtkWindow;
     QHBoxLayout* m_hLayout;
+    QGridLayout* m_vtkLayout;
     MHMainWindowStatusBar* m_statusBar;
 };
 
