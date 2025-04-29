@@ -8,6 +8,8 @@
 
 #include <BRepBuilderAPI_MakeEdge.hxx>
 #include <BRep_Tool.hxx>
+#include <Geom2dAPI_InterCurveCurve.hxx>
+#include <Geom2d_Line.hxx>
 #include <Geom_Circle.hxx>
 #include <Geom_Curve.hxx>
 #include <Geom_Line.hxx>
@@ -94,6 +96,22 @@ MH_GEOMETRY_API MHArcEdge toMHArcEdge(const TopoDS_Edge& topoDSEdge) {
     MHVertex centerVertex(center.X(), center.Y(), center.Z());
     MHVertex normalVertex(normal.X(), normal.Y(), normal.Z());
     return MHArcEdge(centerVertex, normalVertex, radius, radianToAngle(sourceRadian), radianToAngle(targetRadian), orientation);
+}
+
+MH_GEOMETRY_API MHLineIntersectionType getLineIntersectionVertex(const MHLineEdge& lineEdge1, const MHLineEdge& lineEdge2, MHVertex& intersectionVertex) {
+    auto sourceVertex1 = lineEdge1.getSourceVertex();
+    auto targetVertex1 = lineEdge1.getTargetVertex();
+    auto sourceVertex2 = lineEdge2.getSourceVertex();
+    auto targetVertex2 = lineEdge2.getTargetVertex();
+    Handle(Geom2d_Line) line1 = new Geom2d_Line(gp_Pnt2d(sourceVertex1.x, sourceVertex1.y), gp_Vec2d(targetVertex1.x - sourceVertex1.x, targetVertex1.y - sourceVertex1.y));
+    Handle(Geom2d_Line) line2 = new Geom2d_Line(gp_Pnt2d(sourceVertex2.x, sourceVertex2.y), gp_Vec2d(targetVertex2.x - sourceVertex2.x, targetVertex2.y - sourceVertex2.y));
+    Geom2dAPI_InterCurveCurve intersection(line1, line2);
+    if (intersection.NbPoints() > 0) {
+        auto point = intersection.Point(1);
+        intersectionVertex = MHVertex(point.X(), point.Y(), 0.0);
+        return MHLineIntersectionType::INTERSECT;
+    }
+    return MHLineIntersectionType::NONE;
 }
 
 }  // namespace MHGeometry::MHToolKit
