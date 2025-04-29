@@ -44,9 +44,10 @@ std::vector<std::shared_ptr<MHHoleEntity>> MHHoleManager::getHoles() const {
 }
 
 void MHHoleManager::clear() {
-    for (auto& pair : m_holes) {
-        if (pair.second) {
-            pair.second->destroy();
+    while (!m_holes.empty()) {
+        auto it = m_holes.begin();
+        if (it->second) {
+            it->second->destroy();
         }
     }
     m_holes.clear();

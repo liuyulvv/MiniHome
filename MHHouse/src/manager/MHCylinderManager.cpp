@@ -44,9 +44,10 @@ std::vector<std::shared_ptr<MHCylinderEntity>> MHCylinderManager::getCylinders()
 }
 
 void MHCylinderManager::clear() {
-    for (const auto& pair : m_cylinders) {
-        if (pair.second) {
-            pair.second->destroy();
+    while (!m_cylinders.empty()) {
+        auto it = m_cylinders.begin();
+        if (it->second) {
+            it->second->destroy();
         }
     }
     m_cylinders.clear();

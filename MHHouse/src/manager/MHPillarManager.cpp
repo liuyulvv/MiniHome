@@ -44,9 +44,10 @@ std::vector<std::shared_ptr<MHPillarEntity>> MHPillarManager::getPillars() const
 }
 
 void MHPillarManager::clear() {
-    for (const auto& pair : m_pillars) {
-        if (pair.second) {
-            pair.second->destroy();
+    while (!m_pillars.empty()) {
+        auto it = m_pillars.begin();
+        if (it->second) {
+            it->second->destroy();
         }
     }
     m_pillars.clear();

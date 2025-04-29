@@ -10,12 +10,18 @@
 #include <vtkImageReader2Factory.h>
 
 #include "MHRendererManager.h"
+#include "MHSpaceManager.h"
 
 namespace MHHouse {
 
 MHSpaceEntity::MHSpaceEntity(vtkSmartPointer<MHCore::MHRenderer> renderer) : MHHouseEntity(renderer) {
     createDefaultTexture();
     m_actor->SetTexture(m_texture);
+}
+
+void MHSpaceEntity::destroy() {
+    MHHouseEntity::destroy();
+    MHSpaceManager::getInstance().removeSpace(m_id);
 }
 
 void MHSpaceEntity::onDelete() {}

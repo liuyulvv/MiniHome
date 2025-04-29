@@ -121,9 +121,10 @@ void MHSpaceManager::removeSpace(std::shared_ptr<MHSpaceEntity> space) {
 }
 
 void MHSpaceManager::clear() {
-    for (auto& space : m_spaces) {
-        if (space.second) {
-            space.second->destroy();
+    while (!m_spaces.empty()) {
+        auto it = m_spaces.begin();
+        if (it->second) {
+            it->second->destroy();
         }
     }
     m_spaces.clear();

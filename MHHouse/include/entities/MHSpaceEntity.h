@@ -22,6 +22,7 @@ public:
     MHSpaceEntity& operator=(MHSpaceEntity&& entity) = delete;
 
 public:
+    virtual void destroy() override;
     virtual void onDelete() override;
 
 public:

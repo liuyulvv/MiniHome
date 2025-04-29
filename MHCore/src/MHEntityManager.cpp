@@ -22,6 +22,10 @@ MHEntityManager::~MHEntityManager() {
 }
 
 void MHEntityManager::clear() {
+    while (!m_entities.empty()) {
+        auto iter = m_entities.begin();
+        iter->second->destroy();
+    }
     m_entities.clear();
 }
 

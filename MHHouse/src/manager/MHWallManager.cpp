@@ -44,9 +44,10 @@ std::vector<std::shared_ptr<MHWallEntity>> MHWallManager::getWalls() const {
 }
 
 void MHWallManager::clear() {
-    for (const auto& pair : m_walls) {
-        if (pair.second) {
-            pair.second->destroy();
+    while (!m_walls.empty()) {
+        auto it = m_walls.begin();
+        if (it->second) {
+            it->second->destroy();
         }
     }
     m_walls.clear();
