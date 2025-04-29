@@ -34,7 +34,9 @@ public:
     virtual bool onLeftButtonUp(const MHCore::MHInteractorInfo& interactorInfo) override;
     virtual bool onRightButtonUp(const MHCore::MHInteractorInfo& interactorInfo) override;
     virtual bool onMouseMove(const MHCore::MHInteractorInfo& interactorInfo) override;
-
+    virtual bool onKeyPress(const MHCore::MHInteractorInfo& interactorInfo) override;
+    virtual bool onKeyRelease(const MHCore::MHInteractorInfo& interactorInfo) override;
+    
 private:
     enum class DrawState {
         END,

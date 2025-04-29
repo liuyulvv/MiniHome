@@ -338,9 +338,7 @@ void MHMainVTKInteractorStyle::OnKeyPress() {
     std::string key = m_interactor->GetKeySym();
     std::transform(key.begin(), key.end(), key.begin(), ::toupper);
     if (!key.empty()) {
-        if (key.length() == 1 && std::isalnum(key[0])) {
-            m_interactorInfo.pressedKeys.insert(key);
-        }
+        m_interactorInfo.pressedKeys.insert(key);
     }
     for (const auto& filter : m_interactorFilters) {
         if (filter->onKeyPress(m_interactorInfo)) {
@@ -368,9 +366,7 @@ void MHMainVTKInteractorStyle::OnKeyRelease() {
     std::string key = m_interactor->GetKeySym();
     std::transform(key.begin(), key.end(), key.begin(), ::toupper);
     if (!key.empty()) {
-        if (key.length() == 1 && std::isalnum(key[0])) {
-            m_interactorInfo.pressedKeys.erase(key);
-        }
+        m_interactorInfo.pressedKeys.erase(key);
     }
     for (const auto& filter : m_interactorFilters) {
         if (filter->onKeyRelease(m_interactorInfo)) {

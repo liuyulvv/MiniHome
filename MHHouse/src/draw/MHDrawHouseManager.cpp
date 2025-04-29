@@ -100,6 +100,10 @@ MHWallPositionType MHDrawHouseManager::getDrawWallPositionType() {
     return m_drawWallPositionType;
 }
 
+void MHDrawHouseManager::setDrawWallPositionType(MHWallPositionType type) {
+    m_drawWallPositionType = type;
+}
+
 double MHDrawHouseManager::getDrawWallHeight() {
     return m_drawWallHeight;
 }

@@ -46,6 +46,7 @@ public:
     void beginDraw(MHDrawType drawType);
     void endDraw();
     static MHWallPositionType getDrawWallPositionType();
+    static void setDrawWallPositionType(MHWallPositionType type);
     static double getDrawWallHeight();
     static double getDrawWallWidth();
     static double getDrawPillarHeight();

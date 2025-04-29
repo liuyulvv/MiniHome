@@ -95,6 +95,19 @@ bool MHDrawWallArc::onMouseMove(const MHCore::MHInteractorInfo& interactorInfo) 
     return true;
 }
 
+bool MHDrawWallArc::onKeyPress(const MHCore::MHInteractorInfo& interactorInfo) {
+    if (interactorInfo.pressedKeys.size() == 1 && interactorInfo.pressedKeys.contains("SPACE")) {
+        auto currentType = static_cast<int>(MHDrawHouseManager::getInstance().getDrawWallPositionType());
+        currentType = (currentType + 1) % 3;
+        MHDrawHouseManager::getInstance().setDrawWallPositionType(static_cast<MHWallPositionType>(currentType));
+    }
+    return true;
+}
+
+bool MHDrawWallArc::onKeyRelease(const MHCore::MHInteractorInfo& interactorInfo) {
+    return true;
+}
+
 void MHDrawWallArc::computeArcEdge(const MHCore::MHInteractorInfo& interactorInfo) {
     MHGeometry::MHVertex current = {interactorInfo.worldX, interactorInfo.worldY, 0};
     auto source = m_lineEdge->getSourceVertex();

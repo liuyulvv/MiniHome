@@ -88,6 +88,19 @@ bool MHDrawWallRectangle::onMouseMove(const MHCore::MHInteractorInfo& interactor
     return true;
 }
 
+bool MHDrawWallRectangle::onKeyPress(const MHCore::MHInteractorInfo& interactorInfo) {
+    if (interactorInfo.pressedKeys.size() == 1 && interactorInfo.pressedKeys.contains("SPACE")) {
+        auto currentType = static_cast<int>(MHDrawHouseManager::getInstance().getDrawWallPositionType());
+        currentType = (currentType + 1) % 3;
+        MHDrawHouseManager::getInstance().setDrawWallPositionType(static_cast<MHWallPositionType>(currentType));
+    }
+    return true;
+}
+
+bool MHDrawWallRectangle::onKeyRelease(const MHCore::MHInteractorInfo& interactorInfo) {
+    return true;
+}
+
 void MHDrawWallRectangle::updateWallEntities(bool generate3D) {
     if (!m_lineEdge || m_drawState != DrawState::SECOND) {
         return;
