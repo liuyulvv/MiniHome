@@ -79,4 +79,17 @@ bool MHDrawWallLine::onMouseMove(const MHCore::MHInteractorInfo& interactorInfo)
     return true;
 }
 
+bool MHDrawWallLine::onKeyPress(const MHCore::MHInteractorInfo& interactorInfo) {
+    if (interactorInfo.pressedKeys.size() == 1 && interactorInfo.pressedKeys.contains("SPACE")) {
+        auto currentType = static_cast<int>(MHDrawHouseManager::getInstance().getDrawWallPositionType());
+        currentType = (currentType + 1) % 3;
+        MHDrawHouseManager::getInstance().setDrawWallPositionType(static_cast<MHWallPositionType>(currentType));
+    }
+    return true;
+}
+
+bool MHDrawWallLine::onKeyRelease(const MHCore::MHInteractorInfo& interactorInfo) {
+    return true;
+}
+
 }  // namespace MHHouse
