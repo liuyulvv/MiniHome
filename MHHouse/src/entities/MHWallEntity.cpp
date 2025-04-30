@@ -44,6 +44,7 @@ void MHWallEntity::updateWall(const MHGeometry::MHLineEdge& positionEdge, double
     m_height = height;
     m_width = width;
     m_positionType = positionType;
+    updateMidEdge();
     updateWallEdges();
 }
 
@@ -52,6 +53,7 @@ void MHWallEntity::updateWall(const MHGeometry::MHArcEdge& positionEdge, double 
     m_height = height;
     m_width = width;
     m_positionType = positionType;
+    updateMidEdge();
     updateWallEdges();
 }
 
@@ -199,6 +201,42 @@ void MHWallEntity::createDefaultTexture() {
     m_wall2DTexture = vtkSmartPointer<vtkTexture>::New();
     m_wall2DTexture->SetInputConnection(textureReader2D->GetOutputPort());
     m_wall2DTexture->InterpolateOn();
+}
+
+void MHWallEntity::updateMidEdge() {
+    if (m_positionEdge) {
+        auto result = std::dynamic_pointer_cast<MHGeometry::MHEdge>(m_positionEdge->clone());
+        auto edgeType = result->getEdgeType();
+        if (edgeType == MHGeometry::MHEdgeType::LINE_EDGE) {
+            auto edgeDirection = (m_positionEdge->getTargetVertex() - m_positionEdge->getSourceVertex()).normalize();
+            auto edgeNormal = edgeDirection.cross(MHGeometry::MHVertex(0, 0, 1)).normalize();
+            if (m_positionType == MHWallPositionType::LEFT) {
+                vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+                transform->Identity();
+                transform->Translate(-m_width / 2 * edgeNormal.x, -m_width / 2 * edgeNormal.y, -m_width / 2 * edgeNormal.z);
+                result->applyTransform(transform);
+            } else if (m_positionType == MHWallPositionType::RIGHT) {
+                vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+                transform->Identity();
+                transform->Translate(m_width / 2 * edgeNormal.x, m_width / 2 * edgeNormal.y, m_width / 2 * edgeNormal.z);
+                result->applyTransform(transform);
+            }
+        } else {
+            auto arcEdge = static_cast<MHGeometry::MHArcEdge*>(m_positionEdge.get());
+            if (m_positionType == MHWallPositionType::LEFT) {
+                result = std::make_shared<MHGeometry::MHArcEdge>(arcEdge->getCenter(), arcEdge->getNormal(), arcEdge->getRadius() + m_width / 2, arcEdge->getSourceAngle(), arcEdge->getTargetAngle());
+            } else if (m_positionType == MHWallPositionType::RIGHT) {
+                result = std::make_shared<MHGeometry::MHArcEdge>(arcEdge->getCenter(), arcEdge->getNormal(), arcEdge->getRadius() - m_width / 2, arcEdge->getSourceAngle(), arcEdge->getTargetAngle());
+            }
+        }
+        m_midEdge = result;
+        m_sourceVertex = m_midEdge->getSourceVertex();
+        m_targetVertex = m_midEdge->getTargetVertex();
+    } else {
+        m_midEdge = nullptr;
+        m_sourceVertex = MHGeometry::MHVertex(0, 0, 0);
+        m_targetVertex = MHGeometry::MHVertex(0, 0, 0);
+    }
 }
 
 void MHWallEntity::updateWallEdges() {

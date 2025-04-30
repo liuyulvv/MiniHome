@@ -52,6 +52,7 @@ public:
 
 private:
     void createDefaultTexture();
+    void updateMidEdge();
     void updateWallEdges();
 
 private:
@@ -59,6 +60,7 @@ private:
     double m_height = 2800.0;
     double m_width = 240.0;
     MHWallPositionType m_positionType = MHWallPositionType::LEFT;
+    std::shared_ptr<MHGeometry::MHEdge> m_midEdge = nullptr;
     std::vector<std::shared_ptr<MHGeometry::MHEdge>> m_edges;
     std::shared_ptr<MHGeometry::MHPlaneFace> m_baseFace = nullptr;
     std::shared_ptr<MHHouseEntity> m_wall2D = nullptr;
