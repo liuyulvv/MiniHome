@@ -14,10 +14,13 @@
 
 #include <vtkActor.h>
 #include <vtkDataSetMapper.h>
+#include <vtkMapper.h>
 #include <vtkOpenGLActor.h>
 #include <vtkProperty.h>
+#include <vtkRenderer.h>
 #include <vtkSmartPointer.h>
 
+#include <functional>
 #include <memory>
 
 namespace MHCore {
@@ -40,11 +43,17 @@ private:
     ~MHActor();
 
 public:
+    virtual void Render(vtkRenderer* ren, vtkMapper* mapper) override;
+
+public:
     void setEntity(std::shared_ptr<MHEntity> entity);
     std::shared_ptr<MHEntity> getEntity() const;
 
+    void setRenderCallback(std::function<void()> callback);
+
 private:
     std::shared_ptr<MHEntity> m_Entity = nullptr;
+    std::function<void()> m_renderCallback = nullptr;
 };
 
 }  // namespace MHCore
