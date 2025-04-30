@@ -27,12 +27,8 @@ public:
     MHLineEntity& operator=(MHLineEntity&& entity) = delete;
 
 public:
-    void setSourceVertex(const MHGeometry::MHVertex& vertex);
-    void setTargetVertex(const MHGeometry::MHVertex& vertex);
-    void update();
-
-private:
-    MHGeometry::MHLineEdge m_lineEdge;
+    void update(const MHGeometry::MHVertex& sourceVertex, const MHGeometry::MHVertex& targetVertex);
+    void update(const MHGeometry::MHVertex& sourceVertex, const MHGeometry::MHVertex& targetVertex, double length);
 };
 
 }  // namespace MHCore

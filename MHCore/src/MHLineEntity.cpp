@@ -14,20 +14,25 @@ namespace MHCore {
 MHLineEntity::MHLineEntity(vtkSmartPointer<MHRenderer> renderer) : MHEntity(renderer) {
 }
 
-void MHLineEntity::setSourceVertex(const MHGeometry::MHVertex& vertex) {
-    m_lineEdge.setSourceVertex(vertex);
-}
-
-void MHLineEntity::setTargetVertex(const MHGeometry::MHVertex& vertex) {
-    m_lineEdge.setTargetVertex(vertex);
-}
-
-void MHLineEntity::update() {
+void MHLineEntity::update(const MHGeometry::MHVertex& sourceVertex, const MHGeometry::MHVertex& targetVertex) {
     auto lineSource = vtkSmartPointer<vtkLineSource>::New();
-    auto sourceVertex = m_lineEdge.getSourceVertex();
-    auto targetVertex = m_lineEdge.getTargetVertex();
     double start[3] = {sourceVertex.x, sourceVertex.y, sourceVertex.z};
     double end[3] = {targetVertex.x, targetVertex.y, targetVertex.z};
+    lineSource->SetPoint1(start);
+    lineSource->SetPoint2(end);
+    auto mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+    mapper->SetInputConnection(lineSource->GetOutputPort());
+    m_actor->SetMapper(mapper);
+}
+
+void MHLineEntity::update(const MHGeometry::MHVertex& sourceVertex, const MHGeometry::MHVertex& targetVertex, double length) {
+    auto lineSource = vtkSmartPointer<vtkLineSource>::New();
+    auto midVertex = (sourceVertex + targetVertex) / 2.0;
+    auto direction = (targetVertex - sourceVertex).normalize();
+    auto source = midVertex - direction * (length / 2.0);
+    auto target = midVertex + direction * (length / 2.0);
+    double start[3] = {source.x, source.y, source.z};
+    double end[3] = {target.x, target.y, target.z};
     lineSource->SetPoint1(start);
     lineSource->SetPoint2(end);
     auto mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
